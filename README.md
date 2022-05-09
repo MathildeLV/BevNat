@@ -1,2 +1,2 @@
 # BevNat
-Births in Lausanne, 1987-2020
+Births in Switzerland, 1987-2020
