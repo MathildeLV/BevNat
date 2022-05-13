@@ -1,0 +1,215 @@
+---
+title: "Variables checking"
+author: "Mathilde Le Vu"
+date: '2022-05-11'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.1.2/library"))
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+```
+
+# Opening the data file
+```{r }
+bevn <- read.csv2(here("data", "birth_iem.csv"))
+
+```
+# Checking each variable has the correct format and content
+<br>
+1. Statistikjahr und Ereignisjahr = statistical year and year of birth
+Expected: from 1987 to 2020, no missing
+```{r}
+summary(bevn$Statistikjahr)
+table(bevn$Statistikjahr, useNA="always")
+round(prop.table(table(bevn$Statistikjahr, useNA="always"))*100,2)
+summary(bevn$Ereignisjahr)
+table(bevn$Ereignisjahr, useNA="always")
+round(prop.table(table(bevn$Ereignisjahr, useNA="always"))*100,2)
+
+```
+
+<br>
+2. Ereignismonat = month of birth <br>
+Expected: 1-12
+```{r}
+summary(bevn$Ereignismonat)
+table(bevn$Ereignismonat, useNA="always")
+round(prop.table(table(bevn$Ereignismonat, useNA="always"))*100,2)
+```
+<br>
+3. Mutter und Vater: Alter in erfüllten Jahren: Age mother/father (fullfilled years) <br>
+expected? 10-65 for women and 10-90+ for men?
+```{r}
+summary(bevn$Mutter..Alter.in.erfüllten.Jahren)
+summary(bevn$Vater..Alter.in.erfüllten.Jahren)
+```
+<br>
+4. Kind: Geschlecht = sex of the neonate <br>  1=male, 2=female 
+```{r}
+table(bevn$Kind..Geschlecht, useNA="always")
+round(prop.table(table(bevn$Kind..Geschlecht, useNA="always"))*100,2)
+```
+
+<br>
+5. Kind: Gestationsalter = gestational age <br> in Tagen days, missing=empty, only since 2006 <br>
+Expected: 100-308?
+```{r}
+summary(bevn$Kind..Gestationsalter.in.Tagen)
+```
+
+<br>
+6. Geburtsort = place of birth (hospital or at home), only available until 1997 (ca. 98% in hospitals) <br>
+Coding
+<br> 1- im Spital	à l’hôpital			1969-1997 <br>
+ 2- zu Hause	à la maison	1969-1997 <br> 
+ 3- anderer Ort	autre lieu	1987-1997 <br>
+ 4- Ort unbekannt	lieu inconnu	1987-1997 <br>
+ 9- Angabe fehlt	pas d’indication		1987-1997 <br> 
+
+
+```{r}
+summary(bevn$Geburtsort)
+table(bevn$Ereignisjahr, bevn$Geburtsort, useNA = "always")
+```
+
+<br>
+7. Geburtsstaat = State and world region of birth, see separate codebook 
+<br> Expected: 8100-8703
+```{r}
+summary(bevn$Geburtsstaat)
+table(bevn$Geburtsstaat, useNA = "always")
+```
+4 attritbuted to 8999: doesnt correspond to any country in the codebook
+<br>
+
+8. Art der Geburt = number of babies <br> 1=singleton, 2=twins, 3=triplets, ..., 6=sextuplets and more <br>
+Expected: 1-6
+```{r}
+summary(bevn$Art.der.Geburt)
+table(bevn$Art.der.Geburt, useNA="always")
+round(prop.table(table(bevn$Art.der.Geburt, useNA="always"))*100,2)
+```
+<br>
+9. Anzahl Knaben =	if multiple birth, number of boys 
+<br> Expected: 0-5 
+```{r}
+summary(bevn$Anzahl.Knaben)
+table(bevn$Anzahl.Knaben, useNA = "always")
+```
+<br>
+10. Anzahl Mädchen = if multiple birth, number of girls <br>
+Expected: 0-5
+```{r}
+summary(bevn$Anzahl.Mädchen)
+table(bevn$Anzahl.Mädchen, useNA = "always")
+```
+
+<br> 11. Kind: Grösse in Zentimeter = length at birth (cm), missing=99  <br>
+Expected: 10-
+```{r}
+summary(bevn$Kind..Grösse.in.Zentimeter)
+table(bevn$Kind..Grösse.in.Zentimeter, useNA = "always")
+```
+Many are set to 0 (missing? should have been set to 99). Outliers (1-10?)
+NA (3) instead of 99
+
+<br>
+12. Kind: Gewicht in Gramm = weight at birth (g), missing=9999  <br>
+Expected: 10-5000
+```{r}
+summary(bevn$Kind..Gewicht.in.Gramm)
+HBW <- subset(bevn, Kind..Gewicht.in.Gramm>5500)
+table(HBW$Kind..Gewicht.in.Gramm, useNA = "always")
+LBW <- subset(bevn, Kind..Gewicht.in.Gramm<500)
+table(LBW$Kind..Gewicht.in.Gramm, useNA = "always")
+```
+
+outliers (9.3kg, or LBW <100...)
+<br>
+13. Kind: Rang in der aktuellen Ehe <br>
+Expected: 1-15
+```{r}
+summary(bevn$Kind..Rang.in.der.aktuellen.Ehe)
+table(bevn$Kind..Rang.in.der.aktuellen.Ehe, useNA="always")
+round(prop.table(table(bevn$Kind..Rang.in.der.aktuellen.Ehe, useNA="always"))*100,2)
+```
+
+14. Mutter: Staatsangehörigkeit = Nationality Mother, see separate codebook 
+<br> Expected: 8100-8703
+```{r}
+summary(bevn$Mutter..Staatsangehörigkeit)
+table(bevn$Mutter..Staatsangehörigkeit, useNA="always")
+```
+8998, 8999?  NAs?
+<br>
+15. Mutter Zivilstand = additional variable  not in the codebook, see other file<br>
+ 1 - Single	dés 1969 <br>
+ 2- Married	dés 1969 <br>
+ 3- Widowed	dés 1969 <br>
+ 4- Divorced	dés 1969 <br>
+ 5- Unmarried	dés 1998 <br>
+ 6- Registered partnership dés 2007 <br>
+ 7- Partnership dissolved	dés 2007 <br>
+```{r}
+summary(bevn$Mutter.Zivilstand)
+table(bevn$Mutter.Zivilstand, useNA="always")
+round(prop.table(table(bevn$Mutter.Zivilstand, useNA="always"))*100,2)
+```
+
+
+16. Mutter: Wohngemeinde / Wohnstaat =  Place of residence Mother (GMDNR or country, see separate codebook) <br>
+```{r}
+summary(bevn$Mutter..Wohngemeinde...Wohnstaat)
+```
+How to check that numbers are okay? see separate codebook <br>
+
+17. Empty variables:<br>
+- Mutter: Stellung im Beruf (NA) <br>
+- Mutter: Beruf (NA) <br>
+- Vater/Ernährer: Stellung im Beruf (NA) <br>
+- Vater/Ernährer: Beruf (NA) <br>
+```{r}
+summary(bevn$Mutter..Stellung.im.Beruf)
+summary(bevn$Mutter..Beruf)
+summary(bevn$Vater.Ernährer..Stellung.im.Beruf)
+table(bevn$Vater.Ernährer..Stellung.im.Beruf, useNA="always")
+summary(bevn$Vater.Ernährer..Beruf)
+
+```
+Vater.Ernährer..Stellung.im.Beruf is not empty: shouldnt it be?
+These 4 variables are not important anyway`? <br>
+
+21. Vater: Staatsangehörigkeit = Nationality father, see separate codebook <br>
+Expected: 8100-8703
+```{r}
+summary(bevn$Vater..Staatsangehörigkeit)
+```
+Same remark than for the mother: 8998, 899? NAs? to check <br>
+
+22. Kind: biologischer Rang  (NA) <br>
+```{r}
+summary(bevn$Kind..biologischer.Rang)
+table(bevn$Kind..biologischer.Rang, useNA = "always")
+```
+
+
+23. Flag: Geschlecht des Kindes (NA) <br>
+24.Flag: Art der Geburt (NA) <br>
+25. Flag: Rang des Kindes in der aktuellen Ehe (NA) <br>
+26. Flag: Zivilstand der Mutter <br>
+27. Mutter: ständig oder nicht-ständiger Wohnsitz = Residence of the mother
+<br> 1=permanent resident, 2=non-permanent resident, 4=short stay, 9=domiciled abroad <br>
+28. Vater: Alter in erreichten Jahren = Age father (approximated) <br>
+29. Mutter: Alter in erreichten Jahren = Age mother (approximated) <br>
+30. lebend geboren oder nicht = born alive or not <br>1=lifeborn, 2=stillborn <br>
+```{r}
+round(prop.table((table(bevn$Ereignisjahr, bevn$lebend.geboren.oder.nicht, useNA="always")), margin = 1)*100,3 )
+```
+
+
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
