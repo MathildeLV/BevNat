@@ -66,19 +66,21 @@ Checking that its available since 2006
 ```{r}
 summary(bevn$Kind..Gestationsalter.in.Tagen)
 
+##GA in weeks
+bevn$Kind..Gestationsalter.in.Tagen <- as.numeric(bevn$Kind..Gestationsalter.in.Tagen)
+bevn$GA_weeks <- bevn$Kind..Gestationsalter.in.Tagen / 7
+summary(bevn$GA_weeks)
+
+tapply(bevn$GA_weeks, bevn$Ereignisjahr, summary) 
+
 #calculating mean by year
-aggregate(x = bevn$Kind..Gestationsalter.in.Tagen,      #function aggregate doesnt work          
-          by = list(bevn$Ereignisjahr),              
-          FUN = mean)                           
-
- group_mean <- aggregate(Kind..Gestationsalter.in.Tagen ~ Ereignisjahr, data = bevn, mean) # Equivalent works
+ group_mean <- aggregate(GA_weeks ~ Ereignisjahr, data = bevn, mean) # Equivalent works
  group_mean
-
-tapply(bevn$Kind..Gestationsalter.in.Tagen, bevn$Ereignisjahr, summary)
 
 ```
 Available in 2003 and 2004 as well<br>
 Much less NAs from 2007 <br>
+From 2006, GA mean is very stable (around 39.15)
 
 ## Geburtsort = place of birth (hospital or at home)
 
@@ -93,7 +95,7 @@ Coding <br>
 ```{r}
 table(bevn$Geburtsort, useNA = "always")
 round(prop.table(table(bevn$Geburtsort, useNA="always"))*100,2)
-table(bevn$Ereignisjahr, bevn$Geburtsort, useNA = "always")
+round(prop.table(table(bevn$Ereignisjahr, bevn$Geburtsort, useNA = "always"))*100,2)
 ```
 Only available until 1997: okay
 
@@ -102,18 +104,43 @@ Only available until 1997: okay
 See separate codebook <br>
 Expected: 8100-8703 <br>
 ```{r}
-summary(bevn$Geburtsstaat)
-table(bevn$Geburtsstaat, useNA = "always")
-```
-4 attritbuted to 8999: doesnt correspond to any country in the codebook -> missing Geburtsstaat?  <br>
+#checking min and max values (should be 8100 and 8703)
+  summary(bevn$Geburtsstaat)
+#8999 doesnt correspond to anything in the codebook but probably NA
+  table(bevn$Geburtsstaat, useNA = "always")
+#assign NA to values=8999
+  bevn$Geburtsstaat[bevn$Geburtsstaat ==8999] = NA
+ 
+# categorizing state of birth in : Switzerland or Outside of Switzerland
+  bevn$Geburtsstaat_cat1 <- cut(bevn$Geburtsstaat, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  table(bevn$Geburtsstaat_cat1, useNA = "always")
+  round(prop.table(table(bevn$Geburtsstaat_cat1, useNA="always"))*100,2)
 
+#categorizing state of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+  bevn$Geburtsstaat_cat2 <- cut(bevn$Geburtsstaat, breaks=c(8000, 8100, 8280, 8384, 8486, 8601, 8685, 10000), include.lowest=TRUE, labels=c("Switzerland", "Europe - excl Switz", "Africa", "Americas", "Asia", "Oceania", "Other"))
+table(bevn$Geburtsstaat_cat2, useNA = "always")
+round(prop.table(table(bevn$Geburtsstaat_cat2, useNA="always"))*100,2)
+
+#categorizing state of birth in : Switzerland, different parts of Europe, other
+bevn$Geburtsstaat_cat3 <- as.factor(ifelse(bevn$Geburtsstaat == 8100, 'Switz',
+                                    ifelse(bevn$Geburtsstaat == 8207 | bevn$Geburtsstaat == 8208 | bevn$Geburtsstaat == 8209 | bevn$Geburtsstaat == 8222 | bevn$Geburtsstaat == 8229 | bevn$Geburtsstaat == 8230 | bevn$Geburtsstaat == 8238 | bevn$Geburtsstaat == 8243 | bevn$Geburtsstaat == 8244,  'Central Europe',
+                                    ifelse (bevn$Geburtsstaat == 8201 | bevn$Geburtsstaat == 8205 | bevn$Geburtsstaat ==8220 | bevn$Geburtsstaat == 8232 | bevn$Geburtsstaat == 82880 | (bevn$Geburtsstaat > 8247 & bevn$Geburtsstaat< 8258) , 'SE Europe',
+                                    ifelse(bevn$Geburtsstaat==8202 | bevn$Geburtsstaat== 8213 | bevn$Geburtsstaat==8231 |bevn$Geburtsstaat== 8236, 'SW Europe', 
+                                    ifelse(bevn$Geburtsstaat==8204 | bevn$Geburtsstaat==8212 |bevn$Geburtsstaat==8215|bevn$Geburtsstaat==8216|bevn$Geburtsstaat==8223|bevn$Geburtsstaat==8225|bevn$Geburtsstaat==8226|bevn$Geburtsstaat==8227|bevn$Geburtsstaat==8270|bevn$Geburtsstaat==8271|bevn$Geburtsstaat==8272|bevn$Geburtsstaat==8275, 'Western Europe',
+                                 ifelse(bevn$Geburtsstaat==8206|bevn$Geburtsstaat==8210|bevn$Geburtsstaat==8211|bevn$Geburtsstaat==8217|bevn$Geburtsstaat==8228|bevn$Geburtsstaat==8234|bevn$Geburtsstaat==8273|bevn$Geburtsstaat==8274,'Northern Europe', 
+                                ifelse(bevn$Geburtsstaat==8214|bevn$Geburtsstaat==8218|bevn$Geburtsstaat==8224|bevn$Geburtsstaat==8233|bevn$Geburtsstaat==8239|bevn$Geburtsstaat==8241|bevn$Geburtsstaat==8242, 'Southern Europe',
+                                ifelse(bevn$Geburtsstaat==8235|bevn$Geburtsstaat==8572|bevn$Geburtsstaat==8573|bevn$Geburtsstaat==8574|bevn$Geburtsstaat==8576|bevn$Geburtsstaat==8577|bevn$Geburtsstaat==8578 | (bevn$Geburtsstaat > 8259 & bevn$Geburtsstaat < 8267), 'Eastern Europe','other')))))))))
+
+round(prop.table(table(bevn$Geburtsstaat_cat3, useNA="always"))*100,2)
+```
+4 attritbuted to 8999: doesnt correspond to any country in the codebook -> attributed to NA  <br>
+95% of total births took place in Switzerland.
 
 ## Art der Geburt = number of babies 
 
 1=singleton, 2=twins, 3=triplets, ..., 6=sextuplets and more <br>
 Expected: 1-6
 ```{r}
-summary(bevn$Art.der.Geburt)
 table(bevn$Art.der.Geburt, useNA="always")
 round(prop.table(table(bevn$Art.der.Geburt, useNA="always"))*100,2)
 ```
@@ -122,9 +149,7 @@ round(prop.table(table(bevn$Art.der.Geburt, useNA="always"))*100,2)
 
 Expected: 0-5 
 ```{r}
-summary(bevn$Anzahl.Knaben)
 table(bevn$Anzahl.Knaben, useNA = "always")
-summary(bevn$Anzahl.Mädchen)
 table(bevn$Anzahl.Mädchen, useNA = "always")
 ```
 
@@ -133,20 +158,28 @@ table(bevn$Anzahl.Mädchen, useNA = "always")
 Expected: 10-60? And 99 for missing
 ```{r}
 summary(bevn$Kind..Grösse.in.Zentimeter)
+#assign birthlength=99 to NA
+bevn$Kind..Grösse.in.Zentimeter[bevn$Kind..Grösse.in.Zentimeter ==99] = NA
+summary(bevn$Kind..Grösse.in.Zentimeter)
 table(bevn$Kind..Grösse.in.Zentimeter, useNA = "always")
+round(prop.table(table(bevn$Kind..Grösse.in.Zentimeter, useNA="always"))*100,2)
 ```
 Many are set to 0 (missing? should have been set to 99). Outliers (1-10?)
-NA (3) instead of 99
+4.33% are NAs
+--> we should choose a threshold for inclusion in the db.
 
 ## Kind: Gewicht in Gramm = weight at birth (g), missing=9999 
 
 Expected: 10-6000 and 9999
 ```{r}
 summary(bevn$Kind..Gewicht.in.Gramm)
-HBW <- subset(bevn, Kind..Gewicht.in.Gramm>5500) #having a look at high birthweight neonates : 1 extreme outlier at 9351g
-table(HBW$Kind..Gewicht.in.Gramm, useNA = "always")
-LBW <- subset(bevn, Kind..Gewicht.in.Gramm<500) #having a look at (extreme) low birthweight neonates : many are set to 0, many are also below 100
-table(LBW$Kind..Gewicht.in.Gramm, useNA = "always")
+#assign BW=9999 or BW=0 to NA
+bevn$Kind..Gewicht.in.Gramm[bevn$Kind..Gewicht.in.Gramm ==9999 |bevn$Kind..Gewicht.in.Gramm==0] = NA
+summary(bevn$Kind..Gewicht.in.Gramm)
+HBW <- subset(bevn, Kind..Gewicht.in.Gramm>6000) #having a look at high birthweight neonates : 1 extreme outlier at 9351g
+table(HBW$Kind..Gewicht.in.Gramm)
+VLBW <- subset(bevn, Kind..Gewicht.in.Gramm<100) #having a look at (extreme) low birthweight neonates : many are set to 0, many are also below 100
+table(VLBW$Kind..Gewicht.in.Gramm)
 ```
 
 outliers (BW=9.3kg, or BW <<<100...)<br>
@@ -155,7 +188,6 @@ outliers (BW=9.3kg, or BW <<<100...)<br>
 
 Expected: 1-15
 ```{r}
-summary(bevn$Kind..Rang.in.der.aktuellen.Ehe)
 table(bevn$Kind..Rang.in.der.aktuellen.Ehe, useNA="always")
 round(prop.table(table(bevn$Kind..Rang.in.der.aktuellen.Ehe, useNA="always"))*100,2)
 ```
@@ -166,6 +198,14 @@ Expected: 8100-8703
 ```{r}
 summary(bevn$Mutter..Staatsangehörigkeit)
 table(bevn$Mutter..Staatsangehörigkeit, useNA="always")
+
+# categorizing nationality of the mother in : Switzerland or Outside of Switzerland
+  bevn$mother_nationality_cat1 <- cut(bevn$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  round(prop.table(table(bevn$mother_nationality_cat1, useNA="always"))*100,2)
+  
+# categorizing state of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+  bevn$mother_nationality_cat2 <- cut(bevn$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 8280, 8384, 8486, 8601, 8685, 10000), include.lowest=TRUE, labels=c("Switzerland", "Europe - excl Switz", "Africa", "Americas", "Asia", "Oceania", "Other"))
+round(prop.table(table(bevn$mother_nationality_cat2, useNA="always"))*100,2)
 ```
 8998, 8999?  NAs?  <br>
 
@@ -180,8 +220,6 @@ See additional codebook <br>
  6- Registered partnership from 2007 <br>
  7- Partnership dissolved	from 2007 <br>
 ```{r}
-summary(bevn$Mutter.Zivilstand)
-table(bevn$Mutter.Zivilstand, useNA="always")
 round(prop.table(table(bevn$Mutter.Zivilstand, useNA="always"))*100,2)
 table(bevn$Mutter.Zivilstand, bevn$Ereignisjahr, useNA="always")
 ```
@@ -198,10 +236,15 @@ Expected: <br>
 1-6910 for commune if resident inside Switz <br>
 8201-8703 if resident outside of Switz <br>
 ```{r}
+#to check minimum and maximum
 summary(bevn$Mutter..Wohngemeinde...Wohnstaat)
+#assign Mutter..Wohngemeinde...Wohnstaat=8999 to NA
+bevn$Mutter..Wohngemeinde...Wohnstaat[bevn$Mutter..Wohngemeinde...Wohnstaat ==8999] = NA
+# categorizing place of residence of the mother in : inside or outside Switzerland
+  bevn$mother_residence_cat1 <- cut(bevn$Mutter..Wohngemeinde...Wohnstaat, breaks=c(0, 6911, 8704), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  round(prop.table(table(bevn$mother_residence_cat1, useNA="always"))*100,2)
+  table(bevn$mother_residence_cat1, useNA="always")
 ```
-How to check that numbers are okay? see separate codebook <br>
-8999, is it missing place of residence? <br>
 
 ## Empty variables
 - Mutter: Stellung im Beruf (NA) <br>
@@ -228,17 +271,23 @@ Coding Vater.Ernährer..Stellung.im.Beruf:  <br>
 
 Expected: 8100-8703
 ```{r}
+#checking min and max
 summary(bevn$Vater..Staatsangehörigkeit)
-table(bevn$Vater..Staatsangehörigkeit, useNA = "always")
+#assign Vater..Staatsangehörigkeit=8999 to NA
+bevn$Vater..Staatsangehörigkeit[bevn$Vater..Staatsangehörigkeit ==8999|bevn$Vater..Staatsangehörigkeit ==8998] = NA
+# categorizing nationality of the father in : inside or outside Switzerland
+  bevn$father_nationality_cat1 <- cut(bevn$Vater..Staatsangehörigkeit, breaks=c(8000, 8100, 8704), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  round(prop.table(table(bevn$father_nationality_cat1, useNA="always"))*100,2)
+  table(bevn$father_nationality_cat1, useNA="always")
 ```
 Same remark than for the mother: 8998, 899? NAs? to check <br>
 
 ## Kind: biologischer Rang
 ```{r}
-summary(bevn$Kind..biologischer.Rang)
 table(bevn$Kind..biologischer.Rang, useNA = "always")
 round(prop.table(table(bevn$Kind..biologischer.Rang, useNA="always"))*100,2)
 ```
+Many missing biological rank, but we also have the variable Kind.rang.in.der.aktuelle.ehe.
 
 ## Flag variables: what is their use?
 ```{r}
@@ -277,6 +326,12 @@ table(bevn$Mutter..Alter.in.erreichten.Jahren, useNA = "always")
 ```{r}
 table(bevn$lebend.geboren.oder.nicht, useNA = "always")
 round(prop.table(table(bevn$lebend.geboren.oder.nicht, useNA="always"))*100,3)
+ stillborn <- subset(bevn, lebend.geboren.oder.nicht==2)
+ round(prop.table(table(stillborn$Ereignisjahr))*100,2)
+#calculating mean GA by year of birth, for stillborn
+ GA_median <- aggregate(GA_weeks ~ Ereignisjahr, data = stillborn, median) 
+ GA_median
+#GA was only systematically recorded from 2006 
 ```
 
 
