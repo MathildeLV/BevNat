@@ -312,7 +312,7 @@ table(bevn$Mutter..ständig.oder.nicht.ständiger.Wohnsitz, useNA = "always")
 round(prop.table(table(bevn$Mutter..ständig.oder.nicht.ständiger.Wohnsitz, useNA="always"))*100,2)
 ```
 
-## Vater: Alter in erreichten Jahren = Age father (approximated) and  Mutter: Alter in erreichten Jahren = Age mother (approximated)
+## Vater und Mutter: Alter in erreichten Jahren = Age father and mother (approximated)
 ```{r}
 summary(bevn$Vater..Alter.in.erreichten.Jahren)
 table(bevn$Vater..Alter.in.erreichten.Jahren, useNA = "always")
@@ -328,12 +328,16 @@ table(bevn$lebend.geboren.oder.nicht, useNA = "always")
 round(prop.table(table(bevn$lebend.geboren.oder.nicht, useNA="always"))*100,3)
  stillborn <- subset(bevn, lebend.geboren.oder.nicht==2)
  round(prop.table(table(stillborn$Ereignisjahr))*100,2)
-#calculating mean GA by year of birth, for stillborn
+#calculating median GA by year of birth, for stillborn
  GA_median <- aggregate(GA_weeks ~ Ereignisjahr, data = stillborn, median) 
  GA_median
 #GA was only systematically recorded from 2006 
+ #calculating median BW for stillborn babies, by year
+  BW_median <- aggregate(Kind..Gewicht.in.Gramm ~ Ereignisjahr, data = stillborn, median) 
+  BW_median
 ```
-
+GA seems stable across years for stillbron: 28-31weeks
+but stillborn BW seems to vary accross years (730-2135g)
 
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
