@@ -472,66 +472,13 @@ birth</h2>
 <pre class="r"><code>summary(bevn$Kind..Gestationsalter.in.Tagen)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
 ##   112.0   270.0   277.0   274.5   283.0   321.0 1780447</code></pre>
-<pre class="r"><code>#calculating mean by year
-aggregate(x = bevn$Kind..Gestationsalter.in.Tagen,      #function aggregate doesnt work          
-          by = list(bevn$Ereignisjahr),              
-          FUN = mean)                           </code></pre>
-<pre><code>##    Group.1  x
-## 1     1987 NA
-## 2     1988 NA
-## 3     1989 NA
-## 4     1990 NA
-## 5     1991 NA
-## 6     1992 NA
-## 7     1993 NA
-## 8     1994 NA
-## 9     1995 NA
-## 10    1996 NA
-## 11    1997 NA
-## 12    1998 NA
-## 13    1999 NA
-## 14    2000 NA
-## 15    2001 NA
-## 16    2002 NA
-## 17    2003 NA
-## 18    2004 NA
-## 19    2005 NA
-## 20    2006 NA
-## 21    2007 NA
-## 22    2008 NA
-## 23    2009 NA
-## 24    2010 NA
-## 25    2011 NA
-## 26    2012 NA
-## 27    2013 NA
-## 28    2014 NA
-## 29    2015 NA
-## 30    2016 NA
-## 31    2017 NA
-## 32    2018 NA
-## 33    2019 NA
-## 34    2020 NA</code></pre>
-<pre class="r"><code> group_mean &lt;- aggregate(Kind..Gestationsalter.in.Tagen ~ Ereignisjahr, data = bevn, mean) # Equivalent works
- group_mean</code></pre>
-<pre><code>##    Ereignisjahr Kind..Gestationsalter.in.Tagen
-## 1          2003                       218.5000
-## 2          2005                       269.8571
-## 3          2006                       274.3462
-## 4          2007                       274.2273
-## 5          2008                       273.9483
-## 6          2009                       274.1977
-## 7          2010                       274.4390
-## 8          2011                       274.5116
-## 9          2012                       274.2680
-## 10         2013                       274.4669
-## 11         2014                       274.5580
-## 12         2015                       274.5876
-## 13         2016                       274.4900
-## 14         2017                       274.7061
-## 15         2018                       274.6784
-## 16         2019                       274.9338
-## 17         2020                       274.9297</code></pre>
-<pre class="r"><code>tapply(bevn$Kind..Gestationsalter.in.Tagen, bevn$Ereignisjahr, summary)</code></pre>
+<pre class="r"><code>##GA in weeks
+bevn$Kind..Gestationsalter.in.Tagen &lt;- as.numeric(bevn$Kind..Gestationsalter.in.Tagen)
+bevn$GA_weeks &lt;- bevn$Kind..Gestationsalter.in.Tagen / 7
+summary(bevn$GA_weeks)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##    16.0    38.6    39.6    39.2    40.4    45.9 1780447</code></pre>
+<pre class="r"><code>tapply(bevn$GA_weeks, bevn$Ereignisjahr, summary) </code></pre>
 <pre><code>## $`1987`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
 ##      NA      NA      NA     NaN      NA      NA   78140 
@@ -598,7 +545,7 @@ aggregate(x = bevn$Kind..Gestationsalter.in.Tagen,      #function aggregate does
 ## 
 ## $`2003`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   157.0   187.8   218.5   218.5   249.2   280.0   76664 
+##   22.43   26.82   31.21   31.21   35.61   40.00   76664 
 ## 
 ## $`2004`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
@@ -606,69 +553,90 @@ aggregate(x = bevn$Kind..Gestationsalter.in.Tagen,      #function aggregate does
 ## 
 ## $`2005`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   184.0   275.5   282.0   269.9   285.0   302.0   83082 
+##   26.29   39.36   40.29   38.55   40.71   43.14   83082 
 ## 
 ## $`2006`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   142.0   269.0   277.0   274.4   283.0   300.0   79776 
+##   20.29   38.43   39.57   39.19   40.43   42.86   79776 
 ## 
 ## $`2007`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   117.0   269.0   277.0   274.2   283.0   315.0   16573 
+##   16.71   38.43   39.57   39.17   40.43   45.00   16573 
 ## 
 ## $`2008`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   114.0   269.0   276.0   273.9   283.0   310.0   14425 
+##   16.29   38.43   39.43   39.13   40.43   44.29   14425 
 ## 
 ## $`2009`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   114.0   269.0   277.0   274.2   283.0   316.0    8695 
+##   16.29   38.43   39.57   39.17   40.43   45.14    8695 
 ## 
 ## $`2010`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   112.0   270.0   277.0   274.4   283.0   320.0    9186 
+##   16.00   38.57   39.57   39.21   40.43   45.71    9186 
 ## 
 ## $`2011`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   124.0   270.0   277.0   274.5   283.0   308.0    9050 
+##   17.71   38.57   39.57   39.22   40.43   44.00    9050 
 ## 
 ## $`2012`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   118.0   270.0   277.0   274.3   283.0   315.0    9321 
+##   16.86   38.57   39.57   39.18   40.43   45.00    9321 
 ## 
 ## $`2013`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   115.0   270.0   277.0   274.5   283.0   321.0    9482 
+##   16.43   38.57   39.57   39.21   40.43   45.86    9482 
 ## 
 ## $`2014`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   113.0   270.0   277.0   274.6   283.0   305.0    9590 
+##   16.14   38.57   39.57   39.22   40.43   43.57    9590 
 ## 
 ## $`2015`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   113.0   270.0   277.0   274.6   283.0   315.0    9480 
+##   16.14   38.57   39.57   39.23   40.43   45.00    9480 
 ## 
 ## $`2016`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   113.0   270.0   277.0   274.5   283.0   312.0    9585 
+##   16.14   38.57   39.57   39.21   40.43   44.57    9585 
 ## 
 ## $`2017`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   118.0   270.0   277.0   274.7   283.0   315.0    9180 
+##   16.86   38.57   39.57   39.24   40.43   45.00    9180 
 ## 
 ## $`2018`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   112.0   270.0   277.0   274.7   283.0   314.0    8705 
+##   16.00   38.57   39.57   39.24   40.43   44.86    8705 
 ## 
 ## $`2019`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   112.0   270.0   277.0   274.9   283.0   317.0    8075 
+##   16.00   38.57   39.57   39.28   40.43   45.29    8075 
 ## 
 ## $`2020`
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##   112.0   270.0   277.0   274.9   283.0   312.0    7234</code></pre>
-<p>Available in 2003 and 2004 as well<br> Much less NAs from 2007
-<br></p>
+##   16.00   38.57   39.57   39.28   40.43   44.57    7234</code></pre>
+<pre class="r"><code>#calculating mean by year
+ group_mean &lt;- aggregate(GA_weeks ~ Ereignisjahr, data = bevn, mean) # Equivalent works
+ group_mean</code></pre>
+<pre><code>##    Ereignisjahr GA_weeks
+## 1          2003 31.21429
+## 2          2005 38.55102
+## 3          2006 39.19232
+## 4          2007 39.17533
+## 5          2008 39.13547
+## 6          2009 39.17110
+## 7          2010 39.20557
+## 8          2011 39.21594
+## 9          2012 39.18114
+## 10         2013 39.20956
+## 11         2014 39.22258
+## 12         2015 39.22680
+## 13         2016 39.21286
+## 14         2017 39.24373
+## 15         2018 39.23977
+## 16         2019 39.27626
+## 17         2020 39.27568</code></pre>
+<p>Available in 2003 and 2004 as well<br> Much less NAs from 2007 <br>
+From 2006, GA mean is very stable (around 39.15)</p>
 </div>
 <div id="geburtsort-place-of-birth-hospital-or-at-home" class="section level2">
 <h2>Geburtsort = place of birth (hospital or at home)</h2>
@@ -685,53 +653,55 @@ inconnu 1987-1997 <br> 9- Angabe fehlt pas d’indication 1987-1997
 <pre><code>## 
 ##     1     2     3     4     9  &lt;NA&gt; 
 ## 30.84  0.33  0.04  0.02  0.03 68.74</code></pre>
-<pre class="r"><code>table(bevn$Ereignisjahr, bevn$Geburtsort, useNA = &quot;always&quot;)</code></pre>
+<pre class="r"><code>round(prop.table(table(bevn$Ereignisjahr, bevn$Geburtsort, useNA = &quot;always&quot;))*100,2)</code></pre>
 <pre><code>##       
-##             1      2      3      4      9   &lt;NA&gt;
-##   1987  77233    701     98     38     70      0
-##   1988  81191    714     49     33     75      0
-##   1989  82124    786     36     34     60      0
-##   1990  85043    901     38     51     90      0
-##   1991  87540    978    115     44    103      0
-##   1992  88100    980     91     46     73      0
-##   1993  84699    959     66     45     80      0
-##   1994  83512   1000    182     61     92      0
-##   1995  82872    912    124     60     86      3
-##   1996  83512    921    177     52     83     13
-##   1997  81070    893    234     48     54     59
-##   1998      0      0      0      0      0  80913
-##   1999      0      0      0      0      0  80170
-##   2000      0      0      0      0     18  80520
-##   2001      0      0      0      0      0  75827
-##   2002      0      0      0      0      0  76253
-##   2003      0      0      0      0      0  76666
-##   2004      0      0      0      0      0  79339
-##   2005      0      0      0      0      0  83089
-##   2006      0      0      0      0      0  84608
-##   2007      0      0      0      0      0  85893
-##   2008      0      0      0      0      0  88298
-##   2009      0      0      0      0      0  90097
-##   2010      0      0      0      0      0  92791
-##   2011      0      0      0      0      0  92324
-##   2012      0      0      0      0      0  94376
-##   2013      0      0      0      0      0  95010
-##   2014      0      0      0      0      0  97496
-##   2015      0      0      0      0      0  98688
-##   2016      0      0      0      0      0 100353
-##   2017      0      0      0      0      0  99050
-##   2018      0      0      0      0      0  99192
-##   2019      0      0      0      0      0  97042
-##   2020      0      0      0      0      0  95668
-##   &lt;NA&gt;      0      0      0      0      0      0</code></pre>
+##           1    2    3    4    9 &lt;NA&gt;
+##   1987 2.60 0.02 0.00 0.00 0.00 0.00
+##   1988 2.73 0.02 0.00 0.00 0.00 0.00
+##   1989 2.76 0.03 0.00 0.00 0.00 0.00
+##   1990 2.86 0.03 0.00 0.00 0.00 0.00
+##   1991 2.94 0.03 0.00 0.00 0.00 0.00
+##   1992 2.96 0.03 0.00 0.00 0.00 0.00
+##   1993 2.85 0.03 0.00 0.00 0.00 0.00
+##   1994 2.81 0.03 0.01 0.00 0.00 0.00
+##   1995 2.79 0.03 0.00 0.00 0.00 0.00
+##   1996 2.81 0.03 0.01 0.00 0.00 0.00
+##   1997 2.73 0.03 0.01 0.00 0.00 0.00
+##   1998 0.00 0.00 0.00 0.00 0.00 2.72
+##   1999 0.00 0.00 0.00 0.00 0.00 2.70
+##   2000 0.00 0.00 0.00 0.00 0.00 2.71
+##   2001 0.00 0.00 0.00 0.00 0.00 2.55
+##   2002 0.00 0.00 0.00 0.00 0.00 2.56
+##   2003 0.00 0.00 0.00 0.00 0.00 2.58
+##   2004 0.00 0.00 0.00 0.00 0.00 2.67
+##   2005 0.00 0.00 0.00 0.00 0.00 2.79
+##   2006 0.00 0.00 0.00 0.00 0.00 2.85
+##   2007 0.00 0.00 0.00 0.00 0.00 2.89
+##   2008 0.00 0.00 0.00 0.00 0.00 2.97
+##   2009 0.00 0.00 0.00 0.00 0.00 3.03
+##   2010 0.00 0.00 0.00 0.00 0.00 3.12
+##   2011 0.00 0.00 0.00 0.00 0.00 3.11
+##   2012 0.00 0.00 0.00 0.00 0.00 3.17
+##   2013 0.00 0.00 0.00 0.00 0.00 3.20
+##   2014 0.00 0.00 0.00 0.00 0.00 3.28
+##   2015 0.00 0.00 0.00 0.00 0.00 3.32
+##   2016 0.00 0.00 0.00 0.00 0.00 3.38
+##   2017 0.00 0.00 0.00 0.00 0.00 3.33
+##   2018 0.00 0.00 0.00 0.00 0.00 3.34
+##   2019 0.00 0.00 0.00 0.00 0.00 3.26
+##   2020 0.00 0.00 0.00 0.00 0.00 3.22
+##   &lt;NA&gt; 0.00 0.00 0.00 0.00 0.00 0.00</code></pre>
 <p>Only available until 1997: okay</p>
 </div>
 <div id="geburtsstaat-state-and-world-region-of-birth" class="section level2">
 <h2>Geburtsstaat = State and world region of birth</h2>
 <p>See separate codebook <br> Expected: 8100-8703 <br></p>
-<pre class="r"><code>summary(bevn$Geburtsstaat)</code></pre>
+<pre class="r"><code>#checking min and max values (should be 8100 and 8703)
+  summary(bevn$Geburtsstaat)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
 ##    8100    8100    8100    8111    8100    8999       1</code></pre>
-<pre class="r"><code>table(bevn$Geburtsstaat, useNA = &quot;always&quot;)</code></pre>
+<pre class="r"><code>#8999 doesnt correspond to anything in the codebook but probably NA
+  table(bevn$Geburtsstaat, useNA = &quot;always&quot;)</code></pre>
 <pre><code>## 
 ##    8100    8201    8202    8204    8205    8206    8207    8211    8212    8214 
 ## 2824645      36       4    1853      73     571   19909     375   32741     648 
@@ -773,16 +743,57 @@ inconnu 1987-1997 <br> 9- Angabe fehlt pas d’indication 1987-1997
 ##       3       4    1114      43       1       2       3       1       1       3 
 ##    8999    &lt;NA&gt; 
 ##       4       1</code></pre>
+<pre class="r"><code>#assign NA to values=8999
+  bevn$Geburtsstaat[bevn$Geburtsstaat ==8999] = NA
+ 
+# categorizing state of birth in : Switzerland or Outside of Switzerland
+  bevn$Geburtsstaat_cat1 &lt;- cut(bevn$Geburtsstaat, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c(&quot;Switzerland&quot;, &quot;Outside Switzerland&quot;))
+  table(bevn$Geburtsstaat_cat1, useNA = &quot;always&quot;)</code></pre>
+<pre><code>## 
+##         Switzerland Outside Switzerland                &lt;NA&gt; 
+##             2824645              148335                   5</code></pre>
+<pre class="r"><code>  round(prop.table(table(bevn$Geburtsstaat_cat1, useNA=&quot;always&quot;))*100,2)</code></pre>
+<pre><code>## 
+##         Switzerland Outside Switzerland                &lt;NA&gt; 
+##               95.01                4.99                0.00</code></pre>
+<pre class="r"><code>#categorizing state of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+  bevn$Geburtsstaat_cat2 &lt;- cut(bevn$Geburtsstaat, breaks=c(8000, 8100, 8280, 8384, 8486, 8601, 8685, 10000), include.lowest=TRUE, labels=c(&quot;Switzerland&quot;, &quot;Europe - excl Switz&quot;, &quot;Africa&quot;, &quot;Americas&quot;, &quot;Asia&quot;, &quot;Oceania&quot;, &quot;Other&quot;))
+table(bevn$Geburtsstaat_cat2, useNA = &quot;always&quot;)</code></pre>
+<pre><code>## 
+##         Switzerland Europe - excl Switz              Africa            Americas 
+##             2824645               89878                4803               30639 
+##                Asia             Oceania               Other                &lt;NA&gt; 
+##               21840                1175                   0                   5</code></pre>
+<pre class="r"><code>round(prop.table(table(bevn$Geburtsstaat_cat2, useNA=&quot;always&quot;))*100,2)</code></pre>
+<pre><code>## 
+##         Switzerland Europe - excl Switz              Africa            Americas 
+##               95.01                3.02                0.16                1.03 
+##                Asia             Oceania               Other                &lt;NA&gt; 
+##                0.73                0.04                0.00                0.00</code></pre>
+<pre class="r"><code>#categorizing state of birth in : Switzerland, different parts of Europe, other
+bevn$Geburtsstaat_cat3 &lt;- as.factor(ifelse(bevn$Geburtsstaat == 8100, &#39;Switz&#39;,
+                                    ifelse(bevn$Geburtsstaat == 8207 | bevn$Geburtsstaat == 8208 | bevn$Geburtsstaat == 8209 | bevn$Geburtsstaat == 8222 | bevn$Geburtsstaat == 8229 | bevn$Geburtsstaat == 8230 | bevn$Geburtsstaat == 8238 | bevn$Geburtsstaat == 8243 | bevn$Geburtsstaat == 8244,  &#39;Central Europe&#39;,
+                                    ifelse (bevn$Geburtsstaat == 8201 | bevn$Geburtsstaat == 8205 | bevn$Geburtsstaat ==8220 | bevn$Geburtsstaat == 8232 | bevn$Geburtsstaat == 82880 | (bevn$Geburtsstaat &gt; 8247 &amp; bevn$Geburtsstaat&lt; 8258) , &#39;SE Europe&#39;,
+                                    ifelse(bevn$Geburtsstaat==8202 | bevn$Geburtsstaat== 8213 | bevn$Geburtsstaat==8231 |bevn$Geburtsstaat== 8236, &#39;SW Europe&#39;, 
+                                    ifelse(bevn$Geburtsstaat==8204 | bevn$Geburtsstaat==8212 |bevn$Geburtsstaat==8215|bevn$Geburtsstaat==8216|bevn$Geburtsstaat==8223|bevn$Geburtsstaat==8225|bevn$Geburtsstaat==8226|bevn$Geburtsstaat==8227|bevn$Geburtsstaat==8270|bevn$Geburtsstaat==8271|bevn$Geburtsstaat==8272|bevn$Geburtsstaat==8275, &#39;Western Europe&#39;,
+                                 ifelse(bevn$Geburtsstaat==8206|bevn$Geburtsstaat==8210|bevn$Geburtsstaat==8211|bevn$Geburtsstaat==8217|bevn$Geburtsstaat==8228|bevn$Geburtsstaat==8234|bevn$Geburtsstaat==8273|bevn$Geburtsstaat==8274,&#39;Northern Europe&#39;, 
+                                ifelse(bevn$Geburtsstaat==8214|bevn$Geburtsstaat==8218|bevn$Geburtsstaat==8224|bevn$Geburtsstaat==8233|bevn$Geburtsstaat==8239|bevn$Geburtsstaat==8241|bevn$Geburtsstaat==8242, &#39;Southern Europe&#39;,
+                                ifelse(bevn$Geburtsstaat==8235|bevn$Geburtsstaat==8572|bevn$Geburtsstaat==8573|bevn$Geburtsstaat==8574|bevn$Geburtsstaat==8576|bevn$Geburtsstaat==8577|bevn$Geburtsstaat==8578 | (bevn$Geburtsstaat &gt; 8259 &amp; bevn$Geburtsstaat &lt; 8267), &#39;Eastern Europe&#39;,&#39;other&#39;)))))))))
+
+round(prop.table(table(bevn$Geburtsstaat_cat3, useNA=&quot;always&quot;))*100,2)</code></pre>
+<pre><code>## 
+##  Central Europe  Eastern Europe Northern Europe           other       SE Europe 
+##            0.84            0.02            0.09            1.97            0.06 
+## Southern Europe       SW Europe           Switz  Western Europe            &lt;NA&gt; 
+##            0.35            0.15           95.01            1.51            0.00</code></pre>
 <p>4 attritbuted to 8999: doesnt correspond to any country in the
-codebook -&gt; missing Geburtsstaat? <br></p>
+codebook -&gt; attributed to NA <br> 95% of total births took place in
+Switzerland.</p>
 </div>
 <div id="art-der-geburt-number-of-babies" class="section level2">
 <h2>Art der Geburt = number of babies</h2>
 <p>1=singleton, 2=twins, 3=triplets, …, 6=sextuplets and more <br>
 Expected: 1-6</p>
-<pre class="r"><code>summary(bevn$Art.der.Geburt)</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   1.000   1.000   1.000   1.032   1.000   5.000</code></pre>
 <pre class="r"><code>table(bevn$Art.der.Geburt, useNA=&quot;always&quot;)</code></pre>
 <pre><code>## 
 ##       1       2       3       4       5    &lt;NA&gt; 
@@ -796,16 +807,10 @@ Expected: 1-6</p>
 <h2>Anzahl Knaben and Anzahl Mädchen = if multiple birth, number of boys
 and girls</h2>
 <p>Expected: 0-5</p>
-<pre class="r"><code>summary(bevn$Anzahl.Knaben)</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##       0       0       1       1       2       4 2880121</code></pre>
 <pre class="r"><code>table(bevn$Anzahl.Knaben, useNA = &quot;always&quot;)</code></pre>
 <pre><code>## 
 ##       0       1       2       3       4    &lt;NA&gt; 
 ##   29778   31812   30660     610       4 2880121</code></pre>
-<pre class="r"><code>summary(bevn$Anzahl.Mädchen)</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##       0       0       1       1       2       4 2880121</code></pre>
 <pre class="r"><code>table(bevn$Anzahl.Mädchen, useNA = &quot;always&quot;)</code></pre>
 <pre><code>## 
 ##       0       1       2       3       4    &lt;NA&gt; 
@@ -818,6 +823,11 @@ missing=99</h2>
 <pre class="r"><code>summary(bevn$Kind..Grösse.in.Zentimeter)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
 ##     0.0    48.0    50.0    51.1    51.0    99.0       3</code></pre>
+<pre class="r"><code>#assign birthlength=99 to NA
+bevn$Kind..Grösse.in.Zentimeter[bevn$Kind..Grösse.in.Zentimeter ==99] = NA
+summary(bevn$Kind..Grösse.in.Zentimeter)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##    0.00   48.00   50.00   48.93   51.00   64.00  128628</code></pre>
 <pre class="r"><code>table(bevn$Kind..Grösse.in.Zentimeter, useNA = &quot;always&quot;)</code></pre>
 <pre><code>## 
 ##      0      1      5      8      9     10     11     12     13     14     15 
@@ -830,10 +840,23 @@ missing=99</h2>
 ##   3276   3805   6091   7640  12096  18791  32307  64566 121846 225967 363755 
 ##     49     50     51     52     53     54     55     56     57     58     59 
 ## 465398 572123 413807 269441 131810  58116  20569   7509   2288    771    355 
-##     60     61     62     63     64     99   &lt;NA&gt; 
-##     85      7      4      5      1 128625      3</code></pre>
+##     60     61     62     63     64   &lt;NA&gt; 
+##     85      7      4      5      1 128628</code></pre>
+<pre class="r"><code>round(prop.table(table(bevn$Kind..Grösse.in.Zentimeter, useNA=&quot;always&quot;))*100,2)</code></pre>
+<pre><code>## 
+##     0     1     5     8     9    10    11    12    13    14    15    16    17 
+##  0.77  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00 
+##    18    19    20    21    22    23    24    25    26    27    28    29    30 
+##  0.00  0.00  0.00  0.00  0.01  0.01  0.01  0.01  0.02  0.02  0.03  0.03  0.05 
+##    31    32    33    34    35    36    37    38    39    40    41    42    43 
+##  0.05  0.06  0.06  0.06  0.07  0.08  0.09  0.11  0.13  0.20  0.26  0.41  0.63 
+##    44    45    46    47    48    49    50    51    52    53    54    55    56 
+##  1.09  2.17  4.10  7.60 12.24 15.65 19.24 13.92  9.06  4.43  1.95  0.69  0.25 
+##    57    58    59    60    61    62    63    64  &lt;NA&gt; 
+##  0.08  0.03  0.01  0.00  0.00  0.00  0.00  0.00  4.33</code></pre>
 <p>Many are set to 0 (missing? should have been set to 99). Outliers
-(1-10?) NA (3) instead of 99</p>
+(1-10?) 4.33% are NAs –&gt; we should choose a threshold for inclusion
+in the db.</p>
 </div>
 <div id="kind-gewicht-in-gramm-weight-at-birth-g-missing9999" class="section level2">
 <h2>Kind: Gewicht in Gramm = weight at birth (g), missing=9999</h2>
@@ -841,70 +864,28 @@ missing=99</h2>
 <pre class="r"><code>summary(bevn$Kind..Gewicht.in.Gramm)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
 ##       0    3025    3360    3604    3700    9999       2</code></pre>
-<pre class="r"><code>HBW &lt;- subset(bevn, Kind..Gewicht.in.Gramm&gt;5500) #having a look at high birthweight neonates : 1 extreme outlier at 9351g
-table(HBW$Kind..Gewicht.in.Gramm, useNA = &quot;always&quot;)</code></pre>
+<pre class="r"><code>#assign BW=9999 or BW=0 to NA
+bevn$Kind..Gewicht.in.Gramm[bevn$Kind..Gewicht.in.Gramm ==9999 |bevn$Kind..Gewicht.in.Gramm==0] = NA
+summary(bevn$Kind..Gewicht.in.Gramm)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##       3    3010    3330    3299    3645    9351  151477</code></pre>
+<pre class="r"><code>HBW &lt;- subset(bevn, Kind..Gewicht.in.Gramm&gt;6000) #having a look at high birthweight neonates : 1 extreme outlier at 9351g
+table(HBW$Kind..Gewicht.in.Gramm)</code></pre>
 <pre><code>## 
-##   5510   5520   5525   5530   5537   5540   5550   5551   5560   5570   5580 
-##      5      3      1      8      1      3      5      1      4      4      6 
-##   5590   5600   5605   5610   5615   5620   5625   5630   5640   5650   5660 
-##      5     11      1      7      1      4      1      5      4      3      5 
-##   5670   5680   5685   5690   5693   5700   5705   5710   5720   5730   5740 
-##      1      1      1      2      2      6      1      4      3      7      2 
-##   5750   5760   5790   5795   5800   5810   5815   5820   5830   5840   5860 
-##      4      1      2      1      4      1      1      1      1      3      1 
-##   5870   5880   5900   5930   5940   5950   5980   6000   6020   6050   6500 
-##      3      1      2      2      2      1      2      4      1      1      1 
-##   6820   9351   9999   &lt;NA&gt; 
-##      1      1 140803      0</code></pre>
-<pre class="r"><code>LBW &lt;- subset(bevn, Kind..Gewicht.in.Gramm&lt;500) #having a look at (extreme) low birthweight neonates : many are set to 0, many are also below 100
-table(LBW$Kind..Gewicht.in.Gramm, useNA = &quot;always&quot;)</code></pre>
+## 6020 6050 6500 6820 9351 
+##    1    1    1    1    1</code></pre>
+<pre class="r"><code>VLBW &lt;- subset(bevn, Kind..Gewicht.in.Gramm&lt;100) #having a look at (extreme) low birthweight neonates : many are set to 0, many are also below 100
+table(VLBW$Kind..Gewicht.in.Gramm)</code></pre>
 <pre><code>## 
-##     0     3    17    20    23    25    27    29    30    34    35    40    45 
-## 10672     1     1     2     1     1     2     1     1     1     3     1     3 
-##    48    49    50    55    58    60    61    66    70    72    75    80    85 
-##     1     1     2     1     1     3     1     2     9     1     1    10     2 
-##    86    89    90    93    94    95   100   101   105   109   110   114   115 
-##     1     1     8     1     1     3    17     1     3     1    13     1     3 
-##   118   120   122   125   130   134   135   140   145   150   155   156   159 
-##     1    14     1     5    21     1     4    17     3    30     7     3     1 
-##   160   165   168   170   173   175   176   180   185   188   190   192   194 
-##    17     5     1    22     1     6     1    24    11     1    29     1     1 
-##   195   196   197   198   200   202   205   210   212   214   215   218   220 
-##     6     1     1     1    37     3     8    24     2     5     7     4    35 
-##   222   225   226   228   230   232   234   235   240   242   244   245   246 
-##     1     8     1     1    36     1     2     7    29     2     1     4     1 
-##   247   250   254   255   258   260   263   265   270   273   275   280   282 
-##     1    44     1     4     1    37     1     9    35     1     8    37     1 
-##   284   285   286   290   294   295   297   300   302   303   304   305   308 
-##     1     5     1    35     1     8     1    64     1     1     1    11     1 
-##   309   310   314   315   316   317   318   320   322   324   325   327   330 
-##     1    38     2    14     1     1     1    50     1     1    12     1    53 
-##   332   333   334   335   336   338   339   340   341   342   345   346   348 
-##     1     1     2    13     1     3     1    73     1     1    19     4     1 
-##   350   352   355   356   358   360   362   363   364   365   366   368   369 
-##    81     1    16     2     2    75     1     1     2    16     1     2     1 
-##   370   372   374   375   376   378   379   380   382   384   385   387   388 
-##    74     1     2    22     1     1     1    99     2     1    14     1     1 
-##   389   390   393   394   395   396   400   402   405   406   407   408   410 
-##     1    87     1     1    12     1   140     2    15     3     1     2    91 
-##   413   414   415   416   418   420   425   430   433   434   435   438   440 
-##     1     1    19     1     1    80    21   118     1     1    22     1   126 
-##   441   442   444   445   446   448   450   454   455   456   458   460   462 
-##     1     3     3    15     2     1   125     4    22     2     1   138     5 
-##   463   464   465   466   468   469   470   472   474   475   476   478   480 
-##     1     1    21     1     1     1   138     3     3    21     1     4   142 
-##   481   482   484   485   486   487   489   490   492   494   495   496   498 
-##     1     1     3    21     2     1     1   138     2     2    23     4     1 
-##  &lt;NA&gt; 
-##     0</code></pre>
+##  3 17 20 23 25 27 29 30 34 35 40 45 48 49 50 55 58 60 61 66 70 72 75 80 85 86 
+##  1  1  2  1  1  2  1  1  1  3  1  3  1  1  2  1  1  3  1  2  9  1  1 10  2  1 
+## 89 90 93 94 95 
+##  1  8  1  1  3</code></pre>
 <p>outliers (BW=9.3kg, or BW &lt;&lt;&lt;100…)<br></p>
 </div>
 <div id="kind-rang-in-der-aktuellen-ehe" class="section level2">
 <h2>Kind: Rang in der aktuellen Ehe</h2>
 <p>Expected: 1-15</p>
-<pre class="r"><code>summary(bevn$Kind..Rang.in.der.aktuellen.Ehe)</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##     1.0     1.0     2.0     1.8     2.0    20.0  465979</code></pre>
 <pre class="r"><code>table(bevn$Kind..Rang.in.der.aktuellen.Ehe, useNA=&quot;always&quot;)</code></pre>
 <pre><code>## 
 ##       1       2       3       4       5       6       7       8       9      10 
@@ -967,6 +948,20 @@ codebook</h2>
 ##     451     527     187      54      36     317    3188      18       3     847 
 ##    8608    8610    8612    8614    8615    8616    8998    8999    &lt;NA&gt; 
 ##      15      12      10      12       1       4      89    6317       0</code></pre>
+<pre class="r"><code># categorizing nationality of the mother in : Switzerland or Outside of Switzerland
+  bevn$mother_nationality_cat1 &lt;- cut(bevn$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c(&quot;Switzerland&quot;, &quot;Outside Switzerland&quot;))
+  round(prop.table(table(bevn$mother_nationality_cat1, useNA=&quot;always&quot;))*100,2)</code></pre>
+<pre><code>## 
+##         Switzerland Outside Switzerland                &lt;NA&gt; 
+##               65.15               34.85                0.00</code></pre>
+<pre class="r"><code># categorizing state of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+  bevn$mother_nationality_cat2 &lt;- cut(bevn$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 8280, 8384, 8486, 8601, 8685, 10000), include.lowest=TRUE, labels=c(&quot;Switzerland&quot;, &quot;Europe - excl Switz&quot;, &quot;Africa&quot;, &quot;Americas&quot;, &quot;Asia&quot;, &quot;Oceania&quot;, &quot;Other&quot;))
+round(prop.table(table(bevn$mother_nationality_cat2, useNA=&quot;always&quot;))*100,2)</code></pre>
+<pre><code>## 
+##         Switzerland Europe - excl Switz              Africa            Americas 
+##               65.15               26.81                2.16                2.36 
+##                Asia             Oceania               Other                &lt;NA&gt; 
+##                3.28                0.03                0.22                0.00</code></pre>
 <p>8998, 8999? NAs? <br></p>
 </div>
 <div id="mutter-zivilstand-additional-variable" class="section level2">
@@ -975,13 +970,6 @@ codebook</h2>
 from 1969 <br> 3- Widowed from 1969 <br> 4- Divorced from 1969 <br> 5-
 Unmarried from 1998 <br> 6- Registered partnership from 2007 <br> 7-
 Partnership dissolved from 2007 <br></p>
-<pre class="r"><code>summary(bevn$Mutter.Zivilstand)</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   1.000   2.000   2.000   1.909   2.000   7.000</code></pre>
-<pre class="r"><code>table(bevn$Mutter.Zivilstand, useNA=&quot;always&quot;)</code></pre>
-<pre><code>## 
-##       1       2       3       4       5       6       7    &lt;NA&gt; 
-##  394543 2516250    3029   58254     154     714      41       0</code></pre>
 <pre class="r"><code>round(prop.table(table(bevn$Mutter.Zivilstand, useNA=&quot;always&quot;))*100,2)</code></pre>
 <pre><code>## 
 ##     1     2     3     4     5     6     7  &lt;NA&gt; 
@@ -1026,11 +1014,22 @@ earlier) <br> category 7 available since 2066 (1 year earlier) <br></p>
 <p>GMDNR or country, see separate codebook <br> Expected: <br> 1-6910
 for commune if resident inside Switz <br> 8201-8703 if resident outside
 of Switz <br></p>
-<pre class="r"><code>summary(bevn$Mutter..Wohngemeinde...Wohnstaat)</code></pre>
+<pre class="r"><code>#to check minimum and maximum
+summary(bevn$Mutter..Wohngemeinde...Wohnstaat)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##       1     785    3024    3304    5586    8999</code></pre>
-<p>How to check that numbers are okay? see separate codebook <br> 8999,
-is it missing place of residence? <br></p>
+<pre class="r"><code>#assign Mutter..Wohngemeinde...Wohnstaat=8999 to NA
+bevn$Mutter..Wohngemeinde...Wohnstaat[bevn$Mutter..Wohngemeinde...Wohnstaat ==8999] = NA
+# categorizing place of residence of the mother in : inside or outside Switzerland
+  bevn$mother_residence_cat1 &lt;- cut(bevn$Mutter..Wohngemeinde...Wohnstaat, breaks=c(0, 6911, 8704), include.lowest=TRUE, labels=c(&quot;Switzerland&quot;, &quot;Outside Switzerland&quot;))
+  round(prop.table(table(bevn$mother_residence_cat1, useNA=&quot;always&quot;))*100,2)</code></pre>
+<pre><code>## 
+##         Switzerland Outside Switzerland                &lt;NA&gt; 
+##               93.18                6.75                0.07</code></pre>
+<pre class="r"><code>  table(bevn$mother_residence_cat1, useNA=&quot;always&quot;)</code></pre>
+<pre><code>## 
+##         Switzerland Outside Switzerland                &lt;NA&gt; 
+##             2770287              200696                2002</code></pre>
 </div>
 <div id="empty-variables" class="section level2">
 <h2>Empty variables</h2>
@@ -1066,58 +1065,26 @@ fonctionnaire ayant une fonction de chef <br> 4 autre <br> 9 inconnu
 <h2>Vater: Staatsangehörigkeit = Nationality father, see separate
 codebook</h2>
 <p>Expected: 8100-8703</p>
-<pre class="r"><code>summary(bevn$Vater..Staatsangehörigkeit)</code></pre>
+<pre class="r"><code>#checking min and max
+summary(bevn$Vater..Staatsangehörigkeit)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
 ##    8100    8100    8100    8161    8218    8999  178124</code></pre>
-<pre class="r"><code>table(bevn$Vater..Staatsangehörigkeit, useNA = &quot;always&quot;)</code></pre>
+<pre class="r"><code>#assign Vater..Staatsangehörigkeit=8999 to NA
+bevn$Vater..Staatsangehörigkeit[bevn$Vater..Staatsangehörigkeit ==8999|bevn$Vater..Staatsangehörigkeit ==8998] = NA
+# categorizing nationality of the father in : inside or outside Switzerland
+  bevn$father_nationality_cat1 &lt;- cut(bevn$Vater..Staatsangehörigkeit, breaks=c(8000, 8100, 8704), include.lowest=TRUE, labels=c(&quot;Switzerland&quot;, &quot;Outside Switzerland&quot;))
+  round(prop.table(table(bevn$father_nationality_cat1, useNA=&quot;always&quot;))*100,2)</code></pre>
 <pre><code>## 
-##    8100    8201    8202    8204    8205    8206    8207    8211    8212    8214 
-## 1773172    1097      10    6131    1409    2030  101414    1271   71753    4855 
-##    8215    8216    8217    8218    8220    8222    8223    8224    8226    8227 
-##   21590    1946     182  152313   27681    3356     529      95      11    9764 
-##    8228    8229    8230    8231    8232    8233    8234    8235    8236    8238 
-##    1060   12887    5276  104311    2909       7    3718      81   38565     378 
-##    8239    8240    8241    8242    8243    8244    8248    8250    8251    8252 
-##   55833    3323       2     174    2121    1516   88721   13939    1354   18121 
-##    8254    8255    8256    8260    8261    8262    8263    8264    8265    8266 
-##     599   35834   33865      85     229     250     127    2942     724     177 
-##    8301    8302    8303    8304    8305    8307    8308    8309    8310    8311 
-##      11    1573      20    4625    2579      10     171     294     816      52 
-##    8312    8313    8314    8315    8317    8319    8320    8321    8322    8323 
-##     667    1095      99     834    1733     749     640      20     511    3224 
-##    8324    8325    8326    8327    8329    8330    8331    8332    8333    8334 
-##      10     117     785     336      33     185    5424      64     650      47 
-##    8335    8336    8337    8340    8341    8343    8344    8345    8346    8347 
-##     109    2558     334     163     273      35       5    1322      58     155 
-##    8348    8349    8350    8351    8352    8353    8354    8356    8357    8358 
-##    4073    1835     493      40       1     167     712      89    7882     133 
-##    8359    8360    8362    8363    8372    8401    8402    8403    8405    8406 
-##    2745      26    9092       9       2    2641      28      27     930    5658 
-##    8407    8408    8409    8410    8411    8415    8417    8418    8419    8420 
-##    2863     343    2544    1467     198     323      18     284      25     117 
-##    8421    8423    8424    8425    8427    8429    8430    8431    8432    8435 
-##     320    5571    1737    1126    1927     153     136     262    1865      14 
-##    8436    8437    8438    8439    8440    8441    8442    8443    8444    8445 
-##      91     408     710   14347      38      15      27      44       2       8 
-##    8501    8502    8503    8504    8505    8506    8507    8508    8510    8511 
-##    2463      36      22       6      52   23831      73    3587    5936     639 
-##    8512    8513    8514    8515    8516    8517    8518    8519    8521    8522 
-##    4157    2174    4702    1286     232     475     670      37     152     182 
-##    8523    8525    8526    8527    8528    8529    8530    8532    8533    8534 
-##    3491     566      53      39     239     302      61      58    2388    1513 
-##    8535    8537    8539    8541    8542    8543    8545    8546    8547    8550 
-##     280     165     367    4008     723      91    2674    1139       1     222 
-##    8560    8561    8562    8563    8564    8565    8566    8567    8601    8602 
-##     262     168     260     193      62      21       6      86    3801      32 
-##    8605    8607    8608    8610    8612    8614    8616    8998    8999    &lt;NA&gt; 
-##       3    1304       6       3       6       4       4     230    3629  178124</code></pre>
+##         Switzerland Outside Switzerland                &lt;NA&gt; 
+##               59.64               34.24                6.12</code></pre>
+<pre class="r"><code>  table(bevn$father_nationality_cat1, useNA=&quot;always&quot;)</code></pre>
+<pre><code>## 
+##         Switzerland Outside Switzerland                &lt;NA&gt; 
+##             1773172             1017830              181983</code></pre>
 <p>Same remark than for the mother: 8998, 899? NAs? to check <br></p>
 </div>
 <div id="kind-biologischer-rang" class="section level2">
 <h2>Kind: biologischer Rang</h2>
-<pre class="r"><code>summary(bevn$Kind..biologischer.Rang)</code></pre>
-<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-##     1.0     1.0     2.0     1.7     2.0    17.0 1478753</code></pre>
 <pre class="r"><code>table(bevn$Kind..biologischer.Rang, useNA = &quot;always&quot;)</code></pre>
 <pre><code>## 
 ##       1       2       3       4       5       6       7       8       9      10 
@@ -1130,6 +1097,8 @@ codebook</h2>
 ## 24.69 18.12  5.62  1.30  0.30  0.10  0.05  0.03  0.02  0.01  0.01  0.00  0.00 
 ##    14    15    16    17  &lt;NA&gt; 
 ##  0.00  0.00  0.00  0.00 49.74</code></pre>
+<p>Many missing biological rank, but we also have the variable
+Kind.rang.in.der.aktuelle.ehe.</p>
 </div>
 <div id="flag-variables-what-is-their-use" class="section level2">
 <h2>Flag variables: what is their use?</h2>
@@ -1181,9 +1150,9 @@ stay, 9=domiciled abroad</p>
 ##     1     2     4     9  &lt;NA&gt; 
 ## 93.07  0.70  0.08  6.16  0.00</code></pre>
 </div>
-<div id="vater-alter-in-erreichten-jahren-age-father-approximated-and-mutter-alter-in-erreichten-jahren-age-mother-approximated" class="section level2">
-<h2>Vater: Alter in erreichten Jahren = Age father (approximated) and
-Mutter: Alter in erreichten Jahren = Age mother (approximated)</h2>
+<div id="vater-und-mutter-alter-in-erreichten-jahren-age-father-and-mother-approximated" class="section level2">
+<h2>Vater und Mutter: Alter in erreichten Jahren = Age father and mother
+(approximated)</h2>
 <pre class="r"><code>summary(bevn$Vater..Alter.in.erreichten.Jahren)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
 ##   13.00   30.00   33.00   33.97   37.00   93.00  178075</code></pre>
@@ -1234,6 +1203,76 @@ Mutter: Alter in erreichten Jahren = Age mother (approximated)</h2>
 <pre><code>## 
 ##      1      2   &lt;NA&gt; 
 ## 99.605  0.395  0.000</code></pre>
+<pre class="r"><code> stillborn &lt;- subset(bevn, lebend.geboren.oder.nicht==2)
+ round(prop.table(table(stillborn$Ereignisjahr))*100,2)</code></pre>
+<pre><code>## 
+## 1987 1988 1989 1990 1991 1992 1993 1994 1995 1996 1997 1998 1999 2000 2001 2002 
+## 2.96 2.78 3.00 3.45 3.22 3.00 3.03 2.52 2.93 2.71 2.97 2.67 2.39 2.50 2.43 2.18 
+## 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014 2015 2016 2017 2018 
+## 2.68 2.38 2.77 3.02 2.66 3.12 3.17 3.15 3.12 3.29 3.54 3.31 3.22 3.39 3.18 3.43 
+## 2019 2020 
+## 3.05 2.80</code></pre>
+<pre class="r"><code>#calculating median GA by year of birth, for stillborn
+ GA_median &lt;- aggregate(GA_weeks ~ Ereignisjahr, data = stillborn, median) 
+ GA_median</code></pre>
+<pre><code>##    Ereignisjahr GA_weeks
+## 1          2003 22.42857
+## 2          2006 28.35714
+## 3          2007 30.85714
+## 4          2008 28.28571
+## 5          2009 29.64286
+## 6          2010 27.85714
+## 7          2011 29.14286
+## 8          2012 27.71429
+## 9          2013 28.57143
+## 10         2014 29.42857
+## 11         2015 29.28571
+## 12         2016 30.00000
+## 13         2017 28.28571
+## 14         2018 28.42857
+## 15         2019 31.14286
+## 16         2020 30.57143</code></pre>
+<pre class="r"><code>#GA was only systematically recorded from 2006 
+ #calculating median BW for stillborn babies, by year
+  BW_median &lt;- aggregate(Kind..Gewicht.in.Gramm ~ Ereignisjahr, data = stillborn, median) 
+  BW_median</code></pre>
+<pre><code>##    Ereignisjahr Kind..Gewicht.in.Gramm
+## 1          1987                 1940.0
+## 2          1988                 2000.0
+## 3          1989                 2000.0
+## 4          1990                 2100.0
+## 5          1991                 1920.0
+## 6          1992                 2030.0
+## 7          1993                 2135.0
+## 8          1994                 2000.0
+## 9          1995                 2050.0
+## 10         1996                 1840.0
+## 11         1997                 2030.0
+## 12         1998                 1780.0
+## 13         1999                 1840.0
+## 14         2000                 1900.0
+## 15         2001                 1745.0
+## 16         2002                 1887.5
+## 17         2003                 1795.0
+## 18         2004                 1592.5
+## 19         2005                 1240.0
+## 20         2006                 1214.0
+## 21         2007                 1320.0
+## 22         2008                 1020.0
+## 23         2009                  960.0
+## 24         2010                  730.0
+## 25         2011                 1013.0
+## 26         2012                  777.5
+## 27         2013                  770.0
+## 28         2014                  955.0
+## 29         2015                  990.0
+## 30         2016                 1070.0
+## 31         2017                  950.0
+## 32         2018                  905.0
+## 33         2019                 1212.5
+## 34         2020                 1060.0</code></pre>
+<p>GA seems stable across years for stillbron: 28-31weeks but stillborn
+BW seems to vary accross years (730-2135g)</p>
 <p>Note that the <code>echo = FALSE</code> parameter was added to the
 code chunk to prevent printing of the R code that generated the
 plot.</p>
