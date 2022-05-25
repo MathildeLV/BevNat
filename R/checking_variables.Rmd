@@ -95,7 +95,6 @@ Coding <br>
 ```{r}
 table(bevn$Geburtsort, useNA = "always")
 round(prop.table(table(bevn$Geburtsort, useNA="always"))*100,2)
-round(prop.table(table(bevn$Ereignisjahr, bevn$Geburtsort, useNA = "always"))*100,2)
 ```
 Only available until 1997: okay
 
@@ -159,7 +158,7 @@ Expected: 10-60? And 99 for missing
 ```{r}
 summary(bevn$Kind..Grösse.in.Zentimeter)
 #assign birthlength=99 to NA
-bevn$Kind..Grösse.in.Zentimeter[bevn$Kind..Grösse.in.Zentimeter ==99] = NA
+bevn$Kind..Grösse.in.Zentimeter[bevn$Kind..Grösse.in.Zentimeter ==99 | bevn$Kind..Grösse.in.Zentimeter==0] = NA
 summary(bevn$Kind..Grösse.in.Zentimeter)
 table(bevn$Kind..Grösse.in.Zentimeter, useNA = "always")
 round(prop.table(table(bevn$Kind..Grösse.in.Zentimeter, useNA="always"))*100,2)
@@ -203,9 +202,21 @@ table(bevn$Mutter..Staatsangehörigkeit, useNA="always")
   bevn$mother_nationality_cat1 <- cut(bevn$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
   round(prop.table(table(bevn$mother_nationality_cat1, useNA="always"))*100,2)
   
-# categorizing state of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+# categorizing nationality of the mother in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
   bevn$mother_nationality_cat2 <- cut(bevn$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 8280, 8384, 8486, 8601, 8685, 10000), include.lowest=TRUE, labels=c("Switzerland", "Europe - excl Switz", "Africa", "Americas", "Asia", "Oceania", "Other"))
 round(prop.table(table(bevn$mother_nationality_cat2, useNA="always"))*100,2)
+
+#categorizing nationality of the mother in : Switzerland, different parts of Europe, other
+bevn$mother_nationality_cat3 <- as.factor(ifelse(bevn$Mutter..Staatsangehörigkeit == 8100, 'Switz',
+                                    ifelse(bevn$Mutter..Staatsangehörigkeit == 8207 | bevn$Mutter..Staatsangehörigkeit == 8208 | bevn$Mutter..Staatsangehörigkeit == 8209 | bevn$Mutter..Staatsangehörigkeit == 8222 | bevn$Mutter..Staatsangehörigkeit == 8229 | bevn$Mutter..Staatsangehörigkeit == 8230 | bevn$Mutter..Staatsangehörigkeit == 8238 | bevn$Mutter..Staatsangehörigkeit == 8243 | bevn$Mutter..Staatsangehörigkeit == 8244,  'Central Europe',
+                                    ifelse (bevn$Mutter..Staatsangehörigkeit == 8201 | bevn$Mutter..Staatsangehörigkeit == 8205 | bevn$Mutter..Staatsangehörigkeit ==8220 | bevn$Mutter..Staatsangehörigkeit == 8232 | bevn$Mutter..Staatsangehörigkeit == 82880 | (bevn$Mutter..Staatsangehörigkeit > 8247 & bevn$Mutter..Staatsangehörigkeit< 8258) , 'SE Europe',
+                                    ifelse(bevn$Mutter..Staatsangehörigkeit==8202 | bevn$Mutter..Staatsangehörigkeit== 8213 | bevn$Mutter..Staatsangehörigkeit==8231 |bevn$Mutter..Staatsangehörigkeit== 8236, 'SW Europe', 
+                                    ifelse(bevn$Mutter..Staatsangehörigkeit==8204 | bevn$Mutter..Staatsangehörigkeit==8212 |bevn$Mutter..Staatsangehörigkeit==8215|bevn$Mutter..Staatsangehörigkeit==8216|bevn$Mutter..Staatsangehörigkeit==8223|bevn$Mutter..Staatsangehörigkeit==8225|bevn$Mutter..Staatsangehörigkeit==8226|bevn$Mutter..Staatsangehörigkeit==8227|bevn$Mutter..Staatsangehörigkeit==8270|bevn$Mutter..Staatsangehörigkeit==8271|bevn$Mutter..Staatsangehörigkeit==8272|bevn$Mutter..Staatsangehörigkeit==8275, 'Western Europe',
+                                 ifelse(bevn$Mutter..Staatsangehörigkeit==8206|bevn$Mutter..Staatsangehörigkeit==8210|bevn$Mutter..Staatsangehörigkeit==8211|bevn$Mutter..Staatsangehörigkeit==8217|bevn$Mutter..Staatsangehörigkeit==8228|bevn$Mutter..Staatsangehörigkeit==8234|bevn$Mutter..Staatsangehörigkeit==8273|bevn$Mutter..Staatsangehörigkeit==8274,'Northern Europe', 
+                                ifelse(bevn$Mutter..Staatsangehörigkeit==8214|bevn$Mutter..Staatsangehörigkeit==8218|bevn$Mutter..Staatsangehörigkeit==8224|bevn$Mutter..Staatsangehörigkeit==8233|bevn$Mutter..Staatsangehörigkeit==8239|bevn$Mutter..Staatsangehörigkeit==8241|bevn$Mutter..Staatsangehörigkeit==8242, 'Southern Europe',
+                                ifelse(bevn$Mutter..Staatsangehörigkeit==8235|bevn$Mutter..Staatsangehörigkeit==8572|bevn$Mutter..Staatsangehörigkeit==8573|bevn$Mutter..Staatsangehörigkeit==8574|bevn$Mutter..Staatsangehörigkeit==8576|bevn$Mutter..Staatsangehörigkeit==8577|bevn$Mutter..Staatsangehörigkeit==8578 | (bevn$Mutter..Staatsangehörigkeit > 8259 & bevn$Mutter..Staatsangehörigkeit < 8267), 'Eastern Europe','other')))))))))
+
+round(prop.table(table(bevn$mother_nationality_cat3, useNA="always"))*100,2)
 ```
 8998, 8999?  NAs?  <br>
 
@@ -246,27 +257,6 @@ bevn$Mutter..Wohngemeinde...Wohnstaat[bevn$Mutter..Wohngemeinde...Wohnstaat ==89
   table(bevn$mother_residence_cat1, useNA="always")
 ```
 
-## Empty variables
-- Mutter: Stellung im Beruf (NA) <br>
-- Mutter: Beruf (NA) <br>
-- Vater/Ernährer: Stellung im Beruf (NA) <br>
-- Vater/Ernährer: Beruf (NA) <br>
-```{r}
-summary(bevn$Mutter..Stellung.im.Beruf)
-summary(bevn$Mutter..Beruf)
-summary(bevn$Vater.Ernährer..Stellung.im.Beruf)
-table(bevn$Vater.Ernährer..Stellung.im.Beruf, useNA="always")
-summary(bevn$Vater.Ernährer..Beruf)
-```
-Vater.Ernährer..Stellung.im.Beruf is not empty: shouldnt it be? <br>
-Coding Vater.Ernährer..Stellung.im.Beruf:  <br>
-1		indépendant  <br>
-2		collaborateur familial  <br>
-3		directeur/-trice, fondé(e) de pouvoir, fonctionnaire  ayant une fonction de chef  <br>
-4		autre  <br>
-9		inconnu  <br>
-<br>
-
 ## Vater: Staatsangehörigkeit = Nationality father, see separate codebook
 
 Expected: 8100-8703
@@ -289,18 +279,6 @@ round(prop.table(table(bevn$Kind..biologischer.Rang, useNA="always"))*100,2)
 ```
 Many missing biological rank, but we also have the variable Kind.rang.in.der.aktuelle.ehe.
 
-## Flag variables: what is their use?
-```{r}
-summary(bevn$Flag..Geschlecht.des.Kindes)
-table(bevn$Flag..Geschlecht.des.Kindes, useNA = "always")
-summary(bevn$Flag..Art.der.Geburt)
-table(bevn$Flag..Art.der.Geburt, useNA = "always")
-summary(bevn$Flag..Rang.des.Kindes.in.der.aktuellen.Ehe)
-table(bevn$Flag..Rang.des.Kindes.in.der.aktuellen.Ehe, useNA = "always")
-summary(bevn$Flag..Zivilstand.der.Mutter)
-table(bevn$Flag..Zivilstand.der.Mutter, useNA = "always")
-```
-Apart form Flag..Zivilstand.der.Mutter, the other variables make no sense --> probably not useful
 
 ## Mutter: ständig oder nicht-ständiger Wohnsitz = Residence of the mother
 
@@ -338,6 +316,13 @@ round(prop.table(table(bevn$lebend.geboren.oder.nicht, useNA="always"))*100,3)
 ```
 GA seems stable across years for stillbron: 28-31weeks
 but stillborn BW seems to vary accross years (730-2135g)
+
+
+Simple plots
+```{r}
+plot(bevn$Kind..Gewicht.in.Gramm,bevn$Kind..Gestationsalter.in.Tagen)
+plot(bevn$Kind..Gewicht.in.Gramm,bevn$Kind..Grösse.in.Zentimeter)
+```
 
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
