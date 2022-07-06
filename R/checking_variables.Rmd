@@ -152,7 +152,7 @@ table(bevn$Anzahl.Knaben, useNA = "always")
 table(bevn$Anzahl.Mädchen, useNA = "always")
 ```
 
-## 11. Kind: Grösse in Zentimeter = length at birth (cm), missing=99
+## Kind: Grösse in Zentimeter = length at birth (cm), missing=99
 
 Expected: 10-60? And 99 for missing
 ```{r}
@@ -249,6 +249,8 @@ Expected: <br>
 ```{r}
 #to check minimum and maximum
 summary(bevn$Mutter..Wohngemeinde...Wohnstaat)
+head(bevn$Mutter..Wohngemeinde...Wohnstaat,50)
+
 #assign Mutter..Wohngemeinde...Wohnstaat=8999 to NA
 bevn$Mutter..Wohngemeinde...Wohnstaat[bevn$Mutter..Wohngemeinde...Wohnstaat ==8999] = NA
 # categorizing place of residence of the mother in : inside or outside Switzerland
@@ -311,18 +313,68 @@ round(prop.table(table(bevn$lebend.geboren.oder.nicht, useNA="always"))*100,3)
  GA_median
 #GA was only systematically recorded from 2006 
  #calculating median BW for stillborn babies, by year
-  BW_median <- aggregate(Kind..Gewicht.in.Gramm ~ Ereignisjahr, data = stillborn, median) 
-  BW_median
+  BW_median_sb <- aggregate(Kind..Gewicht.in.Gramm ~ Ereignisjahr, data = stillborn, median) 
+  BW_median_sb
 ```
 GA seems stable across years for stillbron: 28-31weeks
 but stillborn BW seems to vary accross years (730-2135g)
 
 
-Simple plots
+## Simple plots
 ```{r}
-plot(bevn$Kind..Gewicht.in.Gramm,bevn$Kind..Gestationsalter.in.Tagen)
-plot(bevn$Kind..Gewicht.in.Gramm,bevn$Kind..Grösse.in.Zentimeter)
+plot(bevn$Kind..Gewicht.in.Gramm,bevn$Kind..Gestationsalter.in.Tagen) #BW and GA
+plot(bevn$Kind..Gewicht.in.Gramm,bevn$Kind..Grösse.in.Zentimeter) #BW and BL
+```
+## Birthweight through the years
+```{r}
+BW_median2 <- aggregate(Kind..Gewicht.in.Gramm ~ Ereignisjahr, data = bevn, median) 
+BW_median2
 ```
 
+
+## Length through the years
+```{r}
+BL_median <- aggregate(Kind..Grösse.in.Zentimeter ~ Ereignisjahr, data = bevn, median) 
+BL_median
+```
+
+## Sex % through the years
+```{r}
+table(bevn$Kind..Geschlecht, bevn$Ereignisjahr)
+ round(prop.table(table(bevn$Kind..Geschlecht, bevn$Ereignisjahr), margin=2)*100,2)
+```
+
+## Stillbirth % through the years
+```{r}
+table(bevn$lebend.geboren.oder.nicht, bevn$Ereignisjahr)
+ round(prop.table(table(bevn$lebend.geboren.oder.nicht, bevn$Ereignisjahr), margin = 2)*100,2)
+```
+## Age of the mother through the years
+```{r}
+AM_median <- aggregate(Mutter..Alter.in.erfüllten.Jahren ~ Ereignisjahr, data = bevn, median) 
+AM_median
+```
+
+## Creating a variable combining month+year of birth
+```{r}
+bevn$birthdate3 <- with(bevn, sprintf("%d-%02d", Ereignisjahr, Ereignismonat))
+tail(bevn$birthdate3)
+```
+
+
+## Birthweight change through the years: Simple model
+```{r BW through years}
+##boxplot(bevn$Ereignisjahr, bevn$Kind..Gewicht.in.Gramm) ##doesnt work
+BW_years <- lm(Kind..Gewicht.in.Gramm~Ereignisjahr, data=bevn)
+summary(BW_years)
+library(ggplot2)
+##ggplot(bevn, aes(x=Ereignisjahr, y=Kind..Gewicht.in.Gramm)) ##doesnt work
+
+bevn$TimeInterval <- cut(bevn$Ereignisjahr, breaks=c(1989, 1996, 2003, 2010, 2017))
+boxplot(Kind..Gewicht.in.Gramm~TimeInterval, data=bevn)
+meanBW <- mean(bevn$Kind..Gewicht.in.Gramm)
+##ggplot(bevn, aes(x=Ereignisjahr, y=meanBW)) ##doesnt work
+
+```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
