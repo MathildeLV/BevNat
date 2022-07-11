@@ -1,0 +1,51 @@
+---
+title: "Merging_ecological_variables"
+author: "Mathilde Le Vu"
+date: '2022-07-11'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.1.2/library"))
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(dplyr)
+```
+
+# Opening the data files
+
+```{r opening the 3 datafiles }
+bevn <- read.csv2(here("data", "birth_iem.csv"))
+anth <- read.csv2(here("data", "Anthropo.csv"))
+gem <- read.csv2(here("data", "Gemeinde.csv"))
+```
+
+```{r merging the ecological var files}
+anth$MSRegion <- as.numeric(anth$MSRegion)
+gem$MS_Reg <- as.numeric(gem$MS_Reg)
+summary(gem$MS_Reg)
+summary(anth$MSRegion)
+
+anth = rename(anth, MS_Reg=MSRegion) #like this MS region variables are named the same (MS_Reg) in both gem and anth datasets.
+
+eco <- merge(anth, gem, by="MS_Reg", all.y=TRUE, all.x=TRUE)
+```
+
+#Merging bevn and eco file
+
+To know the eco. variables associated with the place of residence of the mother. 
+
+```{r merging bevn file with the eco file}
+summary(eco$comm16)
+summary(bevn$Mutter..Wohngemeinde...Wohnstaat) ##1-6910 for commune if resident inside Switz <br> 8201-8703 if resident outside of Switz <br>
+
+
+bevn$Mutter..Wohngemeinde...Wohnstaat <- as.numeric(bevn$Mutter..Wohngemeinde...Wohnstaat) 
+eco$comm16 <- as.numeric(eco$comm16) 
+eco = rename(eco, com=comm16) #like this commune variables are named the same (com) in both bevn and eco datasets.
+bevn = rename(bevn, com=Mutter..Wohngemeinde...Wohnstaat) 
+
+bevn_eco <- merge(bevn, eco, by="com", all.y=TRUE, all.x=TRUE)
+```
+
+	In Codebook_data_5 use MS-Region to merge the sheets Gemeinde X Anthropo
