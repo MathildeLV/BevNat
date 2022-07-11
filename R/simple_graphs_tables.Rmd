@@ -1,0 +1,324 @@
+---
+title: "Simple graphs/tables"
+author: "Mathilde Le Vu"
+date: '2022-07-10'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.1.2/library"))
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(dplyr)
+```
+
+# Opening the data file
+
+```{r }
+bevn <- read.csv2(here("data", "birth_iem.csv"))
+```
+
+## Geburtsstaat = State and world region of birth
+
+```{r}
+#8999 doesnt correspond to anything in the codebook but probably NA
+  table(bevn$Geburtsstaat, useNA = "always")
+#assign NA to values=8999
+  bevn$Geburtsstaat[bevn$Geburtsstaat ==8999] = NA
+ 
+# categorizing state of birth in : Switzerland or Outside of Switzerland
+  bevn$Geburtsstaat_cat1 <- cut(bevn$Geburtsstaat, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  table(bevn$Geburtsstaat_cat1, useNA = "always")
+  round(prop.table(table(bevn$Geburtsstaat_cat1, useNA="always"))*100,2)
+
+#categorizing state of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+  bevn$Geburtsstaat_cat2 <- cut(bevn$Geburtsstaat, breaks=c(8000, 8100, 8280, 8384, 8486, 8601, 8685, 10000), include.lowest=TRUE, labels=c("Switzerland", "Europe - excl Switz", "Africa", "Americas", "Asia", "Oceania", "Other"))
+table(bevn$Geburtsstaat_cat2, useNA = "always")
+round(prop.table(table(bevn$Geburtsstaat_cat2, useNA="always"))*100,2)
+
+#categorizing state of birth in : Switzerland, different parts of Europe, other
+bevn$Geburtsstaat_cat3 <- as.factor(ifelse(bevn$Geburtsstaat == 8100, 'Switz',
+                                    ifelse(bevn$Geburtsstaat == 8207 | bevn$Geburtsstaat == 8208 | bevn$Geburtsstaat == 8209 | bevn$Geburtsstaat == 8222 | bevn$Geburtsstaat == 8229 | bevn$Geburtsstaat == 8230 | bevn$Geburtsstaat == 8238 | bevn$Geburtsstaat == 8243 | bevn$Geburtsstaat == 8244,  'Central Europe',
+                                    ifelse (bevn$Geburtsstaat == 8201 | bevn$Geburtsstaat == 8205 | bevn$Geburtsstaat ==8220 | bevn$Geburtsstaat == 8232 | bevn$Geburtsstaat == 82880 | (bevn$Geburtsstaat > 8247 & bevn$Geburtsstaat< 8258) , 'SE Europe',
+                                    ifelse(bevn$Geburtsstaat==8202 | bevn$Geburtsstaat== 8213 | bevn$Geburtsstaat==8231 |bevn$Geburtsstaat== 8236, 'SW Europe', 
+                                    ifelse(bevn$Geburtsstaat==8204 | bevn$Geburtsstaat==8212 |bevn$Geburtsstaat==8215|bevn$Geburtsstaat==8216|bevn$Geburtsstaat==8223|bevn$Geburtsstaat==8225|bevn$Geburtsstaat==8226|bevn$Geburtsstaat==8227|bevn$Geburtsstaat==8270|bevn$Geburtsstaat==8271|bevn$Geburtsstaat==8272|bevn$Geburtsstaat==8275, 'Western Europe',
+                                 ifelse(bevn$Geburtsstaat==8206|bevn$Geburtsstaat==8210|bevn$Geburtsstaat==8211|bevn$Geburtsstaat==8217|bevn$Geburtsstaat==8228|bevn$Geburtsstaat==8234|bevn$Geburtsstaat==8273|bevn$Geburtsstaat==8274,'Northern Europe', 
+                                ifelse(bevn$Geburtsstaat==8214|bevn$Geburtsstaat==8218|bevn$Geburtsstaat==8224|bevn$Geburtsstaat==8233|bevn$Geburtsstaat==8239|bevn$Geburtsstaat==8241|bevn$Geburtsstaat==8242, 'Southern Europe',
+                                ifelse(bevn$Geburtsstaat==8235|bevn$Geburtsstaat==8572|bevn$Geburtsstaat==8573|bevn$Geburtsstaat==8574|bevn$Geburtsstaat==8576|bevn$Geburtsstaat==8577|bevn$Geburtsstaat==8578 | (bevn$Geburtsstaat > 8259 & bevn$Geburtsstaat < 8267), 'Eastern Europe','other')))))))))
+
+round(prop.table(table(bevn$Geburtsstaat_cat3, useNA="always"))*100,2)
+```
+
+There are **148,335** births that occurred outside of Switzerland.
+
+## Mutter: Staatsangehörigkeit = Nationality Mother
+
+See separate codebook
+
+```{r}
+summary(bevn$Mutter..Staatsangehörigkeit)
+table(bevn$Mutter..Staatsangehörigkeit, useNA="always")
+
+# categorizing nationality of the mother in : Switzerland or Outside of Switzerland
+  bevn$mother_nationality_cat1 <- cut(bevn$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  round(prop.table(table(bevn$mother_nationality_cat1, useNA="always"))*100,2)
+  
+# categorizing nationality of the mother in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+  bevn$mother_nationality_cat2 <- cut(bevn$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 8280, 8384, 8486, 8601, 8685, 10000), include.lowest=TRUE, labels=c("Switzerland", "Europe - excl Switz", "Africa", "Americas", "Asia", "Oceania", "Other"))
+round(prop.table(table(bevn$mother_nationality_cat2, useNA="always"))*100,2)
+
+#categorizing nationality of the mother in : Switzerland, different parts of Europe, other
+bevn$mother_nationality_cat3 <- as.factor(ifelse(bevn$Mutter..Staatsangehörigkeit == 8100, 'Switz',
+                                    ifelse(bevn$Mutter..Staatsangehörigkeit == 8207 | bevn$Mutter..Staatsangehörigkeit == 8208 | bevn$Mutter..Staatsangehörigkeit == 8209 | bevn$Mutter..Staatsangehörigkeit == 8222 | bevn$Mutter..Staatsangehörigkeit == 8229 | bevn$Mutter..Staatsangehörigkeit == 8230 | bevn$Mutter..Staatsangehörigkeit == 8238 | bevn$Mutter..Staatsangehörigkeit == 8243 | bevn$Mutter..Staatsangehörigkeit == 8244,  'Central Europe',
+                                    ifelse (bevn$Mutter..Staatsangehörigkeit == 8201 | bevn$Mutter..Staatsangehörigkeit == 8205 | bevn$Mutter..Staatsangehörigkeit ==8220 | bevn$Mutter..Staatsangehörigkeit == 8232 | bevn$Mutter..Staatsangehörigkeit == 82880 | (bevn$Mutter..Staatsangehörigkeit > 8247 & bevn$Mutter..Staatsangehörigkeit< 8258) , 'SE Europe',
+                                    ifelse(bevn$Mutter..Staatsangehörigkeit==8202 | bevn$Mutter..Staatsangehörigkeit== 8213 | bevn$Mutter..Staatsangehörigkeit==8231 |bevn$Mutter..Staatsangehörigkeit== 8236, 'SW Europe', 
+                                    ifelse(bevn$Mutter..Staatsangehörigkeit==8204 | bevn$Mutter..Staatsangehörigkeit==8212 |bevn$Mutter..Staatsangehörigkeit==8215|bevn$Mutter..Staatsangehörigkeit==8216|bevn$Mutter..Staatsangehörigkeit==8223|bevn$Mutter..Staatsangehörigkeit==8225|bevn$Mutter..Staatsangehörigkeit==8226|bevn$Mutter..Staatsangehörigkeit==8227|bevn$Mutter..Staatsangehörigkeit==8270|bevn$Mutter..Staatsangehörigkeit==8271|bevn$Mutter..Staatsangehörigkeit==8272|bevn$Mutter..Staatsangehörigkeit==8275, 'Western Europe',
+                                 ifelse(bevn$Mutter..Staatsangehörigkeit==8206|bevn$Mutter..Staatsangehörigkeit==8210|bevn$Mutter..Staatsangehörigkeit==8211|bevn$Mutter..Staatsangehörigkeit==8217|bevn$Mutter..Staatsangehörigkeit==8228|bevn$Mutter..Staatsangehörigkeit==8234|bevn$Mutter..Staatsangehörigkeit==8273|bevn$Mutter..Staatsangehörigkeit==8274,'Northern Europe', 
+                                ifelse(bevn$Mutter..Staatsangehörigkeit==8214|bevn$Mutter..Staatsangehörigkeit==8218|bevn$Mutter..Staatsangehörigkeit==8224|bevn$Mutter..Staatsangehörigkeit==8233|bevn$Mutter..Staatsangehörigkeit==8239|bevn$Mutter..Staatsangehörigkeit==8241|bevn$Mutter..Staatsangehörigkeit==8242, 'Southern Europe',
+                                ifelse(bevn$Mutter..Staatsangehörigkeit==8235|bevn$Mutter..Staatsangehörigkeit==8572|bevn$Mutter..Staatsangehörigkeit==8573|bevn$Mutter..Staatsangehörigkeit==8574|bevn$Mutter..Staatsangehörigkeit==8576|bevn$Mutter..Staatsangehörigkeit==8577|bevn$Mutter..Staatsangehörigkeit==8578 | (bevn$Mutter..Staatsangehörigkeit > 8259 & bevn$Mutter..Staatsangehörigkeit < 8267), 'Eastern Europe','other')))))))))
+
+round(prop.table(table(bevn$mother_nationality_cat3, useNA="always"))*100,2)
+```
+
+## Mutter: Wohngemeinde / Wohnstaat = Place of residence Mother
+
+1-6910 for commune if resident inside Switz <br> 8201-8703 if resident outside of Switz <br>
+
+```{r}
+#to check minimum and maximum
+summary(bevn$Mutter..Wohngemeinde...Wohnstaat)
+head(bevn$Mutter..Wohngemeinde...Wohnstaat,50)
+
+bevn$Mutter..Wohngemeinde...Wohnstaat[bevn$Mutter..Wohngemeinde...Wohnstaat ==8999] = NA
+# categorizing place of residence of the mother in : inside or outside Switzerland
+  bevn$mother_residence_cat1 <- cut(bevn$Mutter..Wohngemeinde...Wohnstaat, breaks=c(0, 6911, 8704), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  round(prop.table(table(bevn$mother_residence_cat1, useNA="always"))*100,2)
+  table(bevn$mother_residence_cat1, useNA="always")
+```
+
+## Mutter: ständig oder nicht-ständiger Wohnsitz = Residence of the mother
+
+1=permanent resident, 2=non-permanent resident, 4=short stay, 9=domiciled abroad
+
+```{r}
+summary(bevn$Mutter..ständig.oder.nicht.ständiger.Wohnsitz)
+table(bevn$Mutter..ständig.oder.nicht.ständiger.Wohnsitz, useNA = "always")
+round(prop.table(table(bevn$Mutter..ständig.oder.nicht.ständiger.Wohnsitz, useNA="always"))*100,2)
+```
+There are **183,076** women domiciled abroad
+
+## Vater: Staatsangehörigkeit = Nationality father
+
+See separate codebook. Expected: 8100-8703
+
+```{r}
+#assign Vater..Staatsangehörigkeit=8999 to NA
+bevn$Vater..Staatsangehörigkeit[bevn$Vater..Staatsangehörigkeit ==8999|bevn$Vater..Staatsangehörigkeit ==8998] = NA
+# categorizing nationality of the father in : inside or outside Switzerland
+  bevn$father_nationality_cat1 <- cut(bevn$Vater..Staatsangehörigkeit, breaks=c(8000, 8100, 8704), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  round(prop.table(table(bevn$father_nationality_cat1, useNA="always"))*100,2)
+  table(bevn$father_nationality_cat1, useNA="always")
+```
+
+## lebend geboren oder nicht = born alive or not
+
+1=lifeborn, 2=stillborn
+
+```{r}
+table(bevn$lebend.geboren.oder.nicht, useNA = "always")
+round(prop.table(table(bevn$lebend.geboren.oder.nicht, useNA="always"))*100,3)
+```
+
+## Gestational age
+
+```{r}
+##in weeks
+bevn$Kind..Gestationsalter.in.Tagen <- as.numeric(bevn$Kind..Gestationsalter.in.Tagen)
+bevn$GA_weeks <- bevn$Kind..Gestationsalter.in.Tagen / 7
+summary(bevn$GA_weeks)
+```
+
+## Kind: Grösse in Zentimeter = length at birth (cm)
+
+Missing=99
+
+```{r}
+#assign birthlength=99 to NA
+bevn$Kind..Grösse.in.Zentimeter[bevn$Kind..Grösse.in.Zentimeter ==99 | bevn$Kind..Grösse.in.Zentimeter==0] = NA
+summary(bevn$Kind..Grösse.in.Zentimeter)
+table(bevn$Kind..Grösse.in.Zentimeter, useNA = "always")
+```
+
+## Kind: Gewicht in Gramm = weight at birth (g)
+
+Missing=9999
+
+```{r}
+#assign BW=9999 or BW=0 to NA
+bevn$Kind..Gewicht.in.Gramm[bevn$Kind..Gewicht.in.Gramm ==9999 |bevn$Kind..Gewicht.in.Gramm==0] = NA
+summary(bevn$Kind..Gewicht.in.Gramm)
+
+#categorize in LBW, "normal" (arbitrary decision) and high BW
+bevn$BW_cat <- cut(bevn$Kind..Gewicht.in.Gramm, breaks=c(0, 2500, 5000, 10000), include.lowest=TRUE, labels=c("LBW", "NBW", "HBW"))
+table(bevn$BW_cat, useNA="always")
+round(prop.table(table(bevn$BW_cat, useNA="always"))*100, 3)
+```
+
+There are **151,477** births with missing BW.
+
+
+## Art der Geburt = number of babies 
+
+1=singleton, 2=twins, 3=triplets, ..., 6=sextuplets and more <br>
+```{r}
+bevn$Art.der.Geburt <- as.numeric(bevn$Art.der.Geburt)
+table(bevn$Art.der.Geburt, useNA="always")
+round(prop.table(table(bevn$Art.der.Geburt, useNA="always"))*100,2)
+##creating categories: single VS multiple pregnancies
+bevn$singleton_or_multiple <- cut(bevn$Art.der.Geburt, breaks=c(0,1,6), include.lowest = TRUE, labels=c("singleton", "multiple"))
+table(bevn$singleton_or_multiple)
+round(prop.table(table(bevn$singleton_or_multiple, useNA="always"))*100,2)
+```
+
+There are **92,864** multiple births.
+
+
+# Simple tables
+
+## Gestational age through the years
+```{r}
+#calculating mean by year
+ GA_median <- aggregate(GA_weeks ~ Ereignisjahr, data = bevn, median) # from 2006 it was systematically collected
+ GA_median
+```
+
+
+## Birthweight through the years
+
+```{r}
+BW_median2 <- aggregate(Kind..Gewicht.in.Gramm ~ Ereignisjahr, data = bevn, median) 
+BW_median2
+plot(BW_median2)
+```
+Birthweight median slightly varies between 1987 and 2020, 3330-3350g.
+
+## Length through the years
+
+```{r}
+BL_median <- aggregate(Kind..Grösse.in.Zentimeter ~ Ereignisjahr, data = bevn, median) 
+BL_median
+```
+
+Birthlength is robustly consistent at 50cm, 1987-2020.
+
+## Sex % through the years
+
+```{r}
+tab1<- table(bevn$Kind..Geschlecht, bevn$Ereignisjahr)
+tab1
+round(prop.table(table(bevn$Kind..Geschlecht, bevn$Ereignisjahr), margin=2)*100,2)
+
+ratio <- (tab1[1,2]/tab1[1,1])
+ratio
+
+38982/36845
+##pb with creating sex ratio variable
+
+```
+
+## Stillbirth % through the years, their median GA and BW
+
+```{r}
+table(bevn$lebend.geboren.oder.nicht, bevn$Ereignisjahr, useNA="always")
+round(prop.table(table(bevn$lebend.geboren.oder.nicht, bevn$Ereignisjahr), margin=2)*100,3)
+
+#calculating median GA by year of birth, for stillborn
+ GA_median <- aggregate(GA_weeks ~ Ereignisjahr, data = subset(bevn, lebend.geboren.oder.nicht==2 & Ereignisjahr >=2006), median) 
+ GA_median
+ #calculating median BW for stillborn babies, by year
+  BW_median_sb <- aggregate(Kind..Gewicht.in.Gramm ~ Ereignisjahr, data = subset(bevn, lebend.geboren.oder.nicht==2), median) 
+  BW_median_sb
+  
+```
+
+Median GA varies betwen 27.71 and 31.14 weeks between 2006 and 2020.
+
+## Age of the mother through the years
+
+```{r}
+AM_median <- aggregate(Mutter..Alter.in.erfüllten.Jahren ~ Ereignisjahr, data = bevn, median)
+AM_median
+```
+
+Maternal age varies increases between 28 and 32 yo between 1987 and 2020.
+
+
+## Age difference between parents, through the years
+```{r}
+bevn$parent_age_diff <- (bevn$Vater..Alter.in.erfüllten.Jahren)-(bevn$Mutter..Alter.in.erfüllten.Jahren)
+summary(bevn$parent_age_diff)
+agediff_y <- aggregate(parent_age_diff ~ Ereignisjahr, data = bevn, median)
+agediff_y
+```
+
+
+## Creating a variable combining month+year of birth
+
+I created two variables for date : one combining month+year only, and another combining day+month+year.
+I set up day to 1st of each month in order to have variable m-d-y, easier to work with.
+
+```{r}
+bevn$birthdate3 <- with(bevn, sprintf("%d-%02d", Ereignisjahr, Ereignismonat))
+tail(bevn$birthdate3)
+head(bevn$birthdate3)
+
+bevn$day <- 01
+bevn$birthdate2 <- as.Date(paste(bevn$Ereignisjahr, bevn$Ereignismonat, bevn$day, sep='-'))
+summary(bevn$birthdate2)
+tail(bevn$birthdate2)
+head(bevn$birthdate2)
+```
+
+# Simple plots
+
+## BW or BL depending on GA and
+
+2 different sets with either all birthweights/GA or birtsweights "normal" ]100;8000[ and GA >20 weeks
+and with either all birthlengths or "normal" birthlengths ]10,60[ and GA >20 weeks
+
+```{r}
+plot(bevn$GA_weeks,bevn$Kind..Gewicht.in.Gramm) #BW and GA, all birthweights
+plot(bevn$GA_weeks, bevn$Kind..Grösse.in.Zentimeter) #BL and GA, all birthlengths
+
+BW_normal <- subset(bevn, Kind..Gewicht.in.Gramm>100 & Kind..Gewicht.in.Gramm <8000 & GA_weeks>20)
+summary(BW_normal$Kind..Gewicht.in.Gramm)
+plot(BW_normal$GA_weeks, BW_normal$Kind..Gewicht.in.Gramm) #BW and GA, BW ]100;8000[
+
+BL_normal <- subset(bevn, Kind..Grösse.in.Zentimeter>10 & Kind..Grösse.in.Zentimeter <60  & GA_weeks>20)
+summary(BL_normal$Kind..Grösse.in.Zentimeter)
+plot(BL_normal$GA_weeks, BL_normal$Kind..Grösse.in.Zentimeter) #BL and GA, BL ]10;60[
+
+BW_BL_normal <- subset(bevn, Kind..Grösse.in.Zentimeter>10 & Kind..Grösse.in.Zentimeter <60 & Kind..Gewicht.in.Gramm>100 & Kind..Gewicht.in.Gramm <8000  & GA_weeks>20)
+plot(BW_BL_normal$Kind..Gewicht.in.Gramm,BW_BL_normal$Kind..Grösse.in.Zentimeter) #BW and BL
+
+```
+
+## Birthweight change through the years: Simple model
+
+```{r BW through years}
+##boxplot(bevn$Ereignisjahr, bevn$Kind..Gewicht.in.Gramm) ##doesnt work
+BW_years <- lm(Kind..Gewicht.in.Gramm~Ereignisjahr, data=bevn)
+summary(BW_years)
+library(ggplot2)
+##ggplot(bevn, aes(x=Ereignisjahr, y=Kind..Gewicht.in.Gramm)) ##doesnt work
+
+bevn$TimeInterval <- cut(bevn$Ereignisjahr, breaks=c(1989, 1996, 2003, 2010, 2017))
+boxplot(Kind..Gewicht.in.Gramm~TimeInterval, data=bevn)
+meanBW <- mean(bevn$Kind..Gewicht.in.Gramm)
+##ggplot(bevn, aes(x=Ereignisjahr, y=meanBW)) ##doesnt work
+
+##BW_time <- lm(Kind..Gewicht.in.Gramm~birthdate3, data=bevn) ##doesnt work
+
+BW_time <- lm(Kind..Gewicht.in.Gramm~birthdate2, data=bevn)
+summary(BW_time)
+```
