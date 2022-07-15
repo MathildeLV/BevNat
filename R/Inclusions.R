@@ -14,13 +14,13 @@
   #removal of 148340 entries. new nb entries: 2824645
   
 #Place of residence of the mother: exclude mothers domiciled abroad / Mutter..stÃ¤ndig.oder.nicht.stÃ¤ndiger.Wohnsitz
-  table(bevn_eco$Mutter..ständig.oder.nicht.ständiger.Wohnsitz, useNA = "always")
-  round(prop.table(table(bevn_eco$Mutter..ständig.oder.nicht.ständiger.Wohnsitz, useNA="always"))*100,2)
+  table(bevn_eco$Mutter..st?ndig.oder.nicht.st?ndiger.Wohnsitz, useNA = "always")
+  round(prop.table(table(bevn_eco$Mutter..st?ndig.oder.nicht.st?ndiger.Wohnsitz, useNA="always"))*100,2)
   #we will exclude 183076  (status resident=9, domiciled abroad) and no NA
   
    bevn_eco_in2 <- bevn_eco_in1 %>%
-    filter(Mutter..ständig.oder.nicht.ständiger.Wohnsitz!=9)
-   table(bevn_eco_in2$Mutter..ständig.oder.nicht.ständiger.Wohnsitz)
+    filter(Mutter..st?ndig.oder.nicht.st?ndiger.Wohnsitz!=9)
+   table(bevn_eco_in2$Mutter..st?ndig.oder.nicht.st?ndiger.Wohnsitz)
    
    dim(bevn_eco_in1)-dim(bevn_eco_in2)
    dim(bevn_eco_in2)
@@ -69,19 +69,19 @@
    # (148142) 98% of missing BW happened outside of Switz, (3373) 2.23% happened inside Switzerland 
    
    bevn_eco_in5 <- bevn_eco_in4 %>%
-     filter(Kind..Grösse.in.Zentimeter <= 65 & Kind..Grösse.in.Zentimeter >= 20) %>%
-     filter(!is.na(Kind..Grösse.in.Zentimeter))
-   table(bevn_eco_in5$Kind..Grösse.in.Zentimeter, useNA="always")
+     filter(Kind..Gr?sse.in.Zentimeter <= 65 & Kind..Gr?sse.in.Zentimeter >= 20) %>%
+     filter(!is.na(Kind..Gr?sse.in.Zentimeter))
+   table(bevn_eco_in5$Kind..Gr?sse.in.Zentimeter, useNA="always")
    
    dim(bevn_eco_in4)-dim(bevn_eco_in5)
    dim(bevn_eco_in5)
    #Exclusion of 789 additional entries. New nb entries: 2690860            
    
 # Missing maternal age
-   table(bevn_eco$Mutter..Alter.in.erfüllten.Jahren, useNA="always")
+   table(bevn_eco$Mutter..Alter.in.erf?llten.Jahren, useNA="always")
    #no missing
    bevn_eco_in6 <- bevn_eco_in5 %>%
-    filter(!is.na(Mutter..Alter.in.erfüllten.Jahren))
+    filter(!is.na(Mutter..Alter.in.erf?llten.Jahren))
    dim(bevn_eco_in5)-dim(bevn_eco_in6)
    dim(bevn_eco_in6)
    
@@ -115,7 +115,7 @@
 # GA: births only from 2006 and GA not missing BUT KEEPING stillbirths
    #We will exclude 9 GA before 2006 and 1780447 NAs
    bevn_eco_in9 <- bevn_eco_in6 %>%
-     filter(!is.na(GA_weeks_cat)) %>%
+    filter(!is.na(GA_weeks_cat)) %>%
     filter(Ereignisjahr>2005)
    table(bevn_eco_in9$GA_weeks_cat, useNA="always")
    
