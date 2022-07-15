@@ -37,7 +37,6 @@ bevn_eco$Geburtsstaat_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100, 'S
 
 
 
-
 ## Mutter: Staatsangehörigkeit = Nationality Mother
   #categorizing nationality of the mother in : Switzerland or Outside of Switzerland
   bevn_eco$mother_nationality_cat1 <- cut(bevn_eco$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
@@ -59,8 +58,6 @@ bevn_eco$Geburtsstaat_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100, 'S
   
   
   
-  
-  
 ## Mutter: Wohngemeinde / Wohnstaat = Place of residence Mother
   #1-6910 for commune if resident inside Switz <br> 8201-8703 if resident outside of Switz <br>
   # categorizing place of residence of the mother in : inside or outside Switzerland
@@ -68,6 +65,12 @@ bevn_eco$Geburtsstaat_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100, 'S
   table(bevn_eco$mother_residence_cat1, useNA="always")  
   
 
+  
+ ## Categ variable for com (for tables later - it doesnt make sense to group GMDNR like this) 
+  bevn_eco$com1 <- cut(bevn_eco$com, breaks=c(1, 1000, 2000, 3000, 4000, 5000, 6000), include.lowest=TRUE)
+  
+ 
+  
 ## Vater: Staatsangehörigkeit = Nationality father
     # categorizing nationality of the father in : inside or outside Switzerland
   bevn_eco$father_nationality_cat1 <- cut(bevn_eco$Vater..Staatsangehörigkeit, breaks=c(8000, 8100, 8704), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
@@ -81,6 +84,16 @@ bevn_eco$Geburtsstaat_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100, 'S
   #categorize in LBW, "normal" (arbitrary decision) and high BW
   bevn_eco$BW_cat <- cut(bevn_eco$Kind..Gewicht.in.Gramm, breaks=c(0, 2500, 5000, 10000), include.lowest=TRUE, labels=c("LBW", "NBW", "HBW"))
   table(bevn_eco$BW_cat, useNA="always")
+
+  
+## Kind: Gewicht in Gramm = weight at birth (g)
+  bevn_eco$BW_cat2 <- cut(bevn_eco$Kind..Gewicht.in.Gramm, breaks=c(0, 499, 8000, 10000), include.lowest=TRUE)
+  table(bevn_eco$BW_cat2, useNA="always")
+  
+  
+## Kind..Grösse.in.Zentimeter = BL (cm)
+  bevn_eco$BL_cat <- cut(bevn_eco$Kind..Grösse.in.Zentimeter, breaks=c(0, 19, 64, 100), include.lowest=TRUE)
+  table(bevn_eco$BL_cat, useNA="always")
   
   
 ## Art der Geburt = number of babies 
