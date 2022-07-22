@@ -8,32 +8,30 @@ output: html_document
 ```{r setup, include=FALSE}
 .libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.1.2/library"))
 knitr::opts_chunk$set(echo = TRUE)
-library(here)
-library(dplyr)
 ```
 
-## Geburtsstaat = State and world region of birth
+## State and world region of birth
 
 ```{r}
 # State of birth in : Switzerland or Outside of Switzerland
-  table(bevn_eco$Geburtsstaat_cat1, useNA = "always")
-  round(prop.table(table(bevn_eco$Geburtsstaat_cat1, useNA="always"))*100,2)
+  table(bevn_eco$country_of_birth_cat1, useNA = "always")
+  round(prop.table(table(bevn_eco$country_of_birth_cat1, useNA="always"))*100,2)
 
 #State of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
-table(bevn_eco$Geburtsstaat_cat2, useNA = "always")
-round(prop.table(table(bevn_eco$Geburtsstaat_cat2, useNA="always"))*100,2)
+table(bevn_eco$country_of_birth_cat2, useNA = "always")
+round(prop.table(table(bevn_eco$country_of_birth_cat2, useNA="always"))*100,2)
 
 #State of birth in : Switzerland, different parts of Europe, other
-round(prop.table(table(bevn_eco$Geburtsstaat_cat3, useNA="always"))*100,2)
+round(prop.table(table(bevn_eco$country_of_birth_cat3, useNA="always"))*100,2)
 ```
 
 There are **148,335** births that occurred outside of Switzerland.
 
-## Mutter: Staatsangehörigkeit = Nationality Mother
+## Nationality Mother
 
 ```{r}
-summary(bevn_eco$Mutter..Staatsangehörigkeit)
-table(bevn_eco$Mutter..Staatsangehörigkeit, useNA="always")
+summary(bevn_eco$mother_nationality)
+table(bevn_eco$mother_nationality, useNA="always")
 
 # Nationality of the mother in : Switzerland or Outside of Switzerland
   round(prop.table(table(bevn_eco$mother_nationality_cat1, useNA="always"))*100,2)
@@ -45,7 +43,7 @@ table(bevn_eco$Mutter..Staatsangehörigkeit, useNA="always")
   round(prop.table(table(bevn_eco$mother_nationality_cat3, useNA="always"))*100,2)
 ```
 
-## Mutter: Wohngemeinde / Wohnstaat = Place of residence Mother
+## Place of residence Mother
 
 1-6910 for commune if resident inside Switz <br> 8201-8703 if resident outside of Switz <br>
 
@@ -59,18 +57,20 @@ head(bevn_eco$com,50)
   table(bevn_eco$mother_residence_cat1, useNA="always")
 ```
 
-## Mutter: ständig oder nicht-ständiger Wohnsitz = Residence of the mother
+## Status of Residence of the mother
 
 1=permanent resident, 2=non-permanent resident, 4=short stay, 9=domiciled abroad
 
 ```{r}
-summary(bevn_eco$Mutter..ständig.oder.nicht.ständiger.Wohnsitz)
-table(bevn_eco$Mutter..ständig.oder.nicht.ständiger.Wohnsitz, useNA = "always")
-round(prop.table(table(bevn_eco$Mutter..ständig.oder.nicht.ständiger.Wohnsitz, useNA="always"))*100,2)
+summary(bevn_eco$resident_status)
+table(bevn_eco$resident_status, useNA = "always")
+round(prop.table(table(bevn_eco$resident_status, useNA="always"))*100,2)
+
+table(bevn_eco$mother_nationality_cat1, bevn_eco$resident_status)
 ```
 There are **183,076** women domiciled abroad
 
-## Vater: Staatsangehörigkeit = Nationality father
+## Nationality father
 
 See separate codebook. Expected: 8100-8703
 
@@ -85,8 +85,8 @@ See separate codebook. Expected: 8100-8703
 1=lifeborn, 2=stillborn
 
 ```{r}
-table(bevn_eco$lebend.geboren.oder.nicht, useNA = "always")
-round(prop.table(table(bevn_eco$lebend.geboren.oder.nicht, useNA="always"))*100,3)
+table(bevn_eco$stillbirth, useNA = "always")
+round(prop.table(table(bevn_eco$stillbirth, useNA="always"))*100,3)
 ```
 
 ## Gestational age
@@ -96,19 +96,19 @@ round(prop.table(table(bevn_eco$lebend.geboren.oder.nicht, useNA="always"))*100,
 summary(bevn_eco$GA_weeks)
 ```
 
-## Kind: Grösse in Zentimeter = length at birth (cm)
+## Length at birth (cm)
 
 
 ```{r}
-summary(bevn_eco$Kind..Grösse.in.Zentimeter)
-table(bevn_eco$Kind..Grösse.in.Zentimeter, useNA = "always")
+summary(bevn_eco$BL)
+table(bevn_eco$BL, useNA = "always")
 ```
 
-## Kind: Gewicht in Gramm = weight at birth (g)
+## weight at birth (g)
 
 
 ```{r}
-summary(bevn_eco$Kind..Gewicht.in.Gramm)
+summary(bevn_eco$BW)
 
 #BW categ. in LBW, "normal" (arbitrary decision) and high BW
 table(bevn_eco$BW_cat, useNA="always")
@@ -118,12 +118,12 @@ round(prop.table(table(bevn_eco$BW_cat, useNA="always"))*100, 3)
 There are **151,477** births with missing BW.
 
 
-## Art der Geburt = number of babies 
+## Number of babies 
 
 1=singleton, 2=twins, 3=triplets, ..., 6=sextuplets and more <br>
 ```{r}
-table(bevn_eco$Art.der.Geburt, useNA="always")
-round(prop.table(table(bevn_eco$Art.der.Geburt, useNA="always"))*100,2)
+table(bevn_eco$nb_of_babies, useNA="always")
+round(prop.table(table(bevn_eco$nb_of_babies, useNA="always"))*100,2)
 ##Single VS multiple pregnancies
 table(bevn_eco$singleton_or_multiple)
 round(prop.table(table(bevn_eco$singleton_or_multiple, useNA="always"))*100,2)
@@ -132,8 +132,11 @@ round(prop.table(table(bevn_eco$singleton_or_multiple, useNA="always"))*100,2)
 There are **92,864** multiple births.
 
 ## Mothers inside Switz without GMNDR: to check the number of missing
-  table(bevn_eco$com1, bevn_eco$mother_residence_cat1, useNA = "always")
-  round(prop.table(table(bevn_eco$com1, bevn_eco$mother_residence_cat1, useNA="always"), margin=2)*100,2)
+```{r}
+table(bevn_eco_in3$com1, bevn_eco_in3$mother_residence_cat1, useNA = "always")
+  round(prop.table(table(bevn_eco_in3$com1, bevn_eco_in3$mother_residence_cat1, useNA="always"), margin=2)*100,2)
+```
+
 
 
 # Simple tables
@@ -141,15 +144,15 @@ There are **92,864** multiple births.
 ## Gestational age through the years
 ```{r}
 #calculating median by year
- GA_median <- aggregate(GA_weeks ~ Ereignisjahr, data = bevn_eco, median) # from 2006 it was systematically collected
+ GA_median <- aggregate(GA_weeks ~ birthyear, data = bevn_eco, median) # from 2006 it was systematically collected
  GA_median
 
 #same but using tidyverse
  gamedian <- bevn_eco %>%
-   group_by(Ereignisjahr) %>%
+   group_by(birthyear) %>%
      filter( !is.na(GA_weeks)) %>%
    summarise(medGA=format(median(GA_weeks),digits=5))%>%
- filter(Ereignisjahr>2005)
+ filter(birthyear>2005)
 ungroup(gamedian)
 gamedian
 
@@ -160,10 +163,10 @@ getmode <- function(v) {
 }
 # Calculate the GA mode through the years
 ga_mode <- bevn_eco %>%
-   group_by(Ereignisjahr) %>%
+   group_by(birthyear) %>%
      filter( !is.na(GA_weeks)) %>%
-   summarise(mode=format(getmode(GA_weeks), digits=5))%>%
- filter(Ereignisjahr>2005)
+   summarise(mode=format(getmode(GA_weeks), digits=7))%>%
+ filter(birthyear>2005)
 ungroup(ga_mode)
 ga_mode
 
@@ -175,21 +178,21 @@ bevn_eco
 
 bevn_eco1 <- bevn_eco %>%
   filter(!is.na(GA_weeks)) %>%
-  filter(Ereignisjahr>2005)
+  filter(birthyear>2005)
 bevn_eco1
 
 GA_freq <- bevn_eco1 %>%
-  group_by(Ereignisjahr) %>%
-  ungroup(Ereignisjahr)
+  group_by(birthyear) %>%
+  ungroup(birthyear)
 
-round(prop.table(table(GA_freq$GA_weeks_cat, GA_freq$Ereignisjahr, useNA="always"), margin=2)*100,2)
+round(prop.table(table(GA_freq$GA_weeks_cat, GA_freq$birthyear, useNA="always"), margin=2)*100,2)
 ```
 
 
 ## Birthweight through the years
 
 ```{r}
-BW_median2 <- aggregate(Kind..Gewicht.in.Gramm ~ Ereignisjahr, data = bevn_eco, median) 
+BW_median2 <- aggregate(BW ~ birthyear, data = bevn_eco, median) 
 BW_median2
 plot(BW_median2)
 ```
@@ -198,7 +201,7 @@ Birthweight median slightly varies between 1987 and 2020, 3330-3350g.
 ## Length through the years
 
 ```{r}
-BL_median <- aggregate(Kind..Grösse.in.Zentimeter ~ Ereignisjahr, data = bevn_eco, median) 
+BL_median <- aggregate(BL ~ birthyear, data = bevn_eco, median) 
 BL_median
 ```
 
@@ -207,26 +210,26 @@ Birthlength is robustly consistent at 50cm, 1987-2020.
 ## Sex % through the years
 
 ```{r}
-tab1<- table(bevn_eco$Kind..Geschlecht, bevn_eco$Ereignisjahr)
+tab1<- table(bevn_eco$sex, bevn_eco$birthyear)
 tab1
-round(prop.table(table(bevn_eco$Kind..Geschlecht, bevn_eco$Ereignisjahr), margin=2)*100,2)
+round(prop.table(table(bevn_eco$sex, bevn_eco$birthyear), margin=2)*100,2)
 ```
 
 ## Stillbirth % through the years, their median GA and BW
 
 ```{r}
-table(bevn_eco$lebend.geboren.oder.nicht, bevn_eco$Ereignisjahr, useNA="always")
-round(prop.table(table(bevn_eco$lebend.geboren.oder.nicht, bevn_eco$Ereignisjahr), margin=2)*100,3)
+table(bevn_eco$stillbirth, bevn_eco$birthyear, useNA="always")
+round(prop.table(table(bevn_eco$stillbirth, bevn_eco$birthyear), margin=2)*100,3)
 
 #calculating median GA by year of birth, for stillborn
- GA_median_SB <- aggregate(GA_weeks ~ Ereignisjahr, data = subset(bevn_eco, lebend.geboren.oder.nicht==2 & Ereignisjahr >=2006), median) 
+ GA_median_SB <- aggregate(GA_weeks ~ birthyear, data = subset(bevn_eco, stillbirth==1 & birthyear >=2006), median) 
  GA_median_SB
   
  #calculating median GA by year of birth, for stillborn, with tidyverse
   GA_SB_Y <- bevn_eco %>%
-  group_by(Ereignisjahr) %>%
-  filter(lebend.geboren.oder.nicht==2) %>% 
-  filter(Ereignisjahr>2005) %>% 
+  group_by(birthyear) %>%
+  filter(stillbirth==1) %>% 
+  filter(birthyear>2005) %>% 
    filter(!is.na(GA_weeks)) %>% 
     summarise(medGA=format(median(GA_weeks),digits=5))   
   ungroup(GA_SB_Y) 
@@ -234,53 +237,53 @@ round(prop.table(table(bevn_eco$lebend.geboren.oder.nicht, bevn_eco$Ereignisjahr
   
 #calculating mode GA by year of birth, for stillborn
   ga_y_mode <- bevn_eco %>%
-   group_by(Ereignisjahr) %>%
+   group_by(birthyear) %>%
      filter( !is.na(GA_weeks)) %>%
-     filter(lebend.geboren.oder.nicht==2) %>% 
+     filter(stillbirth==1) %>% 
    summarise(mode=format(getmode(GA_weeks), digits=5))%>%
-  filter(Ereignisjahr>2005)
+  filter(birthyear>2005)
   ungroup(ga_y_mode)
   ga_y_mode
 
 #GA_frequency for stillbirths
  GA_SB <- bevn_eco %>%
-  filter(Ereignisjahr>2005) %>% 
-     filter(lebend.geboren.oder.nicht==2) 
+  filter(birthyear>2005) %>% 
+     filter(stillbirth==1) 
   table(GA_SB$GA_weeks_cat)
   round(prop.table(table(GA_SB$GA_weeks_cat))*100,2)
 
 #GA frequency for stillbirths, through the years
  GA_SB_Y_freq <- bevn_eco %>%
-   group_by(Ereignisjahr) %>%
-  filter(lebend.geboren.oder.nicht==2) %>% 
-  filter(Ereignisjahr>2005) %>% 
+   group_by(birthyear) %>%
+  filter(stillbirth==1) %>% 
+  filter(birthyear>2005) %>% 
  select(GA_weeks_cat)
   ungroup(GA_SB_Y_freq)
   GA_SB_Y_freq
-  table(GA_SB_Y_freq$Ereignisjahr, GA_SB_Y_freq$GA_weeks_cat, useNA="always")
- round(prop.table(table(GA_SB_Y_freq$GA_weeks_cat, GA_SB_Y_freq$Ereignisjahr, useNA="always"), margin=2)*100,2)
+  table(GA_SB_Y_freq$birthyear, GA_SB_Y_freq$GA_weeks_cat, useNA="always")
+ round(prop.table(table(GA_SB_Y_freq$GA_weeks_cat, GA_SB_Y_freq$birthyear, useNA="always"), margin=2)*100,2)
 
  #calculating median BW for stillborn babies, by year
-  BW_median_sb <- aggregate(Kind..Gewicht.in.Gramm ~ Ereignisjahr, data = subset(bevn_eco, lebend.geboren.oder.nicht==2), median) 
+  BW_median_sb <- aggregate(BW ~ birthyear, data = subset(bevn_eco, stillbirth==1), median) 
   BW_median_sb
   
  #calculating mode BW for stillborn babies, by year
   BW_y_mode <- bevn_eco %>%
-   group_by(Ereignisjahr) %>%
-     filter( !is.na(Kind..Gewicht.in.Gramm)) %>%
-     filter(lebend.geboren.oder.nicht==2) %>% 
-   summarise(mode=format(getmode(Kind..Gewicht.in.Gramm), digits=5))
+   group_by(birthyear) %>%
+     filter( !is.na(BW)) %>%
+     filter(stillbirth==1) %>% 
+   summarise(mode=format(getmode(BW), digits=5))
   ungroup(BW_y_mode)
   BW_y_mode
 
   #BW frequency for stillbirths, through the years
   BW_SB_Y_freq <- bevn_eco %>%
-   group_by(Ereignisjahr) %>%
-  filter(lebend.geboren.oder.nicht==2) %>% 
-   filter(!is.na(Kind..Gewicht.in.Gramm)) %>% 
+   group_by(birthyear) %>%
+  filter(stillbirth==1) %>% 
+   filter(!is.na(BW)) %>% 
   select(BW_cat) 
   ungroup(BW_SB_Y_freq)
- round(prop.table(table(BW_SB_Y_freq$BW_cat,BW_SB_Y_freq$Ereignisjahr), margin=2)*100,2)
+ round(prop.table(table(BW_SB_Y_freq$BW_cat,BW_SB_Y_freq$birthyear), margin=2)*100,2)
 ```
 
 Median GA varies betwen 27.71 and 31.14 weeks between 2006 and 2020.
@@ -288,7 +291,7 @@ Median GA varies betwen 27.71 and 31.14 weeks between 2006 and 2020.
 ## Age of the mother through the years
 
 ```{r}
-AM_median <- aggregate(Mutter..Alter.in.erfüllten.Jahren ~ Ereignisjahr, data = bevn_eco, median)
+AM_median <- aggregate(mat_age ~ birthyear, data = bevn_eco, median)
 AM_median
 ```
 
@@ -298,7 +301,7 @@ Maternal age varies increases between 28 and 32 yo between 1987 and 2020.
 ## Age difference between parents, through the years
 ```{r}
 summary(bevn_eco$parent_age_diff)
-agediff_y <- aggregate(parent_age_diff ~ Ereignisjahr, data = bevn_eco, median)
+agediff_y <- aggregate(parent_age_diff ~ birthyear, data = bevn_eco, median)
 agediff_y
 ```
 
@@ -320,6 +323,14 @@ I set up day to 1st of each month in order to have variable m-d-y, easier to wor
   head(bevn_eco$birthdate2)
 ```
 
+
+# Ecological variables 
+
+```{r}
+table(bevn_eco$Language)
+table(bevn_eco$BW_cat, bevn_eco$Language)
+```
+
 # Simple plots
 
 ## BW or BL depending on GA and
@@ -328,19 +339,19 @@ I set up day to 1st of each month in order to have variable m-d-y, easier to wor
 and with either all birthlengths or "normal" birthlengths ]10,60[ and GA >20 weeks
 
 ```{r}
-plot(bevn_eco$GA_weeks,bevn_eco$Kind..Gewicht.in.Gramm) #BW and GA, all birthweights
-plot(bevn_eco$GA_weeks, bevn_eco$Kind..Grösse.in.Zentimeter) #BL and GA, all birthlengths
+plot(bevn_eco$GA_weeks,bevn_eco$BW) #BW and GA, all birthweights
+plot(bevn_eco$GA_weeks, bevn_eco$BL) #BL and GA, all birthlengths
 
-BW_normal <- subset(bevn_eco, Kind..Gewicht.in.Gramm>100 & Kind..Gewicht.in.Gramm <8000 & GA_weeks>20)
-summary(BW_normal$Kind..Gewicht.in.Gramm)
-plot(BW_normal$GA_weeks, BW_normal$Kind..Gewicht.in.Gramm) #BW and GA, BW ]100;8000[
+BW_normal <- subset(bevn_eco, BW>100 & BW <8000 & GA_weeks>20)
+summary(BW_normal$BW)
+plot(BW_normal$GA_weeks, BW_normal$BW) #BW and GA, BW ]100;8000[
 
-BL_normal <- subset(bevn_eco, Kind..Grösse.in.Zentimeter>10 & Kind..Grösse.in.Zentimeter <60  & GA_weeks>20)
-summary(BL_normal$Kind..Grösse.in.Zentimeter)
-plot(BL_normal$GA_weeks, BL_normal$Kind..Grösse.in.Zentimeter) #BL and GA, BL ]10;60[
+BL_normal <- subset(bevn_eco, BL>10 & BL <60  & GA_weeks>20)
+summary(BL_normal$BL)
+plot(BL_normal$GA_weeks, BL_normal$BL) #BL and GA, BL ]10;60[
 
-BW_BL_normal <- subset(bevn_eco, Kind..Grösse.in.Zentimeter>10 & Kind..Grösse.in.Zentimeter <60 & Kind..Gewicht.in.Gramm>100 & Kind..Gewicht.in.Gramm <8000  & GA_weeks>20)
-plot(BW_BL_normal$Kind..Gewicht.in.Gramm,BW_BL_normal$Kind..Grösse.in.Zentimeter) #BW and BL
+BW_BL_normal <- subset(bevn_eco, BL>10 & BL <60 & BW>100 & BW <8000  & GA_weeks>20)
+plot(BW_BL_normal$BW,BW_BL_normal$BL) #BW and BL
 ```
 
 
@@ -353,39 +364,38 @@ plot(BW_BL_normal$Kind..Gewicht.in.Gramm,BW_BL_normal$Kind..Grösse.in.Zentimete
 ### Birthweight change through the years: Simple model
 
 ```{r BW through years}
-##boxplot(bevn_eco$Ereignisjahr, bevn_eco$Kind..Gewicht.in.Gramm) ##doesnt work
-m_BW_years <- lm(Kind..Gewicht.in.Gramm~Ereignisjahr, data=bevn_eco)
+##boxplot(bevn_eco$birthyear, bevn_eco$BW) ##doesnt work
+m_BW_years <- lm(BW~birthyear, data=bevn_eco)
 summary(m_BW_years)
 
-bevn_eco$TimeInterval <- cut(bevn_eco$Ereignisjahr, breaks=c(1989, 1996, 2003, 2010, 2017))
-boxplot(Kind..Gewicht.in.Gramm~TimeInterval, data=bevn_eco)
-meanBW <- mean(bevn_eco$Kind..Gewicht.in.Gramm)
+bevn_eco$TimeInterval <- cut(bevn_eco$birthyear, breaks=c(1989, 1996, 2003, 2010, 2017))
+boxplot(BW~TimeInterval, data=bevn_eco)
+meanBW <- mean(bevn_eco$BW)
 
-# BW_time3 <- lm(Kind..Gewicht.in.Gramm~year+month, data=bevn_eco) ##doesnt work
-## m_BW_time3 <- lm(Kind..Gewicht.in.Gramm~ factor(Ereignisjahr)+factor(Ereignismonat), data=bevn_eco) ##to not interpret too much
-summary(m_BW_time3)
+# BW_time3 <- lm(BW~year+month, data=bevn_eco) ##doesnt work
+## m_BW_time3 <- lm(BW~ factor(birthyear)+factor(birthmonth), data=bevn_eco) ##to not interpret too much
 
-m_BW_time2 <- lm(Kind..Gewicht.in.Gramm~birthdate2, data=bevn_eco)
+m_BW_time2 <- lm(BW~birthdate2, data=bevn_eco)
 summary(m_BW_time2)
 ```
 ### BW related to sex
 ```{r}
-m_BW_sex <- lm(Kind..Gewicht.in.Gramm~Kind..Geschlecht, data=bevn_eco)
+m_BW_sex <- lm(BW~sex, data=bevn_eco)
 summary(m_BW_sex) #female is the reference
-table(bevn_eco$Kind..Geschlecht)
+table(bevn_eco$sex)
 ```
 Males are around 134g heavier than females, and this is highly significant
 
 ### BW related to maternal age
 ```{r}
-m_BW_mat_age <- lm(Kind..Gewicht.in.Gramm~Mutter..Alter.in.erfüllten.Jahren, data=bevn_eco)
+m_BW_mat_age <- lm(BW~mat_age, data=bevn_eco)
 summary(m_BW_mat_age)
 ```
 BW decreases significantly when maternal age increases.
 
 ### BW related to GA
 ```{r}
-m_BW_GA <- lm(Kind..Gewicht.in.Gramm ~GA_weeks, data=bevn_eco)
+m_BW_GA <- lm(BW ~GA_weeks, data=bevn_eco)
 summary(m_BW_GA)
 ```
 BW increases with GA : each GA weeks is associated with an increase of 187g. 
@@ -394,24 +404,30 @@ BW increases with GA : each GA weeks is associated with an increase of 187g.
 
 ### stillbirth related to maternal age
 ```{r}
-m_SB_mat_age <- glm(lebend.geboren.oder.nicht~Mutter..Alter.in.erfüllten.Jahren, data=bevn_eco)
-summary(m_SB_mat_age)
+m_SB_mat_age <- glm(stillbirth~mat_age, 
+                    family= "binomial",data=bevn_eco)
+summary(m_SB_mat_age) 
 
 exp(coef(summary(m_SB_mat_age)))[,"Estimate"]
 #exp(confint(m_SB_mat_age))  doesnt work 
+
+
+m_SB_partiy <- glm(stillbirth~parity, 
+                    family= "binomial",data=bevn_eco)
+summary(m_SB_partiy) 
 ```
 
 
 
 ## MULTIVARIATE
 ```{r}
-m_BW <- lm(Kind..Gewicht.in.Gramm ~ GA_weeks + birthdate2 + Mutter..Alter.in.erfüllten.Jahren + Kind..Rang.in.der.aktuellen.Ehe + Kind..Geschlecht, data=bevn_eco)
-
+m_BW <- lm(BW ~ GA_weeks + birthdate2 + mat_age + parity + sex, data=bevn_eco)
 summary(m_BW)
 
+#without mat age
+m_BW1 <- lm(BW ~ GA_weeks + birthdate2 + parity + sex, data=bevn_eco)
+summary(m_BW1)
 
-m_BW_inclusions <- lm(Kind..Gewicht.in.Gramm ~ GA_weeks + birthdate2 + Mutter..Alter.in.erfüllten.Jahren + Kind..Rang.in.der.aktuellen.Ehe + Kind..Geschlecht, data=bevn_eco_in8)
 
-summary(m_BW_inclusions) 
 ```
 
