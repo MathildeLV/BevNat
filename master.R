@@ -6,8 +6,11 @@ library(here)
 library(dplyr)
 library(lubridate)
 library(rmarkdown)
+library(ggplot2)
+
+
 # original data
-bevn <- read.csv2(here("data", "birth_iem.csv"))
+bevn <- read.csv2(here("data", "bevn2006.csv"), sep = ",")
 #ecological variables data
 anth <- read.csv2(here("data", "Anthropo.csv"))
 gem <- read.csv2(here("data", "Gemeinde.csv"))
@@ -16,6 +19,7 @@ gem <- read.csv2(here("data", "Gemeinde.csv"))
 #loading R codes
 source("R/merging.R")
 source("R/data_preparation.R")
+source("R/Inclusions.R")
 
 
 
