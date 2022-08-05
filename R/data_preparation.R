@@ -4,13 +4,12 @@
   bevn_eco$Geburtsstaat[bevn_eco$Geburtsstaat ==8999] = NA
   ## Mutter: Wohngemeinde / Wohnstaat = Place of residence Mother
   bevn_eco$com[bevn_eco$com ==8999] = NA
-  ## Vater: Staatsangehörigkeit = Nationality father
+  ## Vater: Staatsangehorigkeit = Nationality father
   bevn_eco$Vater..Staatsangehörigkeit[bevn_eco$Vater..Staatsangehörigkeit ==8999|bevn_eco$Vater..Staatsangehörigkeit ==8998] = NA
-  ## Kind: Grösse in Zentimeter = length at birth (cm)
+  ## Kind: Grsse in Zentimeter = length at birth (cm)
   bevn_eco$Kind..Grösse.in.Zentimeter[bevn_eco$Kind..Grösse.in.Zentimeter ==99 | bevn_eco$Kind..Grösse.in.Zentimeter==0] = NA
   ## Kind: Gewicht in Gramm = weight at birth (g)
   bevn_eco$Kind..Gewicht.in.Gramm[bevn_eco$Kind..Gewicht.in.Gramm ==9999 |bevn_eco$Kind..Gewicht.in.Gramm==0] = NA
-  
 
 # categorizing state of birth in : Switzerland or Outside of Switzerland
 bevn_eco$country_of_birth_cat1 <- cut(bevn_eco$Geburtsstaat, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
@@ -113,18 +112,23 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
   tail(bevn_eco$birthdate3)
   head(bevn_eco$birthdate3)
   bevn_eco$birthdate3 <- as.factor(bevn_eco$birthdate3)
+  bevn_eco$birthdate3_num <- as.numeric(bevn_eco$birthdate3)
   
-  
+
   bevn_eco$day <- 01
   bevn_eco$birthdate2 <- as.Date(paste(bevn_eco$Ereignisjahr, bevn_eco$Ereignismonat, bevn_eco$day, sep='-'))
   summary(bevn_eco$birthdate2)
-
+  bevn_eco$birthdate2_num <- as.numeric(bevn_eco$birthdate2)
+  
   
   #GA category
   bevn_eco <- bevn_eco %>%
     mutate(GA_weeks_cat = cut (GA_weeks, breaks=c(16,24,30,34,39,44,46), include.lowest=TRUE))  
   bevn_eco
-  
+    #Second GA category, GA< or >= 22weeks
+   bevn_eco <- bevn_eco %>%
+  mutate(GA_weeks_cat2=cut(GA_weeks, breaks=c(10,21.9,46), include.lowest=TRUE))
+   table(bevn_eco$GA_weeks_cat2)
   #Stillbirth to 0/1 binary variable (1 is stillbirth)
   bevn_eco <- bevn_eco %>%
     mutate(lebend.geboren.oder.nicht = as.character(lebend.geboren.oder.nicht),
@@ -133,6 +137,26 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
                                "2" = "1"),
            stillbirth = as.factor(stillbirth))
   
+# Parity category, 1, 2, 3, 4+
+  bevn_eco <- bevn_eco %>%
+    mutate(parity_cat = cut (Kind..biologischer.Rang, breaks=c(0,1,2,3,20)))  
+  bevn_eco
+  table(bevn_eco$parity_cat, useNA = "always")
+  
+# Maternal age category
+  table(bevn_eco$Mutter..Alter.in.erreichten.Jahren)
+  bevn_eco <- bevn_eco %>%
+    mutate(mat_age_cat = cut (Mutter..Alter.in.erreichten.Jahren, breaks=c(10,20,25,30, 35, 40, 70)))  
+  
+  table(bevn_eco$mat_age_cat, useNA = "always")
+  bevn_eco$mat_age_cat <- relevel (bevn_eco$mat_age_cat, ref = 3)
+  
+# Paternal age category
+  table(bevn_eco$Vater..Alter.in.erreichten.Jahren)
+  bevn_eco <- bevn_eco %>%
+    mutate(pat_age_cat = cut (Vater..Alter.in.erreichten.Jahren, breaks=c(10,20,30, 40, 50, 70, 100)))  
+  
+  table(bevn_eco$pat_age_cat, useNA = "always")
   
 # Renaming most variables
     bevn_eco <- bevn_eco %>%
@@ -151,4 +175,13 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
       rename(parity=Kind..biologischer.Rang) %>%
       rename(resident_status=Mutter..ständig.oder.nicht.ständiger.Wohnsitz)
 
-      
+    
+# Chr as factor variables
+   # bevn_eco <- bevn_eco %>%
+    #  mutate(sex = as.numeric(sex))
+    bevn_eco <- bevn_eco %>%
+      mutate(sex = as.character(sex),
+             sex = recode(sex, 
+                                 "M" = "1",
+                                 "F" = "2"),
+             sex = as.factor(sex))
