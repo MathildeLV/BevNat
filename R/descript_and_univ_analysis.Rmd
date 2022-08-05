@@ -1,0 +1,496 @@
+---
+title: "Simple graphs/tables"
+author: "Mathilde Le Vu"
+date: '2022-07-10'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.1.2/library"))
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## State and world region of birth
+
+```{r}
+# State of birth in : Switzerland or Outside of Switzerland
+  table(bevn_eco$country_of_birth_cat1, useNA = "always")
+  round(prop.table(table(bevn_eco$country_of_birth_cat1, useNA="always"))*100,2)
+
+#State of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+table(bevn_eco$country_of_birth_cat2, useNA = "always")
+round(prop.table(table(bevn_eco$country_of_birth_cat2, useNA="always"))*100,2)
+
+#State of birth in : Switzerland, different parts of Europe, other
+round(prop.table(table(bevn_eco$country_of_birth_cat3, useNA="always"))*100,2)
+```
+
+There are **124,074** births that occurred outside of Switzerland.
+
+## Nationality Mother
+
+```{r}
+summary(bevn_eco$mother_nationality)
+table(bevn_eco$mother_nationality, useNA="always")
+
+# Nationality of the mother in : Switzerland or Outside of Switzerland
+  round(prop.table(table(bevn_eco$mother_nationality_cat1, useNA="always"))*100,2)
+    round(prop.table(table(bevn_eco_in7$mother_nationality_cat1, useNA="always"))*100,2)
+
+# Nationality of the mother in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+  round(prop.table(table(bevn_eco$mother_nationality_cat2, useNA="always"))*100,2)
+  round(prop.table(table(bevn_eco_in7$mother_nationality_cat2, useNA="always"))*100,2)
+
+#Nationality of the mother in : Switzerland, different parts of Europe, other
+  round(prop.table(table(bevn_eco$mother_nationality_cat3, useNA="always"))*100,2)
+    round(prop.table(table(bevn_eco_in7$mother_nationality_cat3, useNA="always"))*100,2)
+
+```
+
+## Place of residence Mother
+
+1-6910 for commune if resident inside Switz <br> 8201-8703 if resident outside of Switz <br>
+
+```{r}
+#to check minimum and maximum
+summary(bevn_eco$com)
+head(bevn_eco$com,50)
+
+# Place of residence of the mother in : inside or outside Switzerland
+  round(prop.table(table(bevn_eco$mother_residence_cat1, useNA="always"))*100,2)
+  table(bevn_eco$mother_residence_cat1, useNA="always")
+
+```
+
+## Status of Residence of the mother
+
+1=permanent resident, 2=non-permanent resident, 4=short stay, 9=domiciled abroad
+
+```{r}
+summary(bevn_eco$resident_status)
+table(bevn_eco$resident_status, useNA = "always")
+round(prop.table(table(bevn_eco$resident_status, useNA="always"))*100,2)
+
+table(bevn_eco$mother_nationality_cat1, bevn_eco$resident_status)
+```
+There are **158,606** women domiciled abroad
+
+## Nationality father
+
+See separate codebook. Expected: 8100-8703
+
+```{r}
+# categorizing nationality of the father in : inside or outside Switzerland
+  round(prop.table(table(bevn_eco$father_nationality_cat1, useNA="always"))*100,2)
+  table(bevn_eco$father_nationality_cat1, useNA="always")
+  round(prop.table(table(bevn_eco_in7$father_nationality_cat1, useNA="always"))*100,2)
+  table(bevn_eco_in7$father_nationality_cat1, useNA="always")
+```
+
+## lebend geboren oder nicht = born alive or not
+
+1=lifeborn, 2=stillborn
+
+```{r}
+table(bevn_eco$stillbirth, useNA = "always")
+round(prop.table(table(bevn_eco$stillbirth, useNA="always"))*100,3)
+round(prop.table(table(bevn_eco_in3$stillbirth, useNA="always"))*100,3)
+```
+
+## Gestational age
+
+```{r}
+## GA in weeks
+summary(bevn_eco$GA_weeks)
+summary(bevn_eco_in7$GA_weeks)
+```
+
+## Length at birth (cm)
+
+
+```{r}
+summary(bevn_eco$BL)
+table(bevn_eco$BL, useNA = "always")
+summary(bevn_eco_in7$BL)
+```
+
+## Weight at birth (g)
+
+
+```{r}
+summary(bevn_eco$BW)
+summary(bevn_eco_in7$BW)
+
+#BW categ. in LBW (<2500g) "normal" (arbitrary decision=2500-5000g) and high BW (>5000)
+table(bevn_eco$BW_cat, useNA="always")
+round(prop.table(table(bevn_eco$BW_cat, useNA="always"))*100, 3)
+table(bevn_eco_in7$BW_cat, useNA="always")
+round(prop.table(table(bevn_eco_in7$BW_cat, useNA="always"))*100, 3)
+```
+
+There are **132,494** births with missing BW.
+
+
+## Number of babies 
+
+1=singleton, 2=twins, 3=triplets, ..., 6=sextuplets and more <br>
+```{r}
+table(bevn_eco$nb_of_babies, useNA="always")
+round(prop.table(table(bevn_eco$nb_of_babies, useNA="always"))*100,2)
+##Single VS multiple pregnancies
+table(bevn_eco$singleton_or_multiple)
+round(prop.table(table(bevn_eco$singleton_or_multiple, useNA="always"))*100,2)
+```
+
+There are **50,920** multiple births.
+
+## Parity
+```{r}
+table(bevn_eco$parity_cat, useNA = "always")
+round(prop.table(table(bevn_eco$parity_cat, useNA="always"))*100,2)
+table(bevn_eco_in7$parity_cat, useNA = "always")
+round(prop.table(table(bevn_eco_in7$parity_cat, useNA="always"))*100,2)
+```
+
+## Maternal and paternal age
+```{r}
+summary(bevn_eco$mat_age)
+summary(bevn_eco_in7$mat_age)
+round(prop.table(table(bevn_eco_in7$mat_age_cat))*100,2)
+
+summary(bevn_eco$pat_age)
+summary(bevn_eco_in7$pat_age)
+ table(bevn_eco_in7$pat_age_cat, useNA = "always")
+ round(prop.table(table(bevn_eco_in7$pat_age_cat))*100,2)
+```
+
+## Age difference between parents
+```{r}
+summary(bevn_eco_in7$parent_age_diff)
+```
+
+## Mothers inside Switz without GMNDR: to check the number of missing
+```{r}
+table(bevn_eco_in7$com1, bevn_eco_in7$mother_residence_cat1, useNA = "always")
+```
+
+# Ecological variables 
+
+## Language
+```{r}
+  table(bevn_eco$Language,  useNA="always")
+  round(prop.table(table(bevn_eco$Language,  useNA="always"))*100,2)
+  table(bevn_eco_in7$Language,  useNA="always")
+  round(prop.table(table(bevn_eco_in7$Language,  useNA="always"))*100,2)
+ 
+ # BW category and language region
+  table(bevn_eco$BW_cat, bevn_eco$Language)
+  round(prop.table(table(bevn_eco$BW_cat,bevn_eco$Language, useNA="always"), margin=2)*100,2)
+  table(bevn_eco_in7$BW_cat, bevn_eco_in7$Language)
+  round(prop.table(table(bevn_eco_in7$BW_cat,bevn_eco_in7$Language, useNA="always"), margin=2)*100,2)
+```
+
+## Urban variables
+1 is urban, 0 is rural
+
+```{r}
+ table(bevn_eco$Urban3)
+ round(prop.table(table(bevn_eco$Urban3,  useNA="always"))*100,2)
+round(prop.table(table(bevn_eco_in7$Urban3,  useNA="always"))*100,2)
+```
+
+
+## Grossregion
+
+```{r}
+table(bevn_eco$Grossregion)
+round(prop.table(table(bevn_eco$Grossregion,  useNA="always"))*100,2)
+round(prop.table(table(bevn_eco_in7$Grossregion,  useNA="always"))*100,2)
+```
+
+## Altitude
+
+```{r}
+summary(bevn_eco$mean_Alt_mean2)
+summary(bevn_eco_in7$mean_Alt_mean2)
+```
+
+## SSEP
+
+```{r}
+summary(bevn_eco$mean_ssep2)
+summary(bevn_eco_in7$mean_ssep2)
+```
+
+
+# Simple tables
+
+## Gestational age through the years
+```{r}
+#calculating median by year
+ GA_median <- aggregate(GA_weeks ~ birthyear, data = bevn_eco_in7, median) # from 2006 it was systematically collected
+ GA_median
+
+#same but using tidyverse
+ gamedian <- bevn_eco_in7 %>%
+   group_by(birthyear) %>%
+     filter( !is.na(GA_weeks)) %>%
+   summarise(medGA=format(median(GA_weeks),digits=5))
+ungroup(gamedian)
+gamedian
+
+ #creating a function to calculate the mode of a variable
+getmode <- function(v) {
+   uniqv <- na.omit(unique(v))
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+# Calculate the GA mode through the years
+ga_mode <- bevn_eco_in7 %>%
+   group_by(birthyear) %>%
+     filter( !is.na(GA_weeks)) %>%
+   summarise(mode=format(getmode(GA_weeks), digits=7))
+ungroup(ga_mode)
+ga_mode
+
+
+## GA frequency tables through the years
+round(prop.table(table(GA_freq$GA_weeks_cat, GA_freq$birthyear, useNA="always"), margin=2)*100,2)
+plot(GA_freq$birthyear, GA_freq$GA_weeks)
+round(prop.table(table(bevn_eco_in7$GA_weeks_cat, bevn_eco_in7$birthyear, useNA="always"), margin=2)*100,2)
+boxplot(GA_weeks ~birthyear, data=bevn_eco_in7)
+  #subset with GA over 35 weeks
+  boxplot(GA_weeks ~birthyear, data=bevn_eco_in7, subset = GA_weeks>35)
+```
+
+
+## Birthweight through the years
+
+```{r}
+BW_median2 <- aggregate(BW ~ birthyear, data = bevn_eco_in7, median) 
+BW_median2
+plot(BW_median2)
+boxplot(BW~birthyear, data=bevn_eco_in7, subset= BW<8000)
+```
+Birthweight median slightly varies between 1987 and 2020, 3330-3350g.
+
+## Birth length through the years
+
+```{r}
+BL_median <- aggregate(BL ~ birthyear, data = bevn_eco_in7, median) 
+BL_median
+boxplot(BL~birthyear, data=bevn_eco_in7)
+```
+
+Birthlength is robustly consistent at 50cm, 1987-2020.
+
+## Sex % through the years
+
+```{r}
+table(bevn_eco_in7$sex, bevn_eco_in7$birthyear)
+round(prop.table(table(bevn_eco_in7$sex, bevn_eco_in7$birthyear), margin=2)*100,2)
+```
+
+## Stillbirth % through the years, their median/mode GA and BW
+
+### Gestational age of stillborn babies
+```{r}
+table(bevn_eco_in3$stillbirth, bevn_eco_in3$birthyear, useNA="always")
+round(prop.table(table(bevn_eco_in3$stillbirth, bevn_eco_in3$birthyear), margin=2)*100,3)
+
+#calculating median GA by year of birth, for stillborn, with tidyverse
+  GA_SB_Y <- bevn_eco_in3 %>%
+  group_by(birthyear) %>%
+  filter(stillbirth==1) %>% 
+   filter(!is.na(GA_weeks)) %>% 
+    summarise(medGA=format(median(GA_weeks),digits=5))   
+  ungroup(GA_SB_Y) 
+  GA_SB_Y 
+  
+#calculating mode GA by year of birth, for stillborn
+  ga_y_mode <- bevn_eco_in3 %>%
+   group_by(birthyear) %>%
+     filter( !is.na(GA_weeks)) %>%
+     filter(stillbirth==1) %>% 
+   summarise(mode=format(getmode(GA_weeks), digits=5))
+  ungroup(ga_y_mode)
+  ga_y_mode
+
+#GA_frequency for stillbirths
+ GA_SB <- bevn_eco_in3 %>%
+     filter(stillbirth==1) 
+  table(GA_SB$GA_weeks_cat)
+  round(prop.table(table(GA_SB$GA_weeks_cat))*100,2)
+  
+#GA frequency for stillbirths, through the years
+  boxplot(GA_weeks~birthyear, data=GA_SB)
+```
+
+Median GA for stillbirths varies between 27.21 and 31.14 weeks between 2006 and 2020.
+
+### Birthweight of stillborn babies
+```{r}
+ #calculating median BW for stillborn babies, by year
+  BW_median_sb <- aggregate(BW ~ birthyear, data = subset(bevn_eco_in3, stillbirth==1), median) 
+  BW_median_sb
+  
+ #calculating mode BW for stillborn babies, by year
+  BW_y_mode <- bevn_eco_in3 %>%
+   group_by(birthyear) %>%
+     filter( !is.na(BW)) %>%
+     filter(stillbirth==1) %>% 
+   summarise(mode=format(getmode(BW), digits=5))
+  ungroup(BW_y_mode)
+  BW_y_mode
+
+  #BW frequency for stillbirths, through the years
+  BW_SB_Y_freq <- bevn_eco_in3 %>%
+   group_by(birthyear) %>%
+  filter(stillbirth==1) %>% 
+   filter(!is.na(BW)) %>% 
+  select(BW_cat) 
+  ungroup(BW_SB_Y_freq)
+ round(prop.table(table(BW_SB_Y_freq$BW_cat,BW_SB_Y_freq$birthyear), margin=2)*100,2)
+ boxplot(BW~birthyear, data=bevn_eco_in3, subset=BW<8000)
+```
+
+Median BW for stillbirths varies a lot through the years, between 760g and 1420g.
+
+## Maternal age through the years
+
+```{r}
+AM_median <- aggregate(mat_age ~ birthyear, data = bevn_eco_in7, median)
+AM_median
+
+boxplot(mat_age~birthyear, data=bevn_eco_in7)
+```
+
+Maternal age increases from 31 to 32 yo between 2006 and 2020.
+
+
+## Age difference between parents, through the years
+```{r}
+summary(bevn_eco_in7$parent_age_diff)
+agediff_y <- aggregate(parent_age_diff ~ birthyear, data = bevn_eco_in7, median)
+agediff_y
+```
+
+
+## Time variables
+
+I created two variables for date : one combining month+year only, and another combining day+month+year.
+I set up day to 1st of each month in order to have variable m-d-y, easier to work with.
+
+```{r}
+#month year
+  tail(bevn_eco_in7$birthdate3)
+  head(bevn_eco_in7$birthdate3)
+
+  #day month year
+  summary(bevn_eco_in7$birthdate2)
+  tail(bevn_eco_in7$birthdate2)
+  head(bevn_eco_in7$birthdate2)
+```
+
+
+
+# Simple plots
+
+## BW or BL depending on GA and
+
+2 different sets with either all birthweights/GA or birtsweights "normal" ]100;8000[ and GA >20 weeks
+and with either all birthlengths or "normal" birthlengths ]10,60[ and GA >20 weeks
+
+```{r}
+plot(bevn_eco$GA_weeks,bevn_eco$BW) #BW and GA, all birthweights
+plot(bevn_eco$GA_weeks, bevn_eco$BL) #BL and GA, all birthlengths
+plot(bevn_eco$BW, bevn_eco$BL) #BW and BL, all
+
+#with data set bevn_eco_in7
+plot(bevn_eco_in7$GA_weeks, bevn_eco_in7$BW) 
+plot(bevn_eco_in7$GA_weeks, bevn_eco_in7$BL)
+plot(bevn_eco_in7$BW,bevn_eco_in7$BL)
+```
+
+
+
+
+# UNIVARIATE ANALYSIS
+
+## BIRTHWEIGHT
+
+### Birthweight change through the years: Simple model
+
+```{r BW through years}
+##boxplot(bevn_eco$birthyear, bevn_eco$BW) ##doesnt work
+m_BW_years <- lm(BW~birthyear, data=bevn_eco_in7)
+summary(m_BW_years)
+
+# BW_time3 <- lm(BW~year+month, data=bevn_eco) ##doesnt work
+## m_BW_time3 <- lm(BW~ factor(birthyear)+factor(birthmonth), data=bevn_eco) ##to not interpret too much
+
+m_BW_time2 <- lm(BW~birthdate2, data=bevn_eco_in7)
+summary(m_BW_time2)
+
+m_BW_time3_num <- lm(BW~birthdate3_num, data=bevn_eco_in7)
+summary(m_BW_time3_num)
+```
+### BW related to sex
+```{r}
+m_BW_sex <- lm(BW~sex, data=bevn_eco_in7)
+summary(m_BW_sex) #female is the reference
+table(bevn_eco_in7$sex)
+```
+Males are around 132.5g heavier than females, and this is highly significant
+
+### BW related to maternal age or to parity
+```{r}
+m_BW_mat_age <- lm(BW~mat_age, data=bevn_eco_in7)
+summary(m_BW_mat_age)
+
+m_BW_mat_age_cat <- lm(BW~mat_age_cat, data=bevn_eco_in7)
+summary(m_BW_mat_age_cat)
+
+m_BW_parity <- lm(BW~parity, data=bevn_eco_in7)
+summary(m_BW_parity)
+```
+BW is not impacted by maternal age as a continuous variable, but it is impacted by maternal age as a categorical variable (with age category 25-30 as ref): 
+- babies are much ligher for matage [11-20] and [41-70] (-86 and -53g, respectively) 
+- babies are a little bit lighter for mat age [21-25] and [36-40] (-9.9 and -2.1g, respectively)
+
+BW is rather impacted by parity.
+
+### BW related to GA
+```{r}
+m_BW_GA <- lm(BW ~GA_weeks, data=bevn_eco_in7)
+summary(m_BW_GA)
+```
+BW increases with GA : each GA longer by a week is associated with an increase of 187g. 
+
+## STILLBIRTH
+
+### Stillbirth related to maternal age
+```{r}
+m_SB_mat_age <- glm(stillbirth~mat_age, 
+                    family= "binomial",data=bevn_eco_in3)
+summary(m_SB_mat_age) 
+exp(coef(summary(m_SB_mat_age)))[,"Estimate"]
+exp(confint(m_SB_mat_age))  
+
+m_SB_mat_age_cat <- glm(stillbirth~mat_age_cat, 
+                    family= "binomial",data=bevn_eco_in3)
+summary(m_SB_mat_age_cat) 
+exp(coef(summary(m_SB_mat_age_cat)))[,"Estimate"]
+exp(confint(m_SB_mat_age_cat))  
+
+m_SB_parity <- glm(stillbirth~parity, 
+                    family= "binomial",data=bevn_eco_in3)
+summary(m_SB_parity) 
+
+m_SB_parity_cat <- glm(stillbirth~parity_cat, 
+                    family= "binomial",data=bevn_eco_in3)
+summary(m_SB_parity_cat) 
+```
+Increasing maternal age is significantly associated with an increase of SB risk (pvalue: 0.00012), but this increase is very small. 
+Maternal age category is also associated with changes in SB risk: being in age categories ]10, 20], ]20,25] or ]35,40], ]40,70] increases the risk of having a stillborn. The risk is the greatest for mothers aged (30-70].
+
+Parity does not seem to impact stillbirth risk.
