@@ -200,9 +200,10 @@ eco2 <- eco %>%
                       "6803"="6809")) %>%
   
 
-  #attribute mean(meanssep) for recoded Gemeindenr 
+  #attribute mean(meanssep) for recoded Gemeindenr and attribute mean(Alt_mean) for recoded Gemeindenr 
   group_by(com) %>%
   mutate(mean_ssep2 = mean(mean_ssep)) %>%
+  mutate(mean_Alt_mean2 = mean(Alt_Mean)) %>%
   distinct(com, .keep_all = TRUE) %>%
   ungroup() %>%
   mutate(com = as.numeric(com))
