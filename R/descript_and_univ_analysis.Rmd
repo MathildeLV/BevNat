@@ -94,7 +94,7 @@ See separate codebook. Expected: 8100-8703
 ```{r}
 table(bevn_eco$stillbirth, useNA = "always")
 round(prop.table(table(bevn_eco$stillbirth, useNA="always"))*100,3)
-round(prop.table(table(bevn_eco_in3$stillbirth, useNA="always"))*100,3)
+round(prop.table(table(bevn_eco_in6$stillbirth, useNA="always"))*100,3)
 ```
 
 ## Gestational age
@@ -282,11 +282,11 @@ round(prop.table(table(bevn_eco_in7$sex, bevn_eco_in7$birthyear), margin=2)*100,
 
 ### Gestational age of stillborn babies
 ```{r}
-table(bevn_eco_in3$stillbirth, bevn_eco_in3$birthyear, useNA="always")
-round(prop.table(table(bevn_eco_in3$stillbirth, bevn_eco_in3$birthyear), margin=2)*100,3)
+table(bevn_eco_in6$stillbirth, bevn_eco_in6$birthyear, useNA="always")
+round(prop.table(table(bevn_eco_in6$stillbirth, bevn_eco_in6$birthyear), margin=2)*100,3)
 
 #calculating median GA by year of birth, for stillborn, with tidyverse
-  GA_SB_Y <- bevn_eco_in3 %>%
+  GA_SB_Y <- bevn_eco_in6 %>%
   group_by(birthyear) %>%
   filter(stillbirth==1) %>% 
    filter(!is.na(GA_weeks)) %>% 
@@ -294,7 +294,7 @@ round(prop.table(table(bevn_eco_in3$stillbirth, bevn_eco_in3$birthyear), margin=
   ungroup(GA_SB_Y) 
 
 #calculating mode GA by year of birth, for stillborn
-  ga_y_mode <- bevn_eco_in3 %>%
+  ga_y_mode <- bevn_eco_in6 %>%
    group_by(birthyear) %>%
      filter( !is.na(GA_weeks)) %>%
      filter(stillbirth==1) %>% 
@@ -302,7 +302,7 @@ round(prop.table(table(bevn_eco_in3$stillbirth, bevn_eco_in3$birthyear), margin=
   ungroup(ga_y_mode)
 
 #GA categrory for stillbirths
- GA_SB <- bevn_eco_in3 %>%
+ GA_SB <- bevn_eco_in6 %>%
      filter(stillbirth==1) 
   table(GA_SB$GA_weeks_cat)
   round(prop.table(table(GA_SB$GA_weeks_cat))*100,2)
@@ -316,11 +316,11 @@ Median GA for stillbirths varies between 27.21 and 31.14 weeks between 2006 and 
 ### Birthweight of stillborn babies
 ```{r}
  #calculating median BW for stillborn babies, by year
-  BW_median_sb <- aggregate(BW ~ birthyear, data = subset(bevn_eco_in3, stillbirth==1), median) 
+  BW_median_sb <- aggregate(BW ~ birthyear, data = subset(bevn_eco_in6, stillbirth==1), median) 
   BW_median_sb
   
  #calculating mode BW for stillborn babies, by year
-  BW_y_mode <- bevn_eco_in3 %>%
+  BW_y_mode <- bevn_eco_in6 %>%
    group_by(birthyear) %>%
      filter( !is.na(BW)) %>%
      filter(stillbirth==1) %>% 
@@ -328,14 +328,14 @@ Median GA for stillbirths varies between 27.21 and 31.14 weeks between 2006 and 
   ungroup(BW_y_mode)
 
   #BW frequency for stillbirths, through the years
-  BW_SB_Y_freq <- bevn_eco_in3 %>%
+  BW_SB_Y_freq <- bevn_eco_in6 %>%
    group_by(birthyear) %>%
   filter(stillbirth==1) %>% 
    filter(!is.na(BW)) %>% 
   select(BW_cat) 
 
  round(prop.table(table(BW_SB_Y_freq$BW_cat,BW_SB_Y_freq$birthyear), margin=2)*100,2)
- boxplot(BW~birthyear, data=bevn_eco_in3, subset=BW<8000)
+ boxplot(BW~birthyear, data=bevn_eco_in6, subset=BW<8000)
 ```
 
 Median BW for stillbirths varies a lot through the years, between 760g and 1420g.
@@ -455,23 +455,23 @@ BW increases with GA : each GA longer by a week is associated with an increase o
 ### Stillbirth related to maternal age
 ```{r}
 m_SB_mat_age <- glm(stillbirth~mat_age, 
-                    family= "binomial",data=bevn_eco_in3)
+                    family= "binomial",data=bevn_eco_in6)
 summary(m_SB_mat_age) 
 exp(coef(summary(m_SB_mat_age)))[,"Estimate"]
 exp(confint(m_SB_mat_age))  
 
 m_SB_mat_age_cat <- glm(stillbirth~mat_age_cat, 
-                    family= "binomial",data=bevn_eco_in3)
+                    family= "binomial",data=bevn_eco_in6)
 summary(m_SB_mat_age_cat) 
 exp(coef(summary(m_SB_mat_age_cat)))[,"Estimate"]
 exp(confint(m_SB_mat_age_cat))  
 
 m_SB_parity <- glm(stillbirth~parity, 
-                    family= "binomial",data=bevn_eco_in3)
+                    family= "binomial",data=bevn_eco_in6)
 summary(m_SB_parity) 
 
 m_SB_parity_cat <- glm(stillbirth~parity_cat, 
-                    family= "binomial",data=bevn_eco_in3)
+                    family= "binomial",data=bevn_eco_in6)
 summary(m_SB_parity_cat) 
 ```
 
