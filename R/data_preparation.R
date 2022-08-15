@@ -120,6 +120,10 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
   summary(bevn_eco$birthdate2)
   bevn_eco$birthdate2_num <- as.numeric(bevn_eco$birthdate2)
   
+  #extract month
+  bevn_eco$month <-  format(bevn_eco$birthdate2, "%m")   
+  bevn_eco$month <- as.numeric(bevn_eco$month)
+  table(bevn_eco$month)  
   
   #GA category
   bevn_eco <- bevn_eco %>%
@@ -131,22 +135,22 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
    table(bevn_eco$GA_weeks_cat2)
   #Stillbirth to 0/1 binary variable (1 is stillbirth)
   bevn_eco <- bevn_eco %>%
-    mutate(lebend.geboren.oder.nicht = as.character(lebend.geboren.oder.nicht),
-           stillbirth = recode(lebend.geboren.oder.nicht, 
+    dplyr::mutate(lebend.geboren.oder.nicht = as.character(lebend.geboren.oder.nicht),
+           stillbirth = dplyr::recode(lebend.geboren.oder.nicht, 
                                "1" = "0",
                                "2" = "1"),
            stillbirth = as.factor(stillbirth))
   
 # Parity category, 1, 2, 3, 4+
   bevn_eco <- bevn_eco %>%
-    mutate(parity_cat = cut (Kind..biologischer.Rang, breaks=c(0,1,2,3,20)))  
+    dplyr::mutate(parity_cat = cut (Kind..biologischer.Rang, breaks=c(0,1,2,3,20)))  
   bevn_eco
   table(bevn_eco$parity_cat, useNA = "always")
   
 # Maternal age category
   table(bevn_eco$Mutter..Alter.in.erreichten.Jahren)
   bevn_eco <- bevn_eco %>%
-    mutate(mat_age_cat = cut (Mutter..Alter.in.erreichten.Jahren, breaks=c(10,20,25,30, 35, 40, 70)))  
+    dplyr:: mutate(mat_age_cat = cut (Mutter..Alter.in.erreichten.Jahren, breaks=c(10,20,25,30, 35, 40, 70)))  
   
   table(bevn_eco$mat_age_cat, useNA = "always")
   bevn_eco$mat_age_cat <- relevel (bevn_eco$mat_age_cat, ref = 3)
@@ -154,38 +158,39 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
 # Paternal age category
   table(bevn_eco$Vater..Alter.in.erreichten.Jahren)
   bevn_eco <- bevn_eco %>%
-    mutate(pat_age_cat = cut (Vater..Alter.in.erreichten.Jahren, breaks=c(10,20,30, 40, 50, 70, 100)))  
+    dplyr:: mutate(pat_age_cat = cut (Vater..Alter.in.erreichten.Jahren, breaks=c(10,20,30, 40, 50, 70, 100)))  
   
   table(bevn_eco$pat_age_cat, useNA = "always")
   
 # Renaming most variables
     bevn_eco <- bevn_eco %>%
-      rename(birthyear=Ereignisjahr) %>%
-      rename(birthmonth=Ereignismonat) %>%
-      rename(mat_age=Mutter..Alter.in.erfüllten.Jahren) %>%
-      rename(pat_age=Vater..Alter.in.erfüllten.Jahren) %>%
-      rename(sex=Kind..Geschlecht) %>%
-      rename(GA_days=Kind..Gestationsalter.in.Tagen) %>%
-      rename(country_of_birth=Geburtsstaat) %>%
-      rename(nb_of_babies=Art.der.Geburt) %>%
-      rename(BL=Kind..Grösse.in.Zentimeter) %>%
-      rename(BW=Kind..Gewicht.in.Gramm) %>%
-      rename(mother_nationality=Mutter..Staatsangehörigkeit) %>%
-      rename(father_nationality=Vater..Staatsangehörigkeit) %>%
-      rename(parity=Kind..biologischer.Rang) %>%
-      rename(resident_status=Mutter..ständig.oder.nicht.ständiger.Wohnsitz)
+      dplyr::rename(birthyear=Ereignisjahr) %>%
+      dplyr::rename(birthmonth=Ereignismonat) %>%
+      dplyr::rename(mat_age=Mutter..Alter.in.erfüllten.Jahren) %>%
+      dplyr::rename(pat_age=Vater..Alter.in.erfüllten.Jahren) %>%
+      dplyr::rename(sex=Kind..Geschlecht) %>%
+      dplyr::rename(GA_days=Kind..Gestationsalter.in.Tagen) %>%
+      dplyr::rename(country_of_birth=Geburtsstaat) %>%
+      dplyr::rename(nb_of_babies=Art.der.Geburt) %>%
+      dplyr::rename(BL=Kind..Grösse.in.Zentimeter) %>%
+      dplyr::rename(BW=Kind..Gewicht.in.Gramm) %>%
+      dplyr::rename(mother_nationality=Mutter..Staatsangehörigkeit) %>%
+      dplyr::rename(father_nationality=Vater..Staatsangehörigkeit) %>%
+      dplyr::rename(parity=Kind..biologischer.Rang) %>%
+      dplyr::rename(resident_status=Mutter..ständig.oder.nicht.ständiger.Wohnsitz)
 
     
 # Chr as factor variables
    # bevn_eco <- bevn_eco %>%
     #  mutate(sex = as.numeric(sex))
     bevn_eco <- bevn_eco %>%
-      mutate(sex = as.character(sex),
-             sex = recode(sex, 
+      dplyr::mutate(sex = as.character(sex),
+             sex = dplyr::recode(sex, 
                                  "M" = "1",
                                  "F" = "2"),
              sex = as.factor(sex))
     
+
 #creating a function to calculate the mode of a variable
     getmode <- function(v) {
       uniqv <- na.omit(unique(v))
