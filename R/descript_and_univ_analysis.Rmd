@@ -3,12 +3,24 @@ title: "Descriptive and univariate analysis"
 author: "Mathilde Le Vu"
 date: '2022-07-10'
 output: html_document
+
 ---
 
 ```{r setup, include=FALSE}
 .libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.1.2/library"))
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+## Year and month of birth
+```{r}
+#month of birth
+round(prop.table(table(bevn_eco$month))*100,2)
+round(prop.table(table(bevn_eco_in7$month))*100,2)
+#year of birth
+round(prop.table(table(bevn_eco$birthyear))*100,2)
+round(prop.table(table(bevn_eco_in7$birthyear))*100,2)
+```
+
 
 ## State and world region of birth
 
@@ -252,12 +264,16 @@ boxplot(GA_weeks ~birthyear, data=bevn_eco_in7)
 ```
 
 
-## Birthweight through the years
+## Birthweight through time
 
 ```{r}
+#birthweight through the years
 BW_median2 <- aggregate(BW ~ birthyear, data = bevn_eco_in7, median) 
 BW_median2
 boxplot(BW~birthyear, data=bevn_eco_in7, subset= BW<8000)
+
+#birthweight by month
+boxplot(BW~month, data=bevn_eco_in7, subset= BW<8000)
 ```
 Birthweight median slightly varies between 2007 and 2020, 3345-3360g.
 
@@ -331,9 +347,8 @@ Median GA for stillbirths varies between 27.21 and 31.14 weeks between 2006 and 
   BW_SB_Y_freq <- bevn_eco_in6 %>%
    group_by(birthyear) %>%
   filter(stillbirth==1) %>% 
-   filter(!is.na(BW)) %>% 
-  select(BW_cat) 
-
+   filter(!is.na(BW)) 
+  
  round(prop.table(table(BW_SB_Y_freq$BW_cat,BW_SB_Y_freq$birthyear), margin=2)*100,2)
  boxplot(BW~birthyear, data=bevn_eco_in6, subset=BW<8000)
 ```
@@ -384,12 +399,19 @@ I set up day to 1st of each month in order to have variable m-d-y, easier to wor
 Too different sets with either all birthweights/GA or birtsweights "normal" ]100;8000[ and GA >20 weeks
 and with either all birthlengths or "normal" birthlengths ]10,60[ and GA >20 weeks.
 
+```{r}
+plot(bevn_eco$GA_weeks,bevn_eco$BW) 
+```
 
 ```{r}
-plot(bevn_eco$GA_weeks,bevn_eco$BW) #BW and GA, all birthweights
-plot(bevn_eco$GA_weeks, bevn_eco$BL) #BL and GA, all birthlengths
-plot(bevn_eco$BW, bevn_eco$BL) #BW and BL, all
+#BW and GA, all birthweights
+plot(bevn_eco$GA_weeks, bevn_eco$BL) 
+#BL and GA, all birthlengths
+plot(bevn_eco$BW, bevn_eco$BL) 
+#BW and BL, all
+```
 
+```{r}
 #with data set bevn_eco_in7
 plot(bevn_eco_in7$GA_weeks, bevn_eco_in7$BW) 
 plot(bevn_eco_in7$GA_weeks, bevn_eco_in7$BL)
@@ -403,16 +425,23 @@ plot(bevn_eco_in7$BW,bevn_eco_in7$BL)
 
 ### Birthweight change through the years: Simple model
 
-```{r BW through years}
+```{r BW through time}
 ##boxplot(bevn_eco$birthyear, bevn_eco$BW) ##doesnt work
 m_BW_years <- lm(BW~birthyear, data=bevn_eco_in7)
 summary(m_BW_years)
 
 m_BW_time2 <- lm(BW~birthdate2, data=bevn_eco_in7)
 summary(m_BW_time2)
+m_BW_time2_num <- lm(BW~birthdate2_num, data=bevn_eco_in7)
+summary(m_BW_time2_num)
 
+m_BW_time3<- lm(BW~birthdate3_num, data=bevn_eco_in7)
+summary(m_BW_time3)
 m_BW_time3_num <- lm(BW~birthdate3_num, data=bevn_eco_in7)
 summary(m_BW_time3_num)
+
+m_BW_month <- lm(BW~month, data=bevn_eco_in7)
+summary(m_BW_month)
 ```
 
 ### BW related to sex
@@ -443,6 +472,15 @@ BW is not impacted by maternal age as a continuous variable, but it is impacted 
 
 BW is rather impacted by parity: higher parities are associated with higher BW
 
+
+### BW related to mother nationality
+```{r}
+m_BW_nat_cat1 <- lm(BW ~mother_nationality_cat1, data=bevn_eco_in7)
+summary(m_BW_nat_cat1)
+m_BW_nat_cat2 <- lm(BW ~mother_nationality_cat2, data=bevn_eco_in7)
+summary(m_BW_nat_cat2)
+```
+
 ### BW related to GA
 ```{r}
 m_BW_GA <- lm(BW ~GA_weeks, data=bevn_eco_in7)
@@ -452,8 +490,27 @@ BW increases with GA : each GA longer by a week is associated with an increase o
 
 ## STILLBIRTH
 
-### Stillbirth related to maternal age
+### Stillbirth related to birthyear, birthdate, maternal age (continuous and categorical), parity (continuous and categorical), GA
 ```{r}
+#sex
+m_SB_sex <- glm(stillbirth~sex, 
+                    family= "binomial",data=bevn_eco_in6)
+summary(m_SB_sex) 
+
+#date of birth
+m_SB_birthyear <- glm(stillbirth~birthyear, 
+                    family= "binomial",data=bevn_eco_in6)
+summary(m_SB_birthyear) 
+
+m_SB_birthday <- glm(stillbirth~birthdate2_num, 
+                    family= "binomial",data=bevn_eco_in6)
+summary(m_SB_birthday) 
+
+m_SB_birthmonth <- glm(stillbirth~birthdate3_num, 
+                    family= "binomial",data=bevn_eco_in6)
+summary(m_SB_birthmonth) 
+
+#maternal age
 m_SB_mat_age <- glm(stillbirth~mat_age, 
                     family= "binomial",data=bevn_eco_in6)
 summary(m_SB_mat_age) 
@@ -466,6 +523,7 @@ summary(m_SB_mat_age_cat)
 exp(coef(summary(m_SB_mat_age_cat)))[,"Estimate"]
 exp(confint(m_SB_mat_age_cat))  
 
+#parity
 m_SB_parity <- glm(stillbirth~parity, 
                     family= "binomial",data=bevn_eco_in6)
 summary(m_SB_parity) 
@@ -473,6 +531,27 @@ summary(m_SB_parity)
 m_SB_parity_cat <- glm(stillbirth~parity_cat, 
                     family= "binomial",data=bevn_eco_in6)
 summary(m_SB_parity_cat) 
+
+#gestational age
+m_SB_GA <- glm(stillbirth ~GA_weeks, family="binomial", data=bevn_eco_in6)
+summary(m_SB_GA) 
+exp(coef(summary(m_SB_GA)))[,"Estimate"]
+exp(confint(m_SB_GA))  
+
+#maternal nationality
+m_SB_nat_cat1 <- glm(stillbirth ~mother_nationality_cat1, family="binomial", data=bevn_eco_in6)
+summary(m_SB_nat_cat1) 
+exp(coef(summary(m_SB_nat_cat1)))[,"Estimate"]
+exp(confint(m_SB_nat_cat1)) 
+
+m_SB_nat_cat2 <- glm(stillbirth ~mother_nationality_cat2, family="binomial", data=bevn_eco_in6)
+summary(m_SB_nat_cat2) 
+exp(coef(summary(m_SB_nat_cat2)))[,"Estimate"]
+exp(confint(m_SB_nat_cat2)) 
+
+#Urbanicity
+m_SB_Urban <- glm(stillbirth ~Urban3, family="binomial", data=bevn_eco_in6)
+summary(m_SB_Urban) 
 ```
 
 Increasing maternal age is significantly associated with an increase of SB risk (pvalue: 0.00012), but this increase is very small. 
