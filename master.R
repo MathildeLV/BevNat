@@ -28,4 +28,4 @@ source("R/Inclusions.R")
 
 #render Rmd files in html
 render("R/descript_and_univ_analysis.Rmd", output_file = paste0("../output/",today(),"descript_and_univ_analysis.html"))
-render("R/univariate.Rmd", output_file = paste0("../output/",today(),"univariate.Rmd.html"))
+render("R/multivariate_analysis.Rmd", output_file = paste0("../output/",today(),"multivariate_analysis.html"))
