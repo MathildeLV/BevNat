@@ -6,7 +6,7 @@
 summary(gem$MS_Reg)
 
 anth <- anth %>%
-  rename(MS_Reg=MSRegion) %>% #like this MS region variables are named the same (MS_Reg) in both gem and anth datasets.
+  dplyr::rename(MS_Reg=MSRegion) %>% #like this MS region variables are named the same (MS_Reg) in both gem and anth datasets.
   mutate(MS_Reg= as.numeric(MS_Reg))
 
 summary(anth$MS_Reg)
@@ -22,8 +22,8 @@ summary(bevn$Mutter..Wohngemeinde...Wohnstaat) ##1-6910 for commune if resident 
 
 
 bevn$Mutter..Wohngemeinde...Wohnstaat <- as.numeric(bevn$Mutter..Wohngemeinde...Wohnstaat) 
-bevn <- rename(bevn, com=Mutter..Wohngemeinde...Wohnstaat) 
-eco <- rename(eco, com=comm16) 
+bevn <-  dplyr::rename(bevn, com=Mutter..Wohngemeinde...Wohnstaat) 
+eco <-  dplyr::rename(eco, com=comm16) 
 #like this commune variables are named the same (com) in both bevn and eco datasets.
 
 summary(bevn$com)
@@ -36,13 +36,13 @@ bevn_test <- bevn %>%
 
 com_eco <- bevn_test %>%
   filter( is.na(Statistikjahr)) %>%
-  select(com)
+  dplyr::select(com)
 
 com_eco
 
 com_bevn <- bevn_test %>%
   filter( is.na(MS_Reg)) %>%
-  select(com) %>%
+  dplyr::select(com) %>%
   distinct(com) %>%
   filter(com<8000)
 com_bevn
@@ -50,8 +50,8 @@ com_bevn
 
 #recoding Gemeindenummer
 eco2 <- eco %>%
-  mutate(com =as.character(com),
-         com = recode(com, "36"="292",
+  dplyr::mutate(com =as.character(com),
+         com = dplyr::recode(com, "36"="292",
                       "42"="292",
                       "44"="292",
                       "133"="295",
@@ -201,12 +201,12 @@ eco2 <- eco %>%
   
 
   #attribute mean(meanssep) for recoded Gemeindenr and attribute mean(Alt_mean) for recoded Gemeindenr 
-  group_by(com) %>%
-  mutate(mean_ssep2 = mean(mean_ssep)) %>%
-  mutate(mean_Alt_mean2 = mean(Alt_Mean)) %>%
-  distinct(com, .keep_all = TRUE) %>%
-  ungroup() %>%
-  mutate(com = as.numeric(com))
+  dplyr::group_by(com) %>%
+  dplyr::mutate(mean_ssep2 = mean(mean_ssep)) %>%
+  dplyr::mutate(mean_Alt_mean2 = mean(Alt_Mean)) %>%
+  dplyr::distinct(com, .keep_all = TRUE) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(com = as.numeric(com))
 eco2
 
 
@@ -220,7 +220,7 @@ bevn_eco <- bevn %>%
 
 bevn_eco%>%
   filter( is.na(Statistikjahr)) %>%
-  select(com)
+  dplyr::select(com)
 
 tab <- bevn_eco %>%
   filter(mean_ssep!=mean_ssep2) 
@@ -228,4 +228,3 @@ tab <- bevn_eco %>%
 
 
 round(prop.table(table(bevn_eco$Language, useNA="always"))*100,2)
-round(prop.table(table(bevn_eco$com, useNA="always"))*100,2)
