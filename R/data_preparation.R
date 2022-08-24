@@ -1,57 +1,93 @@
+# Renaming most variables
+bevn_eco <- bevn_eco %>%
+  dplyr::rename(birthyear=Ereignisjahr) %>%
+  dplyr::rename(birthmonth=Ereignismonat) %>%
+  dplyr::rename(mat_age=Mutter..Alter.in.erfÃ¼llten.Jahren) %>%
+  dplyr::rename(pat_age=Vater..Alter.in.erfÃ¼llten.Jahren) %>%
+  dplyr::rename(sex=Kind..Geschlecht) %>%
+  dplyr::rename(GA_days=Kind..Gestationsalter.in.Tagen) %>%
+  dplyr::rename(country_of_birth=Geburtsstaat) %>%
+  dplyr::rename(nb_of_babies=Art.der.Geburt) %>%
+  dplyr::rename(BL=Kind..GrÃ¶sse.in.Zentimeter) %>%
+  dplyr::rename(BW=Kind..Gewicht.in.Gramm) %>%
+  dplyr::rename(mother_nationality=Mutter..StaatsangehÃ¶rigkeit) %>%
+  dplyr::rename(father_nationality=Vater..StaatsangehÃ¶rigkeit) %>%
+  dplyr::rename(parity=Kind..biologischer.Rang) %>%
+  dplyr::rename(resident_status=Mutter..stÃ¤ndig.oder.nicht.stÃ¤ndiger.Wohnsitz)
+
 #recoding variables to NAs 
 
-  #Geburtsstaat = State and world region of birth
-  bevn_eco$Geburtsstaat[bevn_eco$Geburtsstaat ==8999] = NA
+  #country_of_birth = State and world region of birth
+  bevn_eco$country_of_birth[bevn_eco$country_of_birth ==8999] = NA
   ## Mutter: Wohngemeinde / Wohnstaat = Place of residence Mother
   bevn_eco$com[bevn_eco$com ==8999] = NA
   ## Vater: Staatsangehorigkeit = Nationality father
-  bevn_eco$Vater..Staatsangehörigkeit[bevn_eco$Vater..Staatsangehörigkeit ==8999|bevn_eco$Vater..Staatsangehörigkeit ==8998] = NA
+  bevn_eco$father_nationality[bevn_eco$father_nationality ==8999|bevn_eco$father_nationality ==8998] = NA
   ## Kind: Grsse in Zentimeter = length at birth (cm)
-  bevn_eco$Kind..Grösse.in.Zentimeter[bevn_eco$Kind..Grösse.in.Zentimeter ==99 | bevn_eco$Kind..Grösse.in.Zentimeter==0] = NA
+  bevn_eco$BL[bevn_eco$BL ==99 | bevn_eco$BL==0] = NA
   ## Kind: Gewicht in Gramm = weight at birth (g)
-  bevn_eco$Kind..Gewicht.in.Gramm[bevn_eco$Kind..Gewicht.in.Gramm ==9999 |bevn_eco$Kind..Gewicht.in.Gramm==0] = NA
+  bevn_eco$BW[bevn_eco$BW ==9999 |bevn_eco$BW==0] = NA
 
 # categorizing state of birth in : Switzerland or Outside of Switzerland
-bevn_eco$country_of_birth_cat1 <- cut(bevn_eco$Geburtsstaat, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+bevn_eco$country_of_birth_cat1 <- cut(bevn_eco$country_of_birth, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
 table(bevn_eco$country_of_birth_cat1, useNA = "always")
-round(prop.table(table(bevn_eco$country_of_birth_cat1, useNA="always"))*100,2)
+bevn_eco$country_of_birth_cat1 <- relevel (bevn_eco$country_of_birth_cat1, ref = "Switzerland")
 
-#categorizing state of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
-bevn_eco$country_of_birth_cat2 <- cut(bevn_eco$Geburtsstaat, breaks=c(8000, 8100, 8280, 8384, 8486, 8601, 8685, 10000), include.lowest=TRUE, labels=c("Switzerland", "Europe - excl Switz", "Africa", "Americas", "Asia", "Oceania", "Other"))
-table(bevn_eco$country_of_birth_cat2, useNA = "always")
-round(prop.table(table(bevn_eco$country_of_birth_cat2, useNA="always"))*100,2)
-
+#categorizing state of birth in : Switzerland, Europe, Africa, Northern America, Southern America, Asia, Oceania, other
+bevn_eco$country_of_birth_cat2 <- as.factor(ifelse(bevn_eco$country_of_birth == 8100, 'Switz', 
+                                                  ifelse((bevn_eco$country_of_birth > 8200 & bevn_eco$country_of_birth < 8281) | (bevn_eco$country_of_birth > 8571 & bevn_eco$country_of_birth < 8575) | (bevn_eco$country_of_birth > 8575 & bevn_eco$country_of_birth < 8579), 'Europe',
+                                                  ifelse((bevn_eco$country_of_birth > 8300 & bevn_eco$country_of_birth < 8385) | (bevn_eco$country_of_birth == 8551), 'Africa',
+                                                  ifelse((bevn_eco$country_of_birth > 8400 & bevn_eco$country_of_birth < 8404) | (bevn_eco$country_of_birth > 8404 & bevn_eco$country_of_birth < 8413) | (bevn_eco$country_of_birth > 8413 & bevn_eco$country_of_birth < 8422) | (bevn_eco$country_of_birth >8423 & bevn_eco$country_of_birth < 8434) | (bevn_eco$country_of_birth > 8434 & bevn_eco$country_of_birth < 8439) | (bevn_eco$country_of_birth > 8439 & bevn_eco$country_of_birth < 8447) | (bevn_eco$country_of_birth > 8447 & bevn_eco$country_of_birth < 8487), 'Southern and Central America ',
+                                                  ifelse(bevn_eco$country_of_birth == 8404 | bevn_eco$country_of_birth == 8413 | bevn_eco$country_of_birth == 8423 | bevn_eco$country_of_birth== 8434 | bevn_eco$country_of_birth== 8439 | bevn_eco$country_of_birth == 8447, 'Northern America',
+                                                  ifelse((bevn_eco$country_of_birth > 8500 & bevn_eco$country_of_birth < 8551) | (bevn_eco$country_of_birth >8551 & bevn_eco$country_of_birth < 8572) | bevn_eco$country_of_birth== 8575 | bevn_eco$country_of_birth== 8579, 'Asia',
+                                                  ifelse((bevn_eco$country_of_birth > 8600 & bevn_eco$country_of_birth < 8686), 'Oceania', 'other'
+                                                  ))))))))
+  table(bevn_eco$country_of_birth_cat2, useNA = "always")
+  subset(bevn_eco, is.na(country_of_birth_cat2))
+  bevn_eco$country_of_birth_cat2 <- relevel (bevn_eco$country_of_birth_cat2, ref = "Switz")
+  
 #categorizing state of birth in : Switzerland, different parts of Europe, other
-bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100, 'Switz',
-                                    ifelse(bevn_eco$Geburtsstaat == 8207 | bevn_eco$Geburtsstaat == 8208 | bevn_eco$Geburtsstaat == 8209 | bevn_eco$Geburtsstaat == 8222 | bevn_eco$Geburtsstaat == 8229 | bevn_eco$Geburtsstaat == 8230 | bevn_eco$Geburtsstaat == 8238 | bevn_eco$Geburtsstaat == 8243 | bevn_eco$Geburtsstaat == 8244,  'Central Europe',
-                                    ifelse (bevn_eco$Geburtsstaat == 8201 | bevn_eco$Geburtsstaat == 8205 | bevn_eco$Geburtsstaat ==8220 | bevn_eco$Geburtsstaat == 8232 | bevn_eco$Geburtsstaat == 82880 | (bevn_eco$Geburtsstaat > 8247 & bevn_eco$Geburtsstaat< 8258) , 'SE Europe',
-                                    ifelse(bevn_eco$Geburtsstaat==8202 | bevn_eco$Geburtsstaat== 8213 | bevn_eco$Geburtsstaat==8231 |bevn_eco$Geburtsstaat== 8236, 'SW Europe', 
-                                    ifelse(bevn_eco$Geburtsstaat==8204 | bevn_eco$Geburtsstaat==8212 |bevn_eco$Geburtsstaat==8215|bevn_eco$Geburtsstaat==8216|bevn_eco$Geburtsstaat==8223|bevn_eco$Geburtsstaat==8225|bevn_eco$Geburtsstaat==8226|bevn_eco$Geburtsstaat==8227|bevn_eco$Geburtsstaat==8270|bevn_eco$Geburtsstaat==8271|bevn_eco$Geburtsstaat==8272|bevn_eco$Geburtsstaat==8275, 'Western Europe',
-                                    ifelse(bevn_eco$Geburtsstaat==8206|bevn_eco$Geburtsstaat==8210|bevn_eco$Geburtsstaat==8211|bevn_eco$Geburtsstaat==8217|bevn_eco$Geburtsstaat==8228|bevn_eco$Geburtsstaat==8234|bevn_eco$Geburtsstaat==8273|bevn_eco$Geburtsstaat==8274,'Northern Europe', 
-                                    ifelse(bevn_eco$Geburtsstaat==8214|bevn_eco$Geburtsstaat==8218|bevn_eco$Geburtsstaat==8224|bevn_eco$Geburtsstaat==8233|bevn_eco$Geburtsstaat==8239|bevn_eco$Geburtsstaat==8241|bevn_eco$Geburtsstaat==8242, 'Southern Europe',
-                                    ifelse(bevn_eco$Geburtsstaat==8235|bevn_eco$Geburtsstaat==8572|bevn_eco$Geburtsstaat==8573|bevn_eco$Geburtsstaat==8574|bevn_eco$Geburtsstaat==8576|bevn_eco$Geburtsstaat==8577|bevn_eco$Geburtsstaat==8578 | (bevn_eco$Geburtsstaat > 8259 & bevn_eco$Geburtsstaat < 8267), 'Eastern Europe','other')))))))))
+bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 8100, 'Switz',
+                                    ifelse(bevn_eco$country_of_birth == 8207 | bevn_eco$country_of_birth == 8208 | bevn_eco$country_of_birth == 8209 | bevn_eco$country_of_birth == 8222 | bevn_eco$country_of_birth == 8229 | bevn_eco$country_of_birth == 8230 | bevn_eco$country_of_birth == 8238 | bevn_eco$country_of_birth == 8243 | bevn_eco$country_of_birth == 8244,  'Central Europe',
+                                    ifelse (bevn_eco$country_of_birth == 8201 | bevn_eco$country_of_birth == 8205 | bevn_eco$country_of_birth ==8220 | bevn_eco$country_of_birth == 8232 | bevn_eco$country_of_birth == 82880 | (bevn_eco$country_of_birth > 8247 & bevn_eco$country_of_birth< 8258) , 'SE Europe',
+                                    ifelse(bevn_eco$country_of_birth==8202 | bevn_eco$country_of_birth== 8213 | bevn_eco$country_of_birth==8231 |bevn_eco$country_of_birth== 8236, 'SW Europe', 
+                                    ifelse(bevn_eco$country_of_birth==8204 | bevn_eco$country_of_birth==8212 |bevn_eco$country_of_birth==8215|bevn_eco$country_of_birth==8216|bevn_eco$country_of_birth==8223|bevn_eco$country_of_birth==8225|bevn_eco$country_of_birth==8226|bevn_eco$country_of_birth==8227|bevn_eco$country_of_birth==8270|bevn_eco$country_of_birth==8271|bevn_eco$country_of_birth==8272|bevn_eco$country_of_birth==8275, 'Western Europe',
+                                    ifelse(bevn_eco$country_of_birth==8206|bevn_eco$country_of_birth==8210|bevn_eco$country_of_birth==8211|bevn_eco$country_of_birth==8217|bevn_eco$country_of_birth==8228|bevn_eco$country_of_birth==8234|bevn_eco$country_of_birth==8273|bevn_eco$country_of_birth==8274,'Northern Europe', 
+                                    ifelse(bevn_eco$country_of_birth==8214|bevn_eco$country_of_birth==8218|bevn_eco$country_of_birth==8224|bevn_eco$country_of_birth==8233|bevn_eco$country_of_birth==8239|bevn_eco$country_of_birth==8241|bevn_eco$country_of_birth==8242, 'Southern Europe',
+                                    ifelse(bevn_eco$country_of_birth==8235|bevn_eco$country_of_birth==8572|bevn_eco$country_of_birth==8573|bevn_eco$country_of_birth==8574|bevn_eco$country_of_birth==8576|bevn_eco$country_of_birth==8577|bevn_eco$country_of_birth==8578 | (bevn_eco$country_of_birth > 8259 & bevn_eco$country_of_birth < 8267), 'Eastern Europe','other')))))))))
+ table(bevn_eco$country_of_birth_cat3, useNA = "always")
+ bevn_eco$country_of_birth_cat3 <- relevel (bevn_eco$country_of_birth_cat3, ref = "Switz")
+ 
 
-
-
-## Mutter: Staatsangehörigkeit = Nationality Mother
+## Mutter: StaatsangehÃ¶rigkeit = Nationality Mother
   #categorizing nationality of the mother in : Switzerland or Outside of Switzerland
-  bevn_eco$mother_nationality_cat1 <- cut(bevn_eco$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
-
+  bevn_eco$mother_nationality_cat1 <- cut(bevn_eco$mother_nationality, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  bevn_eco$mother_nationality_cat1 <- relevel (bevn_eco$mother_nationality_cat1, ref = "Switzerland")
+  
   # Categorizing nationality of the mother in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
-  bevn_eco$mother_nationality_cat2 <- cut(bevn_eco$Mutter..Staatsangehörigkeit, breaks=c(8000, 8100, 8280, 8384, 8486, 8601, 8685, 10000), include.lowest=TRUE, labels=c("Switzerland", "Europe - excl Switz", "Africa", "Americas", "Asia", "Oceania", "Other"))
+  bevn_eco$mother_nationality_cat2 <- as.factor(ifelse(bevn_eco$mother_nationality == 8100, 'Switz', 
+                                              ifelse((bevn_eco$mother_nationality > 8200 & bevn_eco$mother_nationality < 8281) | (bevn_eco$mother_nationality > 8571 & bevn_eco$mother_nationality < 8575) | (bevn_eco$mother_nationality > 8575 & bevn_eco$mother_nationality < 8579), 'Europe',
+                                              ifelse((bevn_eco$mother_nationality > 8300 & bevn_eco$mother_nationality < 8385) | (bevn_eco$mother_nationality == 8551), 'Africa',
+                                               ifelse((bevn_eco$mother_nationality > 8400 & bevn_eco$mother_nationality < 8404) | (bevn_eco$mother_nationality > 8404 & bevn_eco$mother_nationality < 8413) | (bevn_eco$mother_nationality > 8413 & bevn_eco$mother_nationality < 8422) | (bevn_eco$mother_nationality >8423 & bevn_eco$mother_nationality < 8434) | (bevn_eco$mother_nationality > 8434 & bevn_eco$mother_nationality < 8439) | (bevn_eco$mother_nationality > 8439 & bevn_eco$mother_nationality < 8447) | (bevn_eco$mother_nationality > 8447 & bevn_eco$mother_nationality < 8487), 'Southern and Central America ',
+                                               ifelse(bevn_eco$mother_nationality == 8404 | bevn_eco$mother_nationality == 8413 | bevn_eco$mother_nationality == 8423 | bevn_eco$mother_nationality== 8434 | bevn_eco$mother_nationality== 8439 | bevn_eco$mother_nationality == 8447, 'Northern America',
+                                               ifelse((bevn_eco$mother_nationality > 8500 & bevn_eco$mother_nationality < 8551) | (bevn_eco$mother_nationality >8551 & bevn_eco$mother_nationality < 8572) | bevn_eco$mother_nationality== 8575 | bevn_eco$mother_nationality== 8579, 'Asia',
+                                               ifelse((bevn_eco$mother_nationality > 8600 & bevn_eco$mother_nationality < 8686), 'Oceania', 'other'
+                                               ))))))))
+  table(bevn_eco$mother_nationality_cat2, useNA = "always")
+  bevn_eco$mother_nationality_cat2 <- relevel (bevn_eco$mother_nationality_cat2, ref = "Switz")
+  
   
   #categorizing nationality of the mother in : Switzerland, different parts of Europe, other
-  bevn_eco$mother_nationality_cat3 <- as.factor(ifelse(bevn_eco$Mutter..Staatsangehörigkeit == 8100, 'Switz',
-                                            ifelse(bevn_eco$Mutter..Staatsangehörigkeit == 8207 | bevn_eco$Mutter..Staatsangehörigkeit == 8208 | bevn_eco$Mutter..Staatsangehörigkeit == 8209 | bevn_eco$Mutter..Staatsangehörigkeit == 8222 | bevn_eco$Mutter..Staatsangehörigkeit == 8229 | bevn_eco$Mutter..Staatsangehörigkeit == 8230 | bevn_eco$Mutter..Staatsangehörigkeit == 8238 | bevn_eco$Mutter..Staatsangehörigkeit == 8243 | bevn_eco$Mutter..Staatsangehörigkeit == 8244,  'Central Europe',
-                                            ifelse (bevn_eco$Mutter..Staatsangehörigkeit == 8201 | bevn_eco$Mutter..Staatsangehörigkeit == 8205 | bevn_eco$Mutter..Staatsangehörigkeit ==8220 | bevn_eco$Mutter..Staatsangehörigkeit == 8232 | bevn_eco$Mutter..Staatsangehörigkeit == 82880 | (bevn_eco$Mutter..Staatsangehörigkeit > 8247 & bevn_eco$Mutter..Staatsangehörigkeit< 8258) , 'SE Europe',
-                                            ifelse(bevn_eco$Mutter..Staatsangehörigkeit==8202 | bevn_eco$Mutter..Staatsangehörigkeit== 8213 | bevn_eco$Mutter..Staatsangehörigkeit==8231 |bevn_eco$Mutter..Staatsangehörigkeit== 8236, 'SW Europe', 
-                                            ifelse(bevn_eco$Mutter..Staatsangehörigkeit==8204 | bevn_eco$Mutter..Staatsangehörigkeit==8212 |bevn_eco$Mutter..Staatsangehörigkeit==8215|bevn_eco$Mutter..Staatsangehörigkeit==8216|bevn_eco$Mutter..Staatsangehörigkeit==8223|bevn_eco$Mutter..Staatsangehörigkeit==8225|bevn_eco$Mutter..Staatsangehörigkeit==8226|bevn_eco$Mutter..Staatsangehörigkeit==8227|bevn_eco$Mutter..Staatsangehörigkeit==8270|bevn_eco$Mutter..Staatsangehörigkeit==8271|bevn_eco$Mutter..Staatsangehörigkeit==8272|bevn_eco$Mutter..Staatsangehörigkeit==8275, 'Western Europe',
-                                            ifelse(bevn_eco$Mutter..Staatsangehörigkeit==8206|bevn_eco$Mutter..Staatsangehörigkeit==8210|bevn_eco$Mutter..Staatsangehörigkeit==8211|bevn_eco$Mutter..Staatsangehörigkeit==8217|bevn_eco$Mutter..Staatsangehörigkeit==8228|bevn_eco$Mutter..Staatsangehörigkeit==8234|bevn_eco$Mutter..Staatsangehörigkeit==8273|bevn_eco$Mutter..Staatsangehörigkeit==8274,'Northern Europe', 
-                                            ifelse(bevn_eco$Mutter..Staatsangehörigkeit==8214|bevn_eco$Mutter..Staatsangehörigkeit==8218|bevn_eco$Mutter..Staatsangehörigkeit==8224|bevn_eco$Mutter..Staatsangehörigkeit==8233|bevn_eco$Mutter..Staatsangehörigkeit==8239|bevn_eco$Mutter..Staatsangehörigkeit==8241|bevn_eco$Mutter..Staatsangehörigkeit==8242, 'Southern Europe',
-                                            ifelse(bevn_eco$Mutter..Staatsangehörigkeit==8235|bevn_eco$Mutter..Staatsangehörigkeit==8572|bevn_eco$Mutter..Staatsangehörigkeit==8573|bevn_eco$Mutter..Staatsangehörigkeit==8574|bevn_eco$Mutter..Staatsangehörigkeit==8576|bevn_eco$Mutter..Staatsangehörigkeit==8577|bevn_eco$Mutter..Staatsangehörigkeit==8578 | (bevn_eco$Mutter..Staatsangehörigkeit > 8259 & bevn_eco$Mutter..Staatsangehörigkeit < 8267), 'Eastern Europe','other')))))))))
-  round(prop.table(table(bevn_eco$mother_nationality_cat3, useNA="always"))*100,2)
-  
-  
+  bevn_eco$mother_nationality_cat3 <- as.factor(ifelse(bevn_eco$mother_nationality == 8100, 'Switz',
+                                            ifelse(bevn_eco$mother_nationality == 8207 | bevn_eco$mother_nationality == 8208 | bevn_eco$mother_nationality == 8209 | bevn_eco$mother_nationality == 8222 | bevn_eco$mother_nationality == 8229 | bevn_eco$mother_nationality == 8230 | bevn_eco$mother_nationality == 8238 | bevn_eco$mother_nationality == 8243 | bevn_eco$mother_nationality == 8244,  'Central Europe',
+                                            ifelse (bevn_eco$mother_nationality == 8201 | bevn_eco$mother_nationality == 8205 | bevn_eco$mother_nationality ==8220 | bevn_eco$mother_nationality == 8232 | bevn_eco$mother_nationality == 82880 | (bevn_eco$mother_nationality > 8247 & bevn_eco$mother_nationality< 8258) , 'SE Europe',
+                                            ifelse(bevn_eco$mother_nationality==8202 | bevn_eco$mother_nationality== 8213 | bevn_eco$mother_nationality==8231 |bevn_eco$mother_nationality== 8236, 'SW Europe', 
+                                            ifelse(bevn_eco$mother_nationality==8204 | bevn_eco$mother_nationality==8212 |bevn_eco$mother_nationality==8215|bevn_eco$mother_nationality==8216|bevn_eco$mother_nationality==8223|bevn_eco$mother_nationality==8225|bevn_eco$mother_nationality==8226|bevn_eco$mother_nationality==8227|bevn_eco$mother_nationality==8270|bevn_eco$mother_nationality==8271|bevn_eco$mother_nationality==8272|bevn_eco$mother_nationality==8275, 'Western Europe',
+                                            ifelse(bevn_eco$mother_nationality==8206|bevn_eco$mother_nationality==8210|bevn_eco$mother_nationality==8211|bevn_eco$mother_nationality==8217|bevn_eco$mother_nationality==8228|bevn_eco$mother_nationality==8234|bevn_eco$mother_nationality==8273|bevn_eco$mother_nationality==8274,'Northern Europe', 
+                                            ifelse(bevn_eco$mother_nationality==8214|bevn_eco$mother_nationality==8218|bevn_eco$mother_nationality==8224|bevn_eco$mother_nationality==8233|bevn_eco$mother_nationality==8239|bevn_eco$mother_nationality==8241|bevn_eco$mother_nationality==8242, 'Southern Europe',
+                                            ifelse(bevn_eco$mother_nationality==8235|bevn_eco$mother_nationality==8572|bevn_eco$mother_nationality==8573|bevn_eco$mother_nationality==8574|bevn_eco$mother_nationality==8576|bevn_eco$mother_nationality==8577|bevn_eco$mother_nationality==8578 | (bevn_eco$mother_nationality > 8259 & bevn_eco$mother_nationality < 8267), 'Eastern Europe','other')))))))))
+  table(bevn_eco$mother_nationality_cat3, useNA="always")
+  bevn_eco$mother_nationality_cat3 <- relevel (bevn_eco$mother_nationality_cat3, ref = "Switz")
   
   
 ## Mutter: Wohngemeinde / Wohnstaat = Place of residence Mother
@@ -67,35 +103,35 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
   
  
   
-## Vater: Staatsangehörigkeit = Nationality father
+## Vater: StaatsangehÃ¶rigkeit = Nationality father
     # categorizing nationality of the father in : inside or outside Switzerland
-  bevn_eco$father_nationality_cat1 <- cut(bevn_eco$Vater..Staatsangehörigkeit, breaks=c(8000, 8100, 8704), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
+  bevn_eco$father_nationality_cat1 <- cut(bevn_eco$father_nationality, breaks=c(8000, 8100, 8704), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
   
   
 ## Gestational age
-  bevn_eco$Kind..Gestationsalter.in.Tagen <- as.numeric(bevn_eco$Kind..Gestationsalter.in.Tagen)
-  bevn_eco$GA_weeks <- bevn_eco$Kind..Gestationsalter.in.Tagen / 7
+  bevn_eco$GA_days <- as.numeric(bevn_eco$GA_days)
+  bevn_eco$GA_weeks <- bevn_eco$GA_days / 7
   
 ## Kind: Gewicht in Gramm = weight at birth (g)
   #categorize in LBW, "normal" (arbitrary decision) and high BW
-  bevn_eco$BW_cat <- cut(bevn_eco$Kind..Gewicht.in.Gramm, breaks=c(0, 2500, 5000, 10000), include.lowest=TRUE, labels=c("LBW", "NBW", "HBW"))
+  bevn_eco$BW_cat <- cut(bevn_eco$BW, breaks=c(0, 2500, 5000, 10000), include.lowest=TRUE, labels=c("LBW", "NBW", "HBW"))
   table(bevn_eco$BW_cat, useNA="always")
 
   
 ## Kind: Gewicht in Gramm = weight at birth (g)
-  bevn_eco$BW_cat2 <- cut(bevn_eco$Kind..Gewicht.in.Gramm, breaks=c(0, 499, 8000, 10000), include.lowest=TRUE)
+  bevn_eco$BW_cat2 <- cut(bevn_eco$BW, breaks=c(0, 499, 8000, 10000), include.lowest=TRUE)
   table(bevn_eco$BW_cat2, useNA="always")
   
   
-## Kind..Grösse.in.Zentimeter = BL (cm)
-  bevn_eco$BL_cat <- cut(bevn_eco$Kind..Grösse.in.Zentimeter, breaks=c(0, 19, 64, 100), include.lowest=TRUE)
+## BL = BL (cm)
+  bevn_eco$BL_cat <- cut(bevn_eco$BL, breaks=c(0, 19, 64, 100), include.lowest=TRUE)
   table(bevn_eco$BL_cat, useNA="always")
   
   
 ## Art der Geburt = number of babies 
-  bevn_eco$Art.der.Geburt <- as.numeric(bevn_eco$Art.der.Geburt)
+  bevn_eco$nb_of_babies <- as.numeric(bevn_eco$nb_of_babies)
   ##creating categories: single VS multiple pregnancies
-  bevn_eco$singleton_or_multiple <- cut(bevn_eco$Art.der.Geburt, breaks=c(0,1,6), include.lowest = TRUE, labels=c("singleton", "multiple"))
+  bevn_eco$singleton_or_multiple <- cut(bevn_eco$nb_of_babies, breaks=c(0,1,6), include.lowest = TRUE, labels=c("singleton", "multiple"))
   table(bevn_eco$singleton_or_multiple)
   
   
@@ -103,12 +139,12 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
   
 # NEW VARIABLES
   ## Age difference between parents
-  bevn_eco$parent_age_diff <- (bevn_eco$Vater..Alter.in.erfüllten.Jahren)-(bevn_eco$Mutter..Alter.in.erfüllten.Jahren)
+  bevn_eco$parent_age_diff <- (bevn_eco$pat_age)-(bevn_eco$mat_age)
 
   ## Creating a variable combining month+year of birth
     #  I created two variables for date : one combining month+year only, and another combining day+month+year.
     #  I set up day to 1st of each month in order to have variable m-d-y, easier to work with.
-  bevn_eco$birthdate3 <- with(bevn_eco, sprintf("%d-%02d", Ereignisjahr, Ereignismonat))
+  bevn_eco$birthdate3 <- with(bevn_eco, sprintf("%d-%02d", birthyear, birthmonth))
   tail(bevn_eco$birthdate3)
   head(bevn_eco$birthdate3)
   bevn_eco$birthdate3 <- as.factor(bevn_eco$birthdate3)
@@ -116,7 +152,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
   
 
   bevn_eco$day <- 01
-  bevn_eco$birthdate2 <- as.Date(paste(bevn_eco$Ereignisjahr, bevn_eco$Ereignismonat, bevn_eco$day, sep='-'))
+  bevn_eco$birthdate2 <- as.Date(paste(bevn_eco$birthyear, bevn_eco$birthmonth, bevn_eco$day, sep='-'))
   summary(bevn_eco$birthdate2)
   bevn_eco$birthdate2_num <- as.numeric(bevn_eco$birthdate2)
   
@@ -143,7 +179,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
   
 # Parity category, 1, 2, 3, 4+
   bevn_eco <- bevn_eco %>%
-    dplyr::mutate(parity_cat = cut (Kind..biologischer.Rang, breaks=c(0,1,2,3,20)))  
+    dplyr::mutate(parity_cat = cut (parity, breaks=c(0,1,2,3,20)))  
   bevn_eco
   table(bevn_eco$parity_cat, useNA = "always")
   
@@ -162,25 +198,11 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
   
   table(bevn_eco$pat_age_cat, useNA = "always")
   
-# Renaming most variables
-    bevn_eco <- bevn_eco %>%
-      dplyr::rename(birthyear=Ereignisjahr) %>%
-      dplyr::rename(birthmonth=Ereignismonat) %>%
-      dplyr::rename(mat_age=Mutter..Alter.in.erfüllten.Jahren) %>%
-      dplyr::rename(pat_age=Vater..Alter.in.erfüllten.Jahren) %>%
-      dplyr::rename(sex=Kind..Geschlecht) %>%
-      dplyr::rename(GA_days=Kind..Gestationsalter.in.Tagen) %>%
-      dplyr::rename(country_of_birth=Geburtsstaat) %>%
-      dplyr::rename(nb_of_babies=Art.der.Geburt) %>%
-      dplyr::rename(BL=Kind..Grösse.in.Zentimeter) %>%
-      dplyr::rename(BW=Kind..Gewicht.in.Gramm) %>%
-      dplyr::rename(mother_nationality=Mutter..Staatsangehörigkeit) %>%
-      dplyr::rename(father_nationality=Vater..Staatsangehörigkeit) %>%
-      dplyr::rename(parity=Kind..biologischer.Rang) %>%
-      dplyr::rename(resident_status=Mutter..ständig.oder.nicht.ständiger.Wohnsitz)
+
 
     
 # Chr as factor variables
+  #sex of neonate
    # bevn_eco <- bevn_eco %>%
     #  mutate(sex = as.numeric(sex))
     bevn_eco <- bevn_eco %>%
@@ -190,7 +212,17 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$Geburtsstaat == 8100
                                  "F" = "2"),
              sex = as.factor(sex))
     
-
+    #language region
+    bevn_eco <- bevn_eco %>%
+      mutate(Language=as.character(Language),
+             Language=recode(Language, 
+                             "1"="German",
+                             "2"="French",
+                             "3"="Italian",
+                             "4"="Romansh"),
+                      Language=as.factor(Language))
+    bevn_eco$Language <- relevel (bevn_eco$Language, ref = "German")
+    
 #creating a function to calculate the mode of a variable
     getmode <- function(v) {
       uniqv <- na.omit(unique(v))
