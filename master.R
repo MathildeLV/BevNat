@@ -1,18 +1,28 @@
-.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.1.2/library"))
+.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.2.1/library"))
 
 #packages
 
 library(here)
-library(dplyr)
+library(mgcv)
+library(tidyverse)
 library(lubridate)
 library(rmarkdown)
 library(ggplot2)
-library(mgcv)
 library(repr)
 library(memisc)
+library(tableone)
+library(DT)
+library(data.table)
+
+library(conflicted)
+conflict_prefer("filter", "dplyr")
+conflict_prefer("rename", "dplyr")
+conflict_prefer("select", "dplyr")
+conflict_prefer("mutate", "dplyr")
+conflict_prefer("recode", "dplyr")
 
 #  data from 2007 only
-source("R/bevn_from_2007.R")
+# source("R/bevn_from_2007.R")
 
 bevn <- read.csv2(here("data", "bevn2007.csv"), sep = ",")
 #ecological variables data
