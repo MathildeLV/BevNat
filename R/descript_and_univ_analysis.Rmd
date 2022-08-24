@@ -7,9 +7,11 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.1.2/library"))
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# Characteristics of the population
+(variable by variable)
 
 ## Year and month of birth
 ```{r}
@@ -30,11 +32,11 @@ round(prop.table(table(bevn_eco_in7$birthyear))*100,2)
   round(prop.table(table(bevn_eco$country_of_birth_cat1, useNA="always"))*100,2)
 
 #State of birth in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
-table(bevn_eco$country_of_birth_cat2, useNA = "always")
-round(prop.table(table(bevn_eco$country_of_birth_cat2, useNA="always"))*100,2)
+  table(bevn_eco$country_of_birth_cat2, useNA = "always")
+  round(prop.table(table(bevn_eco$country_of_birth_cat2, useNA="always"))*100,2)
 
 #State of birth in : Switzerland, different parts of Europe, other
-round(prop.table(table(bevn_eco$country_of_birth_cat3, useNA="always"))*100,2)
+  round(prop.table(table(bevn_eco$country_of_birth_cat3, useNA="always"))*100,2)
 ```
 
 There are **124,074** births that occurred outside of Switzerland.
@@ -43,20 +45,18 @@ There are **124,074** births that occurred outside of Switzerland.
 
 ```{r}
 summary(bevn_eco$mother_nationality)
-table(bevn_eco$mother_nationality, useNA="always")
 
 # Nationality of the mother in : Switzerland or Outside of Switzerland
   round(prop.table(table(bevn_eco$mother_nationality_cat1, useNA="always"))*100,2)
-    round(prop.table(table(bevn_eco_in7$mother_nationality_cat1, useNA="always"))*100,2)
+  round(prop.table(table(bevn_eco_in7$mother_nationality_cat1, useNA="always"))*100,2)
 
-# Nationality of the mother in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
+# Nationality of the mother in : Switzerland, Europe, Africa, Northern America, Southern America, Asia, Oceania, other
   round(prop.table(table(bevn_eco$mother_nationality_cat2, useNA="always"))*100,2)
   round(prop.table(table(bevn_eco_in7$mother_nationality_cat2, useNA="always"))*100,2)
 
 #Nationality of the mother in : Switzerland, different parts of Europe, other
   round(prop.table(table(bevn_eco$mother_nationality_cat3, useNA="always"))*100,2)
-    round(prop.table(table(bevn_eco_in7$mother_nationality_cat3, useNA="always"))*100,2)
-
+  round(prop.table(table(bevn_eco_in7$mother_nationality_cat3, useNA="always"))*100,2)
 ```
 
 ## Place of residence Mother
@@ -107,6 +107,15 @@ See separate codebook. Expected: 8100-8703
 table(bevn_eco$stillbirth, useNA = "always")
 round(prop.table(table(bevn_eco$stillbirth, useNA="always"))*100,3)
 round(prop.table(table(bevn_eco_in6$stillbirth, useNA="always"))*100,3)
+```
+
+## Sex
+```{r}
+table(bevn_eco$sex, useNA = "always")
+round(prop.table(table(bevn_eco$sex, useNA="always"))*100,3)
+table(bevn_eco_in7$sex, useNA = "always")
+round(prop.table(table(bevn_eco_in7$sex, useNA="always"))*100,3)
+
 ```
 
 ## Gestational age
@@ -191,12 +200,6 @@ summary(bevn_eco_in7$parent_age_diff)
   round(prop.table(table(bevn_eco$Language,  useNA="always"))*100,2)
   table(bevn_eco_in7$Language,  useNA="always")
   round(prop.table(table(bevn_eco_in7$Language,  useNA="always"))*100,2)
- 
- # BW category and language region
-  table(bevn_eco$BW_cat, bevn_eco$Language)
-  round(prop.table(table(bevn_eco$BW_cat,bevn_eco$Language, useNA="always"), margin=2)*100,2)
-  table(bevn_eco_in7$BW_cat, bevn_eco_in7$Language)
-  round(prop.table(table(bevn_eco_in7$BW_cat,bevn_eco_in7$Language, useNA="always"), margin=2)*100,2)
 ```
 
 ## Urban variables
@@ -222,6 +225,7 @@ round(prop.table(table(bevn_eco_in7$Grossregion,  useNA="always"))*100,2)
 ```{r}
 summary(bevn_eco$mean_Alt_mean2)
 summary(bevn_eco_in7$mean_Alt_mean2)
+summary(bevn_eco_in6$mean_Alt_mean2)
 ```
 
 ## SSEP
@@ -229,10 +233,57 @@ summary(bevn_eco_in7$mean_Alt_mean2)
 ```{r}
 summary(bevn_eco$mean_ssep2)
 summary(bevn_eco_in7$mean_ssep2)
+summary(bevn_eco_in6$mean_ssep2)
 ```
 
 
-# Simple tables
+
+# Characteristics of the population (whole table)
+
+```{r}
+tab1 <- bevn_eco_in7 %>%
+  group_by(birthyear) %>%
+summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),
+            sd_birthweight = round(sd(BW, na.rm = T), digits = 2),
+            count_females = sum(sex == "2"),
+            n = n(),
+            percent_females = count_females/n,
+        count_males = sum(sex == "1"),
+            percent_males = count_males/n)%>%
+  
+  ungroup()
+  tab1
+  
+formatted <- tab1 %>%
+  mutate(birthweight = stringr::str_glue("{mean_birthweight} ± {scales::percent(sd_birthweight)}"),
+         females = stringr::str_glue("{scales::percent(percent_females, accuracy = 1)}")) %>%
+  tidyr::complete(birthyear) %>%
+  select(birthyear, birthweight, females)
+
+knitr::kable(formatted)
+  
+ #  formatted <- tab1 %>%
+ # mutate(birthweight = stringr::str_glue("{mean_birthweight} ± {scales::percent(sd_birthweight)}"),
+#         sex = stringr::str_glue("{scales::percent(percent_females, accuracy = 1)} ({count_females} / #{n})")) %>%
+ # tidyr::complete(birthyear) %>%
+  #select(birthyear, birthweight, sex)
+#knitr::kable(formatted)
+
+
+setDT(bevn_eco_in7)
+
+bevn_eco_in7[,list(
+  meanBirthweight = mean(BW),
+  BirthweightSd = sd(BW),
+  females = 100*sum(sex == "2")/.N,
+  males = 100*sum(sex=="1")/.N),
+
+  by = list(birthyear)]
+```
+
+
+
+# Simple tables: variables through the year
 
 ## Gestational age through the years
 ```{r}
@@ -261,6 +312,19 @@ ungroup(ga_mode)
 boxplot(GA_weeks ~birthyear, data=bevn_eco_in7)
   #subset with GA over 35 weeks
   boxplot(GA_weeks ~birthyear, data=bevn_eco_in7, subset = GA_weeks>35)
+```
+
+## Mother nationality through the years
+
+```{r}
+plot(bevn_eco_in7$birthyear, bevn_eco_in7$mother_nationality_cat2)
+
+tabb <- round(prop.table(table(bevn_eco_in7$mother_nationality_cat2, bevn_eco_in7$birthyear), margin=2)*100,2)
+tabb
+
+par(mar=c(1,3,5,15))
+barplot (tabb, las=2, cex.names=.9, legend.text=TRUE, main="mother nationatliy through the years", col= c("cyan", "forestgreen", "brown", "mediumspringgreen", "darkgoldenrod1", "cadetblue4", "deeppink", "blueviolet", "gray66"), args.legend=list(x="topright", inset=c(-0.7, 0)))
+
 ```
 
 
@@ -396,7 +460,7 @@ I set up day to 1st of each month in order to have variable m-d-y, easier to wor
 
 ## BW or BL depending on GA
 
-Too different sets with either all birthweights/GA or birtsweights "normal" ]100;8000[ and GA >20 weeks
+Too different sets with either all birthweights/GA or birtsweights "normal" ]100;8000[ and GA >20 weeks 
 and with either all birthlengths or "normal" birthlengths ]10,60[ and GA >20 weeks.
 
 ```{r}
@@ -426,7 +490,6 @@ plot(bevn_eco_in7$BW,bevn_eco_in7$BL)
 ### Birthweight change through the years: Simple model
 
 ```{r BW through time}
-##boxplot(bevn_eco$birthyear, bevn_eco$BW) ##doesnt work
 m_BW_years <- lm(BW~birthyear, data=bevn_eco_in7)
 summary(m_BW_years)
 
@@ -487,6 +550,16 @@ m_BW_GA <- lm(BW ~GA_weeks, data=bevn_eco_in7)
 summary(m_BW_GA)
 ```
 BW increases with GA : each GA longer by a week is associated with an increase of 187g. 
+
+### BW category and language region
+```{r}
+  table(bevn_eco$BW_cat, bevn_eco$Language)
+  round(prop.table(table(bevn_eco$BW_cat,bevn_eco$Language, useNA="always"), margin=2)*100,2)
+  table(bevn_eco_in7$BW_cat, bevn_eco_in7$Language)
+  round(prop.table(table(bevn_eco_in7$BW_cat,bevn_eco_in7$Language, useNA="always"), margin=2)*100,2)
+  m_Bw_lang <- lm(BW~Language, data=bevn_eco_in7)
+  summary(m_Bw_lang)
+```
 
 ## STILLBIRTH
 
@@ -552,6 +625,31 @@ exp(confint(m_SB_nat_cat2))
 #Urbanicity
 m_SB_Urban <- glm(stillbirth ~Urban3, family="binomial", data=bevn_eco_in6)
 summary(m_SB_Urban) 
+
+#Language region
+  table(bevn_eco$stillbirth, bevn_eco$Language)
+  round(prop.table(table(bevn_eco$stillbirth,bevn_eco$Language, useNA="always"), margin=2)*100,2)
+  table(bevn_eco_in6$stillbirth, bevn_eco_in6$Language)
+  round(prop.table(table(bevn_eco_in6$stillbirth,bevn_eco_in6$Language, useNA="always"), margin=2)*100,2)
+
+  m_SB_lang <- glm(stillbirth~Language, family="binomial", data=bevn_eco_in6)
+  summary(m_SB_lang)
+  exp(coef(summary(m_SB_lang)))[,"Estimate"]
+  exp(confint(m_SB_lang)) 
+
+#SSEP
+   ssep2median <- bevn_eco_in6 %>%
+   group_by(stillbirth) %>%
+     filter( !is.na(mean_ssep2)) %>%
+   summarise(medssep2=format(median(mean_ssep2),digits=5))
+  ungroup(ssep2median)
+
+  boxplot(mean_ssep2 ~stillbirth, data=bevn_eco_in6)
+ 
+  m_SB_ssep <- glm(stillbirth~mean_ssep2, family="binomial", data=bevn_eco_in6)
+  summary(m_SB_ssep)
+  exp(coef(summary(m_SB_ssep)))[,"Estimate"]
+  exp(confint(m_SB_ssep))
 ```
 
 Increasing maternal age is significantly associated with an increase of SB risk (pvalue: 0.00012), but this increase is very small. 
