@@ -114,8 +114,8 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   
 ## Kind: Gewicht in Gramm = weight at birth (g)
   #categorize in LBW, "normal" (arbitrary decision) and high BW
-  bevn_eco$BW_cat <- cut(bevn_eco$BW, breaks=c(0, 2500, 5000, 10000), include.lowest=TRUE, labels=c("LBW", "NBW", "HBW"))
-  table(bevn_eco$BW_cat, useNA="always")
+  bevn_eco$LBW <- ifelse(bevn_eco$BW<2500, 1, 0)
+  bevn_eco$LBW <- as.factor(bevn_eco$LBW)
 
   
 ## Kind: Gewicht in Gramm = weight at birth (g)
@@ -142,22 +142,22 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   bevn_eco$parent_age_diff <- (bevn_eco$pat_age)-(bevn_eco$mat_age)
 
   ## Creating a variable combining month+year of birth
-    #  I created two variables for date : one combining month+year only, and another combining day+month+year.
+    #  I created two variables for date : one combining month+year only (birth_Y_X_M), and another combining day+month+year (birth_Y_M_1stday).
     #  I set up day to 1st of each month in order to have variable m-d-y, easier to work with.
-  bevn_eco$birthdate3 <- with(bevn_eco, sprintf("%d-%02d", birthyear, birthmonth))
-  tail(bevn_eco$birthdate3)
-  head(bevn_eco$birthdate3)
-  bevn_eco$birthdate3 <- as.factor(bevn_eco$birthdate3)
-  bevn_eco$birthdate3_num <- as.numeric(bevn_eco$birthdate3)
+  bevn_eco$birth_Y_X_M <- with(bevn_eco, sprintf("%d-%02d", birthyear, birthmonth))
+  tail(bevn_eco$birth_Y_X_M)
+  head(bevn_eco$birth_Y_X_M)
+  bevn_eco$birth_Y_X_M <- as.factor(bevn_eco$birth_Y_X_M)
+  bevn_eco$birth_Y_X_M <- as.numeric(bevn_eco$birth_Y_X_M)
   
 
   bevn_eco$day <- 01
-  bevn_eco$birthdate2 <- as.Date(paste(bevn_eco$birthyear, bevn_eco$birthmonth, bevn_eco$day, sep='-'))
-  summary(bevn_eco$birthdate2)
-  bevn_eco$birthdate2_num <- as.numeric(bevn_eco$birthdate2)
+  bevn_eco$birth_Y_M_1stday <- as.Date(paste(bevn_eco$birthyear, bevn_eco$birthmonth, bevn_eco$day, sep='-'))
+  summary(bevn_eco$birth_Y_M_1stday)
+  bevn_eco$birth_Y_M_1stday_num <- as.numeric(bevn_eco$birth_Y_M_1stday)
   
   #extract month
-  bevn_eco$month <-  format(bevn_eco$birthdate2, "%m")   
+  bevn_eco$month <-  format(bevn_eco$birth_Y_M_1stday, "%m")   
   bevn_eco$month <- as.numeric(bevn_eco$month)
   table(bevn_eco$month)  
   
@@ -169,6 +169,12 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
    bevn_eco <- bevn_eco %>%
   mutate(GA_weeks_cat2=cut(GA_weeks, breaks=c(10,21.9,46), include.lowest=TRUE))
    table(bevn_eco$GA_weeks_cat2)
+   
+   # Third GA category, GA< or >= 37weeks, PTB
+   bevn_eco$PTB <- ifelse(bevn_eco$GA_weeks<37, 1, 0)
+   bevn_eco$PTB <- as.factor(bevn_eco$PTB)
+   
+   
   #Stillbirth to 0/1 binary variable (1 is stillbirth)
   bevn_eco <- bevn_eco %>%
     dplyr::mutate(lebend.geboren.oder.nicht = as.character(lebend.geboren.oder.nicht),
