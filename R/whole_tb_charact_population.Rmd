@@ -1,0 +1,499 @@
+---
+title: "Table_characteristics_population"
+author: "Mathilde Le Vu"
+date: '2022-08-26'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Maternal characteristics
+
+## Initial population : bevn_eco
+
+```{r}
+taba <- bevn_eco %>%
+  group_by(birthyear) %>%
+summarise(n = n(),
+            
+          #mat age category
+    count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,
+    count_mat_age_cat_20_25= sum(mat_age_cat=="(20,25]"), perc_mat_age_cat_20_25= 100*count_mat_age_cat_20_25/n,
+    count_mat_age_cat_25_30= sum(mat_age_cat=="(25,30]"), perc_mat_age_cat_25_30= 100*count_mat_age_cat_25_30/n,
+    count_mat_age_cat_30_35= sum(mat_age_cat=="(30,35]"), perc_mat_age_cat_30_35= 100*count_mat_age_cat_30_35/n,
+    count_mat_age_cat_35_40= sum(mat_age_cat=="(35,40]"), perc_mat_age_cat_35_40= 100*count_mat_age_cat_35_40/n,
+    count_mat_age_cat_40_70= sum(mat_age_cat=="(40,70]"),perc_mat_age_cat_40_70= 100*count_mat_age_cat_40_70/n,
+
+    count_parity_1= sum(parity_cat=="(0,1]", na.rm = T),  perc_parity_1= 100*count_parity_1/n,     #parity
+    count_parity_2= sum(parity_cat=="(1,2]", na.rm = T), perc_parity_2= 100*count_parity_2/n,
+    count_parity_3= sum(parity_cat=="(2,3]", na.rm = T), perc_parity_3= 100*count_parity_3/n,
+    count_parity_4= sum(parity_cat=="(3,20]", na.rm = T),  perc_parity_4= 100*count_parity_4/n,
+    count_parity_NA = sum(is.na(parity_cat)), perc_parity_NA=100*count_parity_NA/n,
+          
+        #moth nat cat 1
+    count_mat_nat_cat_1_1= sum(mother_nationality_cat1=="Switzerland", na.rm = T),     perc_mat_nat_cat_1_1=100*count_mat_nat_cat_1_1/n,  
+    count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
+
+    #moth nat cat 2
+    count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switz"), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
+    count_mat_nat_cat_2_Af= sum(mother_nationality_cat2=="Africa"), perc_mat_nat_cat_2_Af=100*count_mat_nat_cat_2_Af/n,
+    count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia"), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
+    count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe"), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
+    count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America"), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
+    count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania"), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
+    count_mat_nat_cat_2_ot= sum(mother_nationality_cat2=="other"), perc_mat_nat_cat_2_ot=100*count_mat_nat_cat_2_ot/n,
+    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America "), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+
+    count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
+    count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
+
+    count_lang_G=sum(Language=="German", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
+    count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
+    count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
+    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n
+          ) %>%     
+  
+  ungroup()
+  taba
+  
+  
+formatteda <- taba %>%
+  mutate(n=n,
+         "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age
+         "(20-25]" = round({perc_mat_age_cat_20_25}, digits=2),
+         "(25-30]" = round({perc_mat_age_cat_25_30}, digits=2),
+         "(30-35]" = round({perc_mat_age_cat_30_35}, digits=2),
+        "(35-40]" = round({perc_mat_age_cat_35_40}, digits=2),
+        "> 40" = round({perc_mat_age_cat_40_70}, digits=2),
+        
+        "1" = round({perc_parity_1}, digits=2), #parity
+        "2" = round({perc_parity_2}, digits=2),
+        "3" = round({perc_parity_3}, digits=2),
+        ">3" = round({perc_parity_4}, digits=2),
+        "missing" = round({perc_parity_NA}, digits=2),
+
+        "Switzerland_" = round({perc_mat_nat_cat_1_1}, digits=2),  #mat nationality cat 1
+        "Other_" = round({perc_mat_nat_cat_1_2}, digits=2),
+        
+        "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=2),  #mat nationality cat 2
+        "Africa" = round({perc_mat_nat_cat_2_Af}, digits=2),
+        "Asia" = round({perc_mat_nat_cat_2_As}, digits=2),
+        "Europe" = round({perc_mat_nat_cat_2_E}, digits=2),
+        "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=2),
+        "Other" = round({perc_mat_nat_cat_2_ot}, digits=2),
+        "Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
+        "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
+
+        "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
+        "Urban" = round({perc_Urban3_1}, digits=2),
+        
+        "German"= round({perc_lang_G}, digits=2), #Language region
+        "French"= round({perc_lang_F}, digits=2),
+        "Italian"= round({perc_lang_I}, digits=2),
+        "Romansh"= round({perc_lang_R}, digits=2),
+         ) %>%
+  tidyr::complete(birthyear) %>%
+  select(birthyear, n, "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh")
+formatteda
+
+mat_in_gt <- formatteda%>%
+  gt()%>%
+  tab_header(title="maternal characteristics") %>%
+  tab_spanner(label = "Maternal age (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
+  tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3", "missing")) %>%
+  tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other_") ) %>%
+  tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other") ) %>%
+  tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
+  tab_spanner(label= "Language region", columns =c("German","French", "Italian", "Romansh"))
+
+mat_in_gt
+
+mat_in_gt %>%
+  gtsave(here("output/tables", "maternal_characteristics_in.html"))
+```
+
+
+## Birthweight as an outcome: in7
+
+```{r}
+tabb <- bevn_eco_in7 %>%
+  group_by(birthyear) %>%
+summarise(n = n(),
+            
+          #mat age category
+    count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,
+    count_mat_age_cat_20_25= sum(mat_age_cat=="(20,25]"), perc_mat_age_cat_20_25= 100*count_mat_age_cat_20_25/n,
+    count_mat_age_cat_25_30= sum(mat_age_cat=="(25,30]"), perc_mat_age_cat_25_30= 100*count_mat_age_cat_25_30/n,
+    count_mat_age_cat_30_35= sum(mat_age_cat=="(30,35]"), perc_mat_age_cat_30_35= 100*count_mat_age_cat_30_35/n,
+    count_mat_age_cat_35_40= sum(mat_age_cat=="(35,40]"), perc_mat_age_cat_35_40= 100*count_mat_age_cat_35_40/n,
+    count_mat_age_cat_40_70= sum(mat_age_cat=="(40,70]"),perc_mat_age_cat_40_70= 100*count_mat_age_cat_40_70/n,
+
+    count_parity_1= sum(parity_cat=="(0,1]", na.rm = T),  perc_parity_1= 100*count_parity_1/n,     #parity
+    count_parity_2= sum(parity_cat=="(1,2]", na.rm = T), perc_parity_2= 100*count_parity_2/n,
+    count_parity_3= sum(parity_cat=="(2,3]", na.rm = T), perc_parity_3= 100*count_parity_3/n,
+    count_parity_4= sum(parity_cat=="(3,20]", na.rm = T),  perc_parity_4= 100*count_parity_4/n,
+          
+        #moth nat cat 1
+    count_mat_nat_cat_1_1= sum(mother_nationality_cat1=="Switzerland", na.rm = T),     perc_mat_nat_cat_1_1=100*count_mat_nat_cat_1_1/n,  
+    count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
+
+    #moth nat cat 2
+    count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switz"), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
+    count_mat_nat_cat_2_Af= sum(mother_nationality_cat2=="Africa"), perc_mat_nat_cat_2_Af=100*count_mat_nat_cat_2_Af/n,
+    count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia"), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
+    count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe"), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
+    count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America"), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
+    count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania"), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
+    count_mat_nat_cat_2_ot= sum(mother_nationality_cat2=="other"), perc_mat_nat_cat_2_ot=100*count_mat_nat_cat_2_ot/n,
+    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America "), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+
+    count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
+    count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
+
+    count_lang_G=sum(Language=="German", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
+    count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
+    count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
+    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n
+          ) %>%     
+  
+  ungroup()
+  tabb
+  
+  
+formattedb <- tabb %>%
+  mutate(n=n,
+         "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age
+         "(20-25]" = round({perc_mat_age_cat_20_25}, digits=2),
+         "(25-30]" = round({perc_mat_age_cat_25_30}, digits=2),
+         "(30-35]" = round({perc_mat_age_cat_30_35}, digits=2),
+        "(35-40]" = round({perc_mat_age_cat_35_40}, digits=2),
+        "> 40" = round({perc_mat_age_cat_40_70}, digits=2),
+        
+        "1" = round({perc_parity_1}, digits=2), #parity
+        "2" = round({perc_parity_2}, digits=2),
+        "3" = round({perc_parity_3}, digits=2),
+        ">3" = round({perc_parity_4}, digits=2),
+        
+        "Switzerland_" = round({perc_mat_nat_cat_1_1}, digits=2),  #mat nationality cat 1
+        "Other_" = round({perc_mat_nat_cat_1_2}, digits=2),
+        
+        "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=2),  #mat nationality cat 2
+        "Africa" = round({perc_mat_nat_cat_2_Af}, digits=2),
+        "Asia" = round({perc_mat_nat_cat_2_As}, digits=2),
+        "Europe" = round({perc_mat_nat_cat_2_E}, digits=2),
+        "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=2),
+        "Other" = round({perc_mat_nat_cat_2_ot}, digits=2),
+        "Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
+        "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
+
+        "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
+        "Urban" = round({perc_Urban3_1}, digits=2),
+        
+        "German"= round({perc_lang_G}, digits=2), #Language region
+        "French"= round({perc_lang_F}, digits=2),
+        "Italian"= round({perc_lang_I}, digits=2),
+        "Romansh"= round({perc_lang_R}, digits=2),
+         ) %>%
+  tidyr::complete(birthyear) %>%
+  select(birthyear, n, "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh")
+formattedb
+
+mat_in7_gt <- formattedb%>%
+  gt()%>%
+  tab_header(title="maternal characteristics") %>%
+  tab_spanner(label = "Maternal age (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
+  tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3")) %>%
+  tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other_") ) %>%
+  tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other") ) %>%
+  tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
+  tab_spanner(label= "Language region", columns =c("German","French", "Italian", "Romansh"))
+
+mat_in7_gt
+
+mat_in7_gt %>%
+  gtsave(here("output/tables", "maternal_characteristics_in7.html")) 
+```
+
+
+## Stillbirth as an outcome: in6
+
+```{r}
+tabc <- bevn_eco_in6 %>%
+  group_by(birthyear) %>%
+summarise(n = n(),
+            
+          #mat age category
+    count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,
+    count_mat_age_cat_20_25= sum(mat_age_cat=="(20,25]"), perc_mat_age_cat_20_25= 100*count_mat_age_cat_20_25/n,
+    count_mat_age_cat_25_30= sum(mat_age_cat=="(25,30]"), perc_mat_age_cat_25_30= 100*count_mat_age_cat_25_30/n,
+    count_mat_age_cat_30_35= sum(mat_age_cat=="(30,35]"), perc_mat_age_cat_30_35= 100*count_mat_age_cat_30_35/n,
+    count_mat_age_cat_35_40= sum(mat_age_cat=="(35,40]"), perc_mat_age_cat_35_40= 100*count_mat_age_cat_35_40/n,
+    count_mat_age_cat_40_70= sum(mat_age_cat=="(40,70]"),perc_mat_age_cat_40_70= 100*count_mat_age_cat_40_70/n,
+
+    count_parity_1= sum(parity_cat=="(0,1]", na.rm = T),  perc_parity_1= 100*count_parity_1/n,     #parity
+    count_parity_2= sum(parity_cat=="(1,2]", na.rm = T), perc_parity_2= 100*count_parity_2/n,
+    count_parity_3= sum(parity_cat=="(2,3]", na.rm = T), perc_parity_3= 100*count_parity_3/n,
+    count_parity_4= sum(parity_cat=="(3,20]", na.rm = T),  perc_parity_4= 100*count_parity_4/n,
+          
+        #moth nat cat 1
+    count_mat_nat_cat_1_1= sum(mother_nationality_cat1=="Switzerland", na.rm = T),     perc_mat_nat_cat_1_1=100*count_mat_nat_cat_1_1/n,  
+    count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
+
+    #moth nat cat 2
+    count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switz"), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
+    count_mat_nat_cat_2_Af= sum(mother_nationality_cat2=="Africa"), perc_mat_nat_cat_2_Af=100*count_mat_nat_cat_2_Af/n,
+    count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia"), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
+    count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe"), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
+    count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America"), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
+    count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania"), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
+    count_mat_nat_cat_2_ot= sum(mother_nationality_cat2=="other"), perc_mat_nat_cat_2_ot=100*count_mat_nat_cat_2_ot/n,
+    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America "), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+
+    count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
+    count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
+
+    count_lang_G=sum(Language=="German", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
+    count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
+    count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
+    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n
+          ) %>%     
+  
+  ungroup()
+  tabc
+  
+  
+formattedc <- tabc %>%
+  mutate(n=n,
+         "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age
+         "(20-25]" = round({perc_mat_age_cat_20_25}, digits=2),
+         "(25-30]" = round({perc_mat_age_cat_25_30}, digits=2),
+         "(30-35]" = round({perc_mat_age_cat_30_35}, digits=2),
+        "(35-40]" = round({perc_mat_age_cat_35_40}, digits=2),
+        "> 40" = round({perc_mat_age_cat_40_70}, digits=2),
+        
+        "1" = round({perc_parity_1}, digits=2), #parity
+        "2" = round({perc_parity_2}, digits=2),
+        "3" = round({perc_parity_3}, digits=2),
+        ">3" = round({perc_parity_4}, digits=2),
+        
+        "Switzerland_" = round({perc_mat_nat_cat_1_1}, digits=2),  #mat nationality cat 1
+        "Other_" = round({perc_mat_nat_cat_1_2}, digits=2),
+        
+        "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=2),  #mat nationality cat 2
+        "Africa" = round({perc_mat_nat_cat_2_Af}, digits=2),
+        "Asia" = round({perc_mat_nat_cat_2_As}, digits=2),
+        "Europe" = round({perc_mat_nat_cat_2_E}, digits=2),
+        "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=2),
+        "Other" = round({perc_mat_nat_cat_2_ot}, digits=2),
+        "Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
+        "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
+
+        "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
+        "Urban" = round({perc_Urban3_1}, digits=2),
+        
+        "German"= round({perc_lang_G}, digits=2), #Language region
+        "French"= round({perc_lang_F}, digits=2),
+        "Italian"= round({perc_lang_I}, digits=2),
+        "Romansh"= round({perc_lang_R}, digits=2),
+         ) %>%
+  tidyr::complete(birthyear) %>%
+  select(birthyear, n, "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh")
+formattedc
+
+mat_in6_gt <- formattedc%>%
+  gt()%>%
+  tab_header(title="maternal characteristics") %>%
+  tab_spanner(label = "Maternal age (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
+  tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3")) %>%
+  tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other_") ) %>%
+  tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other") ) %>%
+  tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
+  tab_spanner(label= "Language region", columns =c("German","French", "Italian", "Romansh"))
+
+mat_in6_gt
+
+mat_in6_gt %>%
+  gtsave(here("output/tables", "maternal_characteristics_in6.html"))
+```
+
+
+
+
+# Neonate characteristics
+
+## Initial population : bevn_eco
+
+```{r}
+tab0 <- bevn_eco %>%
+  group_by(birthyear) %>%
+summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthweight
+            sd_birthweight = round(sd(BW, na.rm = T), digits = 2),
+
+           mean_GA_weeks= round(mean(GA_weeks, na.rm=T), digits=2),   #gestational age weeks
+            sd_GA_weeks= round(sd(GA_weeks, na.rm=T), digits=2),
+            n = n(),
+            count_females = sum(sex == "2"),   percent_females = 100*count_females/n,       #sex
+            count_males = sum(sex == "1"),     percent_males = 100*count_males/n,
+          
+           count_SB_0 = sum(stillbirth=="0", na.rm=T), percent_SB_0=100*count_SB_0/n,         #stillbirth
+           count_SB_1 = sum(stillbirth=="1", na.rm=T), percent_SB_1=100*count_SB_1/n,
+          
+           count_PTB_0 = sum(PTB=="0", na.rm=T), percent_PTB_0=100*count_PTB_0/n,    #preterm birth     
+           count_PTB_1 = sum(PTB=="1", na.rm=T), percent_PTB_1=100*count_PTB_1/n,
+          
+           count_LBW_0 = sum(LBW=="0", na.rm=T), percent_LBW_0=100*count_LBW_0/n,    #low birth weight    
+           count_LBW_1 = sum(LBW=="1", na.rm=T), percent_LBW_1=100*count_LBW_1/n,          
+          )%>%
+  ungroup()
+  tab0
+
+  
+formatted0 <- tab0 %>%
+  mutate("Birthweight (g)"= stringr::str_glue("{mean_birthweight} ± {sd_birthweight}"),    #birthweight
+         n=n,
+         "Gestational Age (weeks)"= stringr::str_glue("{mean_GA_weeks} ± {sd_GA_weeks}"),      #GA_weeks
+
+        females =round({percent_females}, digits=2),
+        males = round({percent_males}, digits=2),
+        
+        no = round({percent_SB_0}, digits=2),
+        yes = round({percent_SB_1}, digits=2),
+        
+        no_ =round({percent_PTB_0}, digits=2),
+        yes_ =round({percent_PTB_1}, digits=2),
+        
+        no. =round({percent_LBW_0}, digits=2),
+        yes. =round({percent_LBW_1}, digits=2),
+         ) %>%
+  tidyr::complete(birthyear) %>%
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", females, males, no, yes, no_, yes_, no., yes.)
+formatted0
+
+neonat_in_gt <- formatted0%>%
+  gt()%>%
+  tab_header(title="neonate characteristics") %>%
+  tab_spanner(label = "Sex", columns = c(females, males))  %>%
+  tab_spanner (label = "Stillbirth", columns = c(no, yes)) %>%
+  tab_spanner(label = "Preterm birth", columns =c(no_, yes_) ) %>%
+  tab_spanner(label= "Low birth weight", columns =c(no., yes.))
+neonat_in_gt
+
+neonat_in_gt %>%
+  gtsave(here("output/tables", "neonatal_characteristics_in.html"))
+```
+
+## Birthweight as an outcome: Bevn_eco_in7
+```{r}
+tab1 <- bevn_eco_in7 %>%
+  group_by(birthyear) %>%
+summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthweight
+            sd_birthweight = round(sd(BW, na.rm = T), digits = 2),
+
+           mean_GA_weeks= round(mean(GA_weeks, na.rm=T), digits=2),   #gestational age weeks
+            sd_GA_weeks= round(sd(GA_weeks, na.rm=T), digits=2),
+            n = n(),
+            count_females = sum(sex == "2"),   percent_females = 100*count_females/n,       #sex
+            count_males = sum(sex == "1"),     percent_males = 100*count_males/n,
+          
+           count_PTB_0 = sum(PTB=="0"), percent_PTB_0=100*count_PTB_0/n,    #preterm birth     
+           count_PTB_1 = sum(PTB=="1"), percent_PTB_1=100*count_PTB_1/n,
+          
+           count_LBW_0 = sum(LBW=="0"), percent_LBW_0=100*count_LBW_0/n,    #low birth weight    
+           count_LBW_1 = sum(LBW=="1"), percent_LBW_1=100*count_LBW_1/n,          
+          )%>%
+  ungroup()
+  tab1
+
+  
+formatted1 <- tab1 %>%
+  mutate("Birthweight (g)"= stringr::str_glue("{mean_birthweight} ± {sd_birthweight}"),    #birthweight
+         n=n,
+         "Gestational Age (weeks)"= stringr::str_glue("{mean_GA_weeks} ± {sd_GA_weeks}"),      #GA_weeks
+
+        females =round({percent_females}, digits=2),
+        males = round({percent_males}, digits=2),
+        
+        no_ =round({percent_PTB_0}, digits=2),
+        yes_ =round({percent_PTB_1}, digits=2),
+        
+        no. =round({percent_LBW_0}, digits=2),
+        yes. =round({percent_LBW_1}, digits=2),
+        
+         ) %>%
+  tidyr::complete(birthyear) %>%
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", females, males, no_, yes_, no., yes.)
+formatted1
+
+neonat_in7_gt <- formatted1%>%
+  gt()%>%
+  tab_header(title="neonate characteristics") %>%
+  tab_spanner(label = "Sex", columns = c(females, males))  %>%
+  tab_spanner(label = "Preterm birth", columns =c(no_, yes_) ) %>%
+  tab_spanner(label= "Low birth weight", columns =c(no., yes.))
+neonat_in7_gt
+
+neonat_in7_gt %>%
+  gtsave(here("output/tables", "neonatal_characteristics_in7.html"))
+```
+
+## Stillbirth as an outcome: Bevn_eco_in6
+```{r}
+tab2 <- bevn_eco_in6 %>%
+  group_by(birthyear) %>%
+summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthweight
+            sd_birthweight = round(sd(BW, na.rm = T), digits = 2),
+
+           mean_GA_weeks= round(mean(GA_weeks, na.rm=T), digits=2),   #gestational age weeks
+            sd_GA_weeks= round(sd(GA_weeks, na.rm=T), digits=2),
+            n = n(),
+            count_females = sum(sex == "2"),   percent_females = 100*count_females/n,       #sex
+            count_males = sum(sex == "1"),     percent_males = 100*count_males/n,
+          
+           count_SB_0 = sum(stillbirth=="0"), percent_SB_0=100*count_SB_0/n,         #stillbirth
+           count_SB_1 = sum(stillbirth=="1"), percent_SB_1=100*count_SB_1/n,
+          
+           count_PTB_0 = sum(PTB=="0"), percent_PTB_0=100*count_PTB_0/n,    #preterm birth     
+           count_PTB_1 = sum(PTB=="1"), percent_PTB_1=100*count_PTB_1/n,
+          
+           count_LBW_0 = sum(LBW=="0"), percent_LBW_0=100*count_LBW_0/n,    #low birth weight    
+           count_LBW_1 = sum(LBW=="1"), percent_LBW_1=100*count_LBW_1/n,          
+          )%>%
+  ungroup()
+  tab2
+
+  
+formatted2 <- tab2 %>%
+  mutate("Birthweight (g)"= stringr::str_glue("{mean_birthweight} ± {sd_birthweight}"),    #birthweight
+         n=n,
+         "Gestational Age (weeks)"= stringr::str_glue("{mean_GA_weeks} ± {sd_GA_weeks}"),      #GA_weeks
+
+        females =round({percent_females}, digits=2),
+        males = round({percent_males}, digits=2),
+        
+        no = round({percent_SB_0}, digits=2),
+        yes = round({percent_SB_1}, digits=2),
+        
+        no_ =round({percent_PTB_0}, digits=2),
+        yes_ =round({percent_PTB_1}, digits=2),
+        
+        no. =round({percent_LBW_0}, digits=2),
+        yes. =round({percent_LBW_1}, digits=2),
+         ) %>%
+  tidyr::complete(birthyear) %>%
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", females, males, no, yes, no_, yes_, no., yes.)
+formatted2
+
+neonat_in6_gt <- formatted2%>%
+  gt()%>%
+  tab_header(title="neonate characteristics") %>%
+  tab_spanner(label = "Sex", columns = c(females, males))  %>%
+  tab_spanner (label = "Stillbirth", columns = c(no, yes)) %>%
+  tab_spanner(label = "Preterm birth", columns =c(no_, yes_) ) %>%
+  tab_spanner(label= "Low birth weight", columns =c(no., yes.))
+formatted2_gt
+
+neonat_in6_gt %>%
+  gtsave(here("output/tables", "neonatal_characteristics_in6.html"))
+```
