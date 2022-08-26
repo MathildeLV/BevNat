@@ -6,7 +6,7 @@
 summary(gem$MS_Reg)
 
 anth <- anth %>%
-  dplyr::rename(MS_Reg=MSRegion) %>% #like this MS region variables are named the same (MS_Reg) in both gem and anth datasets.
+  rename(MS_Reg=MSRegion) %>% #like this MS region variables are named the same (MS_Reg) in both gem and anth datasets.
   mutate(MS_Reg= as.numeric(MS_Reg))
 
 summary(anth$MS_Reg)
@@ -22,8 +22,8 @@ summary(bevn$Mutter..Wohngemeinde...Wohnstaat) ##1-6910 for commune if resident 
 
 
 bevn$Mutter..Wohngemeinde...Wohnstaat <- as.numeric(bevn$Mutter..Wohngemeinde...Wohnstaat) 
-bevn <-  dplyr::rename(bevn, com=Mutter..Wohngemeinde...Wohnstaat) 
-eco <-  dplyr::rename(eco, com=comm16) 
+bevn <-  rename(bevn, com=Mutter..Wohngemeinde...Wohnstaat) 
+eco <-  rename(eco, com=comm16) 
 #like this commune variables are named the same (com) in both bevn and eco datasets.
 
 summary(bevn$com)
