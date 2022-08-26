@@ -9,31 +9,31 @@ output: html_document
 
 ## Birthweight
 ```{r}
-m_BW1 <- lm(BW ~ GA_weeks + birthdate2 + parity_cat + sex, data=bevn_eco_in7)
+m_BW1 <- lm(BW ~ GA_weeks + birth_Y_M_1stday + parity_cat + sex, data=bevn_eco_in7)
 summary(m_BW1)
 
   #with mat age 
-m_BW2 <- lm(BW ~ GA_weeks + birthdate2 + mat_age + parity_cat + sex, data=bevn_eco_in7)
+m_BW2 <- lm(BW ~ GA_weeks + birth_Y_M_1stday + mat_age + parity_cat + sex, data=bevn_eco_in7)
   summary(m_BW2)
  
   #with mat age category
-m_BW2_matage_cat <- lm(BW ~ GA_weeks + birthdate2 + mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
+m_BW2_matage_cat <- lm(BW ~ GA_weeks + birth_Y_M_1stday + mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
   summary(m_BW2_matage_cat)
   
   #with mother nationality (categorical 1)
-   m_BW2_mat_nat_cat1 <- lm(BW ~ mother_nationality_cat1 + GA_weeks + birthdate2 + mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
+   m_BW2_mat_nat_cat1 <- lm(BW ~ mother_nationality_cat1 + GA_weeks + birth_Y_M_1stday + mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
   summary(m_BW2_mat_nat_cat1)
   
   #with mother nationality (categorical 2)
-   m_BW2_mat_nat_cat2 <- lm(BW ~ mother_nationality_cat2 + GA_weeks + birthdate2 +  mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
+   m_BW2_mat_nat_cat2 <- lm(BW ~ mother_nationality_cat2 + GA_weeks + birth_Y_M_1stday +  mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
   summary(m_BW2_mat_nat_cat2)
   
   #with urban category (categorical 3)
-   m_BW2_urb_cat_3 <- lm(BW ~ Urban3 + mother_nationality_cat2 + GA_weeks + birthdate2 +  mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
+   m_BW2_urb_cat_3 <- lm(BW ~ Urban3 + mother_nationality_cat2 + GA_weeks + birth_Y_M_1stday +  mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
   summary(m_BW2_urb_cat_3)  
   
   #with month
-m_BW2_month <- lm(BW ~ month + Urban3 + mother_nationality_cat2 + GA_weeks + birthdate2 +  mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
+m_BW2_month <- lm(BW ~ month + Urban3 + mother_nationality_cat2 + GA_weeks + birth_Y_M_1stday +  mat_age_cat + parity_cat + sex, data=bevn_eco_in7)
   summary(m_BW2_month)
   
 models <- mtable("m1: GA + birthday +  parity + sex"=m_BW1, "m2: m1 + mat.age cont."=m_BW2, "m3: m1 + mat.age.categ"=m_BW2_matage_cat, "m4: m3 + mother nationality_cat1"= m_BW2_mat_nat_cat1 , "m5: m3 + mother nationality_cat2"= m_BW2_mat_nat_cat2, "m6: m5+ Urban"=m_BW2_urb_cat_3, coef.style="ci.horizontal",
@@ -45,17 +45,17 @@ list(models)
 
 ## Stillbirth
 ```{r}
-m_SB_multiv_1 <- glm(stillbirth~mat_age_cat + GA_weeks + birthdate3_num + mother_nationality_cat1, 
+m_SB_multiv_1 <- glm(stillbirth~mat_age_cat + GA_weeks + birth_Y_X_M_num + mother_nationality_cat1, 
                     family= "binomial",data=bevn_eco_in6)
 summary(m_SB_multiv_1) 
 exp(coef(summary(m_SB_multiv_1)))[,"Estimate"]
 
-m_SB_multiv_2 <- glm(stillbirth~mat_age_cat + GA_weeks + birthdate3_num + mother_nationality_cat2, 
+m_SB_multiv_2 <- glm(stillbirth~mat_age_cat + GA_weeks + birth_Y_X_M_num + mother_nationality_cat2, 
                     family= "binomial",data=bevn_eco_in6)
 summary(m_SB_multiv_2) 
 exp(coef(summary(m_SB_multiv_2)))[,"Estimate"]
 
-m_SB_multiv_3 <- glm(stillbirth~mat_age_cat + GA_weeks + birthdate3_num + mother_nationality_cat2 + Urban3,  family= "binomial",data=bevn_eco_in6)
+m_SB_multiv_3 <- glm(stillbirth~mat_age_cat + GA_weeks + birth_Y_X_M_num + mother_nationality_cat2 + Urban3,  family= "binomial",data=bevn_eco_in6)
 summary(m_SB_multiv_3) 
 exp(coef(summary(m_SB_multiv_3)))[,"Estimate"]
 ```
@@ -64,15 +64,15 @@ exp(coef(summary(m_SB_multiv_3)))[,"Estimate"]
 # GAM  Models
 
 ```{r}
-m_BW_bam2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birthdate3_num) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
+m_BW_bam2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_X_M_num) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
   summary(m_BW_bam2)
 plot(m_BW_bam2, all.terms = TRUE,pages=1, shade = TRUE, shade.col = "lightblue")
 
 
-m_BW_bam3 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birthdate3_num) + month + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
+m_BW_bam3 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_X_M_num) + month + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
   summary(m_BW_bam3)
   
-m_BW_bam4 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birthdate3_num) + s(month) + s(mean_ssep2) + parity_cat + sex + Urban3 + mother_nationality_cat1 + Language, data=bevn_eco_in7)
+m_BW_bam4 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_X_M_num) + s(month) + s(mean_ssep2) + parity_cat + sex + Urban3 + mother_nationality_cat1 + Language, data=bevn_eco_in7)
   summary(m_BW_bam4)
   plot(m_BW_bam4, select=1, ylim=c(-3000, 1000),shade = TRUE, shade.col = "lightblue")
   plot(m_BW_bam4, select=2, ylim=c(-120, 120),shade = TRUE, shade.col = "lightblue")
@@ -81,19 +81,20 @@ m_BW_bam4 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birthdate3_num) + s(month) +
   plot(m_BW_bam4, select=5, ylim=c(-125, 60),shade = TRUE, shade.col = "lightblue")
 
 plot(m_BW_bam4, all.terms = TRUE,pages=1, shade = TRUE, shade.col = "lightblue")
- 
+
+
 
 #checking that residuals are not determined
   gam.check(m_BW_bam4)
   #Interpretation: p-values of the GAM check are not significant: residuals are randomly distributed. But k-index is <1 for mat age and month
 
 #try with maternal age with k=12
-m_BW_bam4_1 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=13) + s(birthdate3_num) + s(month) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
+m_BW_bam4_1 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=13) + s(birth_Y_X_M_num) + s(month) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
 summary(m_BW_bam4_1)
   gam.check(m_BW_bam4_1) #pvalue not significant, k-index for month and birthdate is < 1.
 
 #try with mat age k=12 and month k=10
-  m_BW_bam4_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=13) + s(birthdate3_num) + s(month, k=11) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
+  m_BW_bam4_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=13) + s(birth_Y_X_M_num) + s(month, k=11) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
 summary(m_BW_bam4_2)
   gam.check(m_BW_bam4_2) 
 concurvity(m_BW_bam4_2, full=TRUE) #ok
