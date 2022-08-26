@@ -148,7 +148,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   tail(bevn_eco$birth_Y_X_M)
   head(bevn_eco$birth_Y_X_M)
   bevn_eco$birth_Y_X_M <- as.factor(bevn_eco$birth_Y_X_M)
-  bevn_eco$birth_Y_X_M <- as.numeric(bevn_eco$birth_Y_X_M)
+  bevn_eco$birth_Y_X_M_num <- as.numeric(bevn_eco$birth_Y_X_M)
   
 
   bevn_eco$day <- 01
