@@ -13,6 +13,8 @@ library(memisc)
 library(tableone)
 library(DT)
 library(data.table)
+library(gt)
+library(glue)
 
 library(conflicted)
 conflict_prefer("filter", "dplyr")
@@ -20,6 +22,7 @@ conflict_prefer("rename", "dplyr")
 conflict_prefer("select", "dplyr")
 conflict_prefer("mutate", "dplyr")
 conflict_prefer("recode", "dplyr")
+conflict_prefer("count", "dplyr")
 
 #  data from 2007 only
 # source("R/bevn_from_2007.R")
@@ -39,3 +42,4 @@ source("R/Inclusions.R")
 #render Rmd files in html
 render("R/descript_and_univ_analysis.Rmd", output_file = paste0("../output/",today(),"descript_and_univ_analysis.html"))
 render("R/multivariate_analysis.Rmd", output_file = paste0("../output/",today(),"multivariate_analysis.html"))
+render("R/whole_tb_charact_population.Rmd", output_file = paste0("../output/",today(),"whole_tb_charact_population.html"))
