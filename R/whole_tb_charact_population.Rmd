@@ -17,7 +17,9 @@ knitr::opts_chunk$set(echo = TRUE)
 taba <- bevn_eco %>%
   group_by(birthyear) %>%
 summarise(n = n(),
-            
+    mat_age_c = round(mean(mat_age, na.rm = T), digits = 2),        #mat age continuous
+    sd_mat_age_c = round(sd(mat_age, na.rm = T), digits = 2),          
+    
           #mat age category
     count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,
     count_mat_age_cat_20_25= sum(mat_age_cat=="(20,25]"), perc_mat_age_cat_20_25= 100*count_mat_age_cat_20_25/n,
@@ -52,7 +54,10 @@ summarise(n = n(),
     count_lang_G=sum(Language=="German", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
     count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
     count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
-    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n
+    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n,
+    
+    mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 2),     #SSEP
+    sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 2)
           ) %>%     
   
   ungroup()
@@ -61,7 +66,11 @@ summarise(n = n(),
   
 formatteda <- taba %>%
   mutate(n=n,
-         "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age
+         "Maternal age (years)"= stringr::str_glue("{mat_age_c} ± {sd_mat_age_c}"),    #mat age continuous
+         
+         "Mean SSEP"= stringr::str_glue("{mean_SSEP} ± {sd_SSEP}"),    #SSEP
+         
+         "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age categ
          "(20-25]" = round({perc_mat_age_cat_20_25}, digits=2),
          "(25-30]" = round({perc_mat_age_cat_25_30}, digits=2),
          "(30-35]" = round({perc_mat_age_cat_30_35}, digits=2),
@@ -95,7 +104,7 @@ formatteda <- taba %>%
         "Romansh"= round({perc_lang_R}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh")
+  select(birthyear, n, "Maternal age", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh", "Mean SSEP")
 formatteda
 
 mat_in_gt <- formatteda%>%
@@ -121,7 +130,8 @@ mat_in_gt %>%
 tabb <- bevn_eco_in7 %>%
   group_by(birthyear) %>%
 summarise(n = n(),
-            
+    mat_age_c = round(mean(mat_age, na.rm = T), digits = 2),        #mat age continuous
+    sd_mat_age_c = round(sd(mat_age, na.rm = T), digits = 2),  
           #mat age category
     count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,
     count_mat_age_cat_20_25= sum(mat_age_cat=="(20,25]"), perc_mat_age_cat_20_25= 100*count_mat_age_cat_20_25/n,
@@ -155,7 +165,10 @@ summarise(n = n(),
     count_lang_G=sum(Language=="German", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
     count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
     count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
-    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n
+    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n,
+    
+    mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 2),     #SSEP
+    sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 2)
           ) %>%     
   
   ungroup()
@@ -164,6 +177,9 @@ summarise(n = n(),
   
 formattedb <- tabb %>%
   mutate(n=n,
+         "Maternal age (years)"= stringr::str_glue("{mat_age_c} ± {sd_mat_age_c}"),    #mat age continuous
+         "Mean SSEP"= stringr::str_glue("{mean_SSEP} ± {sd_SSEP}"),    #SSEP
+
          "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age
          "(20-25]" = round({perc_mat_age_cat_20_25}, digits=2),
          "(25-30]" = round({perc_mat_age_cat_25_30}, digits=2),
@@ -197,7 +213,7 @@ formattedb <- tabb %>%
         "Romansh"= round({perc_lang_R}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh")
+  select(birthyear, n, "Maternal age", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh", "Mean SSEP")
 formattedb
 
 mat_in7_gt <- formattedb%>%
@@ -223,9 +239,10 @@ mat_in7_gt %>%
 tabc <- bevn_eco_in6 %>%
   group_by(birthyear) %>%
 summarise(n = n(),
-            
-          #mat age category
-    count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,
+    mat_age_c = round(mean(mat_age, na.rm = T), digits = 2),        #mat age continuous
+    sd_mat_age_c = round(sd(mat_age, na.rm = T), digits = 2),  
+    
+    count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,     #mat age category
     count_mat_age_cat_20_25= sum(mat_age_cat=="(20,25]"), perc_mat_age_cat_20_25= 100*count_mat_age_cat_20_25/n,
     count_mat_age_cat_25_30= sum(mat_age_cat=="(25,30]"), perc_mat_age_cat_25_30= 100*count_mat_age_cat_25_30/n,
     count_mat_age_cat_30_35= sum(mat_age_cat=="(30,35]"), perc_mat_age_cat_30_35= 100*count_mat_age_cat_30_35/n,
@@ -257,7 +274,10 @@ summarise(n = n(),
     count_lang_G=sum(Language=="German", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
     count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
     count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
-    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n
+    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n,
+    
+    mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 2),     #SSEP
+    sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 2)
           ) %>%     
   
   ungroup()
@@ -266,6 +286,9 @@ summarise(n = n(),
   
 formattedc <- tabc %>%
   mutate(n=n,
+        "Maternal age (years)"= stringr::str_glue("{mat_age_c} ± {sd_mat_age_c}"),    #mat age continuous
+         "Mean SSEP"= stringr::str_glue("{mean_SSEP} ± {sd_SSEP}"),    #SSEP
+
          "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age
          "(20-25]" = round({perc_mat_age_cat_20_25}, digits=2),
          "(25-30]" = round({perc_mat_age_cat_25_30}, digits=2),
@@ -299,7 +322,7 @@ formattedc <- tabc %>%
         "Romansh"= round({perc_lang_R}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh")
+  select(birthyear, n, "Maternal age", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh", "Mean SSEP")
 formattedc
 
 mat_in6_gt <- formattedc%>%
@@ -355,8 +378,8 @@ formatted0 <- tab0 %>%
          n=n,
          "Gestational Age (weeks)"= stringr::str_glue("{mean_GA_weeks} ± {sd_GA_weeks}"),      #GA_weeks
 
-        females =round({percent_females}, digits=2),
-        males = round({percent_males}, digits=2),
+        female =round({percent_females}, digits=2),
+        male = round({percent_males}, digits=2),
         
         no = round({percent_SB_0}, digits=2),
         yes = round({percent_SB_1}, digits=2),
@@ -368,13 +391,13 @@ formatted0 <- tab0 %>%
         yes. =round({percent_LBW_1}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", females, males, no, yes, no_, yes_, no., yes.)
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, no, yes, no_, yes_, no., yes.)
 formatted0
 
 neonat_in_gt <- formatted0%>%
   gt()%>%
   tab_header(title="neonate characteristics") %>%
-  tab_spanner(label = "Sex", columns = c(females, males))  %>%
+  tab_spanner(label = "Sex", columns = c(female, male))  %>%
   tab_spanner (label = "Stillbirth", columns = c(no, yes)) %>%
   tab_spanner(label = "Preterm birth", columns =c(no_, yes_) ) %>%
   tab_spanner(label= "Low birth weight", columns =c(no., yes.))
@@ -412,8 +435,8 @@ formatted1 <- tab1 %>%
          n=n,
          "Gestational Age (weeks)"= stringr::str_glue("{mean_GA_weeks} ± {sd_GA_weeks}"),      #GA_weeks
 
-        females =round({percent_females}, digits=2),
-        males = round({percent_males}, digits=2),
+        female =round({percent_females}, digits=2),
+        male = round({percent_males}, digits=2),
         
         no_ =round({percent_PTB_0}, digits=2),
         yes_ =round({percent_PTB_1}, digits=2),
@@ -423,13 +446,13 @@ formatted1 <- tab1 %>%
         
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", females, males, no_, yes_, no., yes.)
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, no_, yes_, no., yes.)
 formatted1
 
 neonat_in7_gt <- formatted1%>%
   gt()%>%
   tab_header(title="neonate characteristics") %>%
-  tab_spanner(label = "Sex", columns = c(females, males))  %>%
+  tab_spanner(label = "Sex", columns = c(female, male))  %>%
   tab_spanner(label = "Preterm birth", columns =c(no_, yes_) ) %>%
   tab_spanner(label= "Low birth weight", columns =c(no., yes.))
 neonat_in7_gt
@@ -469,8 +492,8 @@ formatted2 <- tab2 %>%
          n=n,
          "Gestational Age (weeks)"= stringr::str_glue("{mean_GA_weeks} ± {sd_GA_weeks}"),      #GA_weeks
 
-        females =round({percent_females}, digits=2),
-        males = round({percent_males}, digits=2),
+        female =round({percent_females}, digits=2),
+        male = round({percent_males}, digits=2),
         
         no = round({percent_SB_0}, digits=2),
         yes = round({percent_SB_1}, digits=2),
@@ -482,17 +505,17 @@ formatted2 <- tab2 %>%
         yes. =round({percent_LBW_1}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", females, males, no, yes, no_, yes_, no., yes.)
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, no, yes, no_, yes_, no., yes.)
 formatted2
 
 neonat_in6_gt <- formatted2%>%
   gt()%>%
   tab_header(title="neonate characteristics") %>%
-  tab_spanner(label = "Sex", columns = c(females, males))  %>%
+  tab_spanner(label = "Sex", columns = c(female, male))  %>%
   tab_spanner (label = "Stillbirth", columns = c(no, yes)) %>%
   tab_spanner(label = "Preterm birth", columns =c(no_, yes_) ) %>%
   tab_spanner(label= "Low birth weight", columns =c(no., yes.))
-formatted2_gt
+neonat_in6_gt
 
 neonat_in6_gt %>%
   gtsave(here("output/tables", "neonatal_characteristics_in6.html"))
