@@ -27,6 +27,9 @@ bevn_eco <- bevn_eco %>%
   bevn_eco$BL[bevn_eco$BL ==99 | bevn_eco$BL==0] = NA
   ## Kind: Gewicht in Gramm = weight at birth (g)
   bevn_eco$BW[bevn_eco$BW ==9999 |bevn_eco$BW==0] = NA
+  bevn_eco$mother_nationality[bevn_eco$mother_nationality ==8999] = NA
+  bevn_eco$father_nationality[bevn_eco$father_nationality ==8999] = NA
+  
 
 # categorizing state of birth in : Switzerland or Outside of Switzerland
 bevn_eco$country_of_birth_cat1 <- cut(bevn_eco$country_of_birth, breaks=c(8000, 8100, 10000), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
@@ -142,13 +145,13 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   bevn_eco$parent_age_diff <- (bevn_eco$pat_age)-(bevn_eco$mat_age)
 
   ## Creating a variable combining month+year of birth
-    #  I created two variables for date : one combining month+year only (birth_Y_X_M), and another combining day+month+year (birth_Y_M_1stday).
+    #  I created two variables for date : one combining month+year only (birth_Y_M), and another combining day+month+year (birth_Y_M_1stday).
     #  I set up day to 1st of each month in order to have variable m-d-y, easier to work with.
-  bevn_eco$birth_Y_X_M <- with(bevn_eco, sprintf("%d-%02d", birthyear, birthmonth))
-  tail(bevn_eco$birth_Y_X_M)
-  head(bevn_eco$birth_Y_X_M)
-  bevn_eco$birth_Y_X_M <- as.factor(bevn_eco$birth_Y_X_M)
-  bevn_eco$birth_Y_X_M_num <- as.numeric(bevn_eco$birth_Y_X_M)
+  bevn_eco$birth_Y_M <- with(bevn_eco, sprintf("%d-%02d", birthyear, birthmonth))
+  tail(bevn_eco$birth_Y_M)
+  head(bevn_eco$birth_Y_M)
+  bevn_eco$birth_Y_M <- as.factor(bevn_eco$birth_Y_M)
+  bevn_eco$birth_Y_M_num <- as.numeric(bevn_eco$birth_Y_M)
   
 
   bevn_eco$day <- 01
