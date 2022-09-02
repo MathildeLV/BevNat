@@ -2,7 +2,10 @@
 title: "Multivariate analysis (bam)"
 author: "Mathilde Le Vu"
 date: '2022-08-05'
-output: html_document
+output: 
+html_document: 
+toc: true
+theme: united
 ---
 
 # Logistic regression models
@@ -44,35 +47,47 @@ list(models)
 ```
 
 ## Stillbirth
+
+maternal age
+birthdate
+GA_weeks
+mother_nationality_cat1
+mother_nationality_cat2
+Urban3
+Language
+mean_ssep2
+
 ```{r}
-m_SB_multiv_1 <- glm(stillbirth~mat_age_cat + GA_weeks + birth_Y_X_M_num + mother_nationality_cat1, 
+m_SB_multiv_1 <- glm(stillbirth~mat_age_cat + GA_weeks + birth_Y_M_num + mother_nationality_cat1, 
                     family= "binomial",data=bevn_eco_in6)
 summary(m_SB_multiv_1) 
 exp(coef(summary(m_SB_multiv_1)))[,"Estimate"]
 
-m_SB_multiv_2 <- glm(stillbirth~mat_age_cat + GA_weeks + birth_Y_X_M_num + mother_nationality_cat2, 
+m_SB_multiv_2 <- glm(stillbirth~mat_age_cat + GA_weeks + birth_Y_M_num + mother_nationality_cat2, 
                     family= "binomial",data=bevn_eco_in6)
 summary(m_SB_multiv_2) 
 exp(coef(summary(m_SB_multiv_2)))[,"Estimate"]
 
-m_SB_multiv_3 <- glm(stillbirth~mat_age_cat + GA_weeks + birth_Y_X_M_num + mother_nationality_cat2 + Urban3,  family= "binomial",data=bevn_eco_in6)
+m_SB_multiv_3 <- glm(stillbirth~mat_age_cat + GA_weeks + birth_Y_M_num + mother_nationality_cat2 + Urban3 + Language + mean_ssep2,  family= "binomial",data=bevn_eco_in6)
 summary(m_SB_multiv_3) 
 exp(coef(summary(m_SB_multiv_3)))[,"Estimate"]
 ```
 
 
 # GAM  Models
+##  Birthweight 
 
 ```{r}
-m_BW_bam2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_X_M_num) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
+m_BW_bam2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
   summary(m_BW_bam2)
 plot(m_BW_bam2, all.terms = TRUE,pages=1, shade = TRUE, shade.col = "lightblue")
+plot(ggeffects::ggpredict(m_BW_bam2), facets = TRUE)
 
 
-m_BW_bam3 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_X_M_num) + month + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
+m_BW_bam3 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + month + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
   summary(m_BW_bam3)
   
-m_BW_bam4 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_X_M_num) + s(month) + s(mean_ssep2) + parity_cat + sex + Urban3 + mother_nationality_cat1 + Language, data=bevn_eco_in7)
+m_BW_bam4 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month) + s(mean_ssep2) + parity_cat + sex + Urban3 + mother_nationality_cat1 + Language, data=bevn_eco_in7)
   summary(m_BW_bam4)
   plot(m_BW_bam4, select=1, ylim=c(-3000, 1000),shade = TRUE, shade.col = "lightblue")
   plot(m_BW_bam4, select=2, ylim=c(-120, 120),shade = TRUE, shade.col = "lightblue")
@@ -83,18 +98,23 @@ m_BW_bam4 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_X_M_num) + s(month) 
 plot(m_BW_bam4, all.terms = TRUE,pages=1, shade = TRUE, shade.col = "lightblue")
 
 
+# with mat. nationality category 2
+m_BW_bam5 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month) + s(mean_ssep2) + parity_cat + sex + Urban3  + Language + mother_nationality_cat2, data=bevn_eco_in7)
+  summary(m_BW_bam5)
 
 #checking that residuals are not determined
   gam.check(m_BW_bam4)
+    concurvity(m_BW_bam4, full=TRUE) 
+
   #Interpretation: p-values of the GAM check are not significant: residuals are randomly distributed. But k-index is <1 for mat age and month
 
 #try with maternal age with k=12
-m_BW_bam4_1 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=13) + s(birth_Y_X_M_num) + s(month) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
+m_BW_bam4_1 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=13) + s(birth_Y_M_num) + s(month) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
 summary(m_BW_bam4_1)
   gam.check(m_BW_bam4_1) #pvalue not significant, k-index for month and birthdate is < 1.
 
 #try with mat age k=12 and month k=10
-  m_BW_bam4_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=13) + s(birth_Y_X_M_num) + s(month, k=11) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
+  m_BW_bam4_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=13) + s(birth_Y_M_num) + s(month, k=11) + parity_cat + sex + Urban3 + mother_nationality_cat1, data=bevn_eco_in7)
 summary(m_BW_bam4_2)
   gam.check(m_BW_bam4_2) 
 concurvity(m_BW_bam4_2, full=TRUE) #ok
@@ -125,9 +145,48 @@ AIC(m_BW_bam4_15, m_BW_bam4_50)
 
 ## 15 better for fitting (kindex not<1). 20 also ok  but takes + time.
 ```
-## GAM with Stillbirth as outcome variable
+
+## Stillbirth as outcome variable
 
 ```{r}
+m_SB_bam<-bam(stillbirth~s(GA_weeks)+ s(mat_age) + s(birth_Y_M_num) + s(month) +s(mean_ssep2) + Urban3 + Language + mother_nationality_cat2,family="binomial", data=bevn_eco_in6)
+  summary(m_SB_bam)
 
+plot(m_SB_bam)
+    plot(m_SB_bam, pages = 1, trans = plogis)
+
+    #adding intercept
+plot(m_SB_bam, pages = 1, trans = plogis,
+     shift = coef(m_SB_bam)[1])
+
+plot(m_SB_bam, trans = plogis, select=1,,shift = coef(m_SB_bam)[1], shade = TRUE, shade.col = "lightblue")
+  plot(m_SB_bam, trans = plogis, select=2, ylim=c(0, 0.003), shift = coef(m_SB_bam)[1], shade = TRUE, shade.col = "lightblue")
+  plot(m_SB_bam, trans = plogis, select=3, ylim=c(0.0005, 0.0015), shift = coef(m_SB_bam)[1], shade = TRUE, shade.col = "lightblue")
+  plot(m_SB_bam, trans = plogis, select=4, ylim=c(0.0005, 0.0015), shift = coef(m_SB_bam)[1], shade = TRUE, shade.col = "lightblue")
+  plot(m_SB_bam, trans = plogis, select=5, ylim=c(0.0005, 0.0015),shift = coef(m_SB_bam)[1], shade = TRUE, shade.col = "lightblue")
+  
+  
+  # second model_ without date of birth (Only month), and putting mean_ssep2 as linear term
+  m_SB_bam2 = update(m_SB_bam, . ~ . - s(mean_ssep2) + mean_ssep2 - s(birth_Y_M_num))
+  summary(m_SB_bam2)
+ 
+    plot(m_SB_bam2, pages = 1, trans = plogis)
+
+    #adding intercept
+plot(m_SB_bam2, pages = 1, trans = plogis,
+     shift = coef(m_SB_bam)[1])
+
+plot(m_SB_bam2, trans = plogis, select=1,,shift = coef(m_SB_bam2)[1], shade = TRUE, shade.col = "lightblue")
+  plot(m_SB_bam2, trans = plogis, select=2, ylim=c(0, 0.003), shift = coef(m_SB_bam2)[1], shade = TRUE, shade.col = "lightblue")
+  plot(m_SB_bam, trans = plogis, select=4, ylim=c(0.0005, 0.0015), shift = coef(m_SB_bam2)[1], shade = TRUE, shade.col = "lightblue")
+  gam.check(m_SB_bam2)
+  concurvity(m_SB_bam2)
+  
+
+      m_SB_bam3<-bam(stillbirth~s(GA_weeks, k=15)+ s(mat_age, k=15) + s(month) +mean_ssep2 + Urban3 + Language + mother_nationality_cat2,family="binomial", data=bevn_eco_in6)  
+      summary(m_SB_bam3)
+        gam.check(m_SB_bam3)
+  
+        AIC(m_SB_bam2, m_SB_bam3)
 ```
 
