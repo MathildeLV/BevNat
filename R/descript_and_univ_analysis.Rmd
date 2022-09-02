@@ -49,11 +49,13 @@ summary(bevn_eco$mother_nationality)
 # Nationality of the mother in : Switzerland or Outside of Switzerland
   round(prop.table(table(bevn_eco$mother_nationality_cat1, useNA="always"))*100,2)
   round(prop.table(table(bevn_eco_in7$mother_nationality_cat1, useNA="always"))*100,2)
+  round(prop.table(table(bevn_eco_in6$mother_nationality_cat1, useNA="always"))*100,2)
 
 # Nationality of the mother in : Switzerland, Europe, Africa, Northern America, Southern America, Asia, Oceania, other
   round(prop.table(table(bevn_eco$mother_nationality_cat2, useNA="always"))*100,2)
   round(prop.table(table(bevn_eco_in7$mother_nationality_cat2, useNA="always"))*100,2)
-
+  round(prop.table(table(bevn_eco_in6$mother_nationality_cat2, useNA="always"))*100,2)
+  table(bevn_eco_in6$mother_nationality_cat2, useNA="always")
 #Nationality of the mother in : Switzerland, different parts of Europe, other
   round(prop.table(table(bevn_eco$mother_nationality_cat3, useNA="always"))*100,2)
   round(prop.table(table(bevn_eco_in7$mother_nationality_cat3, useNA="always"))*100,2)
@@ -277,7 +279,6 @@ tabb
 
 par(mar=c(1,3,5,15))
 barplot (tabb, las=2, cex.names=.9, legend.text=TRUE, main="mother nationatliy through the years", col= c("cyan", "forestgreen", "brown", "mediumspringgreen", "darkgoldenrod1", "cadetblue4", "deeppink", "blueviolet", "gray66"), args.legend=list(x="topright", inset=c(-0.7, 0)))
-
 ```
 
 
@@ -399,8 +400,8 @@ I set up day to 1st of each month in order to have variable m-d-y, easier to wor
 
 ```{r}
 #month year
-  tail(bevn_eco_in7$birth_Y_X_M)
-  head(bevn_eco_in7$birth_Y_X_M)
+  tail(bevn_eco_in7$birth_Y_M)
+  head(bevn_eco_in7$birth_Y_M)
 
   #day month year
   summary(bevn_eco_in7$birth_Y_M_1stday)
@@ -413,8 +414,8 @@ I set up day to 1st of each month in order to have variable m-d-y, easier to wor
 
 ## BW or BL depending on GA
 
-Too different sets with either all birthweights/GA or birtsweights "normal" ]100;8000[ and GA >20 weeks 
-and with either all birthlengths or "normal" birthlengths ]10,60[ and GA >20 weeks.
+Too different sets with either all birthweights/GA or birtsweights "normal" (100;8000) and GA >20 weeks 
+and with either all birthlengths or "normal" birthlengths (10,6)[ and GA >20 weeks.
 
 ```{r}
 plot(bevn_eco$GA_weeks,bevn_eco$BW) 
@@ -451,9 +452,9 @@ summary(m_BW_time2)
 m_BW_time2_num <- lm(BW~birth_Y_M_1stday_num, data=bevn_eco_in7)
 summary(m_BW_time2_num)
 
-m_BW_time3<- lm(BW~birth_Y_X_M_num, data=bevn_eco_in7)
+m_BW_time3<- lm(BW~birth_Y_M_num, data=bevn_eco_in7)
 summary(m_BW_time3)
-m_BW_time3_num <- lm(BW~birth_Y_X_M_num, data=bevn_eco_in7)
+m_BW_time3_num <- lm(BW~birth_Y_M_num, data=bevn_eco_in7)
 summary(m_BW_time3_num)
 
 m_BW_month <- lm(BW~month, data=bevn_eco_in7)
@@ -532,7 +533,7 @@ m_SB_birthday <- glm(stillbirth~birth_Y_M_1stday_num,
                     family= "binomial",data=bevn_eco_in6)
 summary(m_SB_birthday) 
 
-m_SB_birthmonth <- glm(stillbirth~birth_Y_X_M_num, 
+m_SB_birthmonth <- glm(stillbirth~birth_Y_M_num, 
                     family= "binomial",data=bevn_eco_in6)
 summary(m_SB_birthmonth) 
 
@@ -606,6 +607,6 @@ summary(m_SB_Urban)
 ```
 
 Increasing maternal age is significantly associated with an increase of SB risk (pvalue: 0.00012), but this increase is very small. 
-Maternal age category is also associated with changes in SB risk: being in age categories ]10, 20], ]20,25] or ]35,40], ]40,70] increases the risk of having a stillborn. The risk is the greatest for mothers aged (30-70].
+Maternal age category is also associated with changes in SB risk: being in age categories (10, 20), (20,25) or (35,40), (40,70) increases the risk of having a stillborn. The risk is the greatest for mothers aged (30-70).
 
 Parity does not seem to impact stillbirth risk.
