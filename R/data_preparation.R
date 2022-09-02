@@ -225,12 +225,12 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
     bevn_eco <- bevn_eco %>%
       mutate(Language=as.character(Language),
              Language=recode(Language, 
-                             "1"="German",
+                             "1" ="German or Romansh",
                              "2"="French",
-                             "3"="Italian",
-                             "4"="Romansh"),
+                             "3" ="Italian",
+                             "4"= "German or Romansh"),
                       Language=as.factor(Language))
-    bevn_eco$Language <- relevel (bevn_eco$Language, ref = "German")
+    bevn_eco$Language <- relevel (bevn_eco$Language, ref = "German or Romansh")
     
 #creating a function to calculate the mode of a variable
     getmode <- function(v) {
