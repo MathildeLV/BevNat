@@ -15,6 +15,8 @@ library(DT)
 library(data.table)
 library(gt)
 library(glue)
+library(wesanderson)  #nice colours ggplot
+library(ggeffects)
 
 library(conflicted)
 conflict_prefer("filter", "dplyr")
@@ -43,3 +45,4 @@ source("R/Inclusions.R")
 render("R/descript_and_univ_analysis.Rmd", output_file = paste0("../output/",today(),"descript_and_univ_analysis.html"))
 render("R/multivariate_analysis.Rmd", output_file = paste0("../output/",today(),"multivariate_analysis.html"))
 render("R/whole_tb_charact_population.Rmd", output_file = paste0("../output/",today(),"whole_tb_charact_population.html"))
+render("R/graphics.Rmd", output_file = paste0("../output/",today(),"graphics.html"))
