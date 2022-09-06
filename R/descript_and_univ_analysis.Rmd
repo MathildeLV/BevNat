@@ -149,6 +149,11 @@ table(bevn_eco$LBW, useNA="always")
 round(prop.table(table(bevn_eco$LBW, useNA="always"))*100, 3)
 table(bevn_eco_in7$LBW, useNA="always")
 round(prop.table(table(bevn_eco_in7$LBW, useNA="always"))*100, 3)
+
+table(bevn_eco$Bw_Macro, useNA="always")
+round(prop.table(table(bevn_eco$Bw_Macro, useNA="always"))*100, 3)
+table(bevn_eco_in7$Bw_Macro, useNA="always")
+round(prop.table(table(bevn_eco_in7$Bw_Macro, useNA="always"))*100, 3)
 ```
 
 There are **132,494** births with missing BW.
@@ -272,8 +277,6 @@ boxplot(GA_weeks ~birthyear, data=bevn_eco_in7)
 ## Mother nationality through the years
 
 ```{r}
-plot(bevn_eco_in7$birthyear, bevn_eco_in7$mother_nationality_cat2)
-
 tabb <- round(prop.table(table(bevn_eco_in7$mother_nationality_cat2, bevn_eco_in7$birthyear), margin=2)*100,2)
 tabb
 
@@ -293,7 +296,8 @@ boxplot(BW~birthyear, data=bevn_eco_in7, subset= BW<8000)
 #birthweight by month
 boxplot(BW~month, data=bevn_eco_in7, subset= BW<8000)
 ```
-Birthweight median slightly varies between 2007 and 2020, 3345-3360g.
+
+Birthweight median barely varies between 2007 and 2020, 3345-3360g.
 
 ## Birth length through the years
 
@@ -311,6 +315,8 @@ Birthlength median is robustly consistent at 50cm, 2007-2020.
 table(bevn_eco_in7$sex, bevn_eco_in7$birthyear)
 round(prop.table(table(bevn_eco_in7$sex, bevn_eco_in7$birthyear), margin=2)*100,2)
 ```
+
+Sex ratio is rather stable through the years.
 
 ## Stillbirth % through the years, their median/mode GA and BW
 
@@ -345,7 +351,7 @@ round(prop.table(table(bevn_eco_in6$stillbirth, bevn_eco_in6$birthyear), margin=
   boxplot(GA_weeks~birthyear, data=GA_SB)
 ```
 
-Median GA for stillbirths varies between 27.21 and 31.14 weeks between 2006 and 2020.
+Median GA for stillbirths varies between 31.143 (2017) and 34.357 (2016) weeks between 2007 and 2020.
 
 ### Birthweight of stillborn babies
 ```{r}
@@ -371,7 +377,7 @@ Median GA for stillbirths varies between 27.21 and 31.14 weeks between 2006 and 
  boxplot(BW~birthyear, data=bevn_eco_in6, subset=BW<8000)
 ```
 
-Median BW for stillbirths varies a lot through the years, between 760g and 1420g.
+Median BW for stillbirths varies a lot through the years, between 1500g and 1920g.
 
 ## Maternal age through the years
 
@@ -414,19 +420,14 @@ I set up day to 1st of each month in order to have variable m-d-y, easier to wor
 
 ## BW or BL depending on GA
 
-Too different sets with either all birthweights/GA or birtsweights "normal" (100;8000) and GA >20 weeks 
-and with either all birthlengths or "normal" birthlengths (10,6)[ and GA >20 weeks.
-
-```{r}
-plot(bevn_eco$GA_weeks,bevn_eco$BW) 
-```
-
 ```{r}
 #BW and GA, all birthweights
-plot(bevn_eco$GA_weeks, bevn_eco$BL) 
+plot(bevn_eco$GA_weeks,bevn_eco$BW) 
 #BL and GA, all birthlengths
-plot(bevn_eco$BW, bevn_eco$BL) 
+plot(bevn_eco$GA_weeks, bevn_eco$BL) 
 #BW and BL, all
+plot(bevn_eco$BW, bevn_eco$BL) 
+
 ```
 
 ```{r}
@@ -447,13 +448,9 @@ plot(bevn_eco_in7$BW,bevn_eco_in7$BL)
 m_BW_years <- lm(BW~birthyear, data=bevn_eco_in7)
 summary(m_BW_years)
 
-m_BW_time2 <- lm(BW~birth_Y_M_1stday, data=bevn_eco_in7)
-summary(m_BW_time2)
 m_BW_time2_num <- lm(BW~birth_Y_M_1stday_num, data=bevn_eco_in7)
 summary(m_BW_time2_num)
 
-m_BW_time3<- lm(BW~birth_Y_M_num, data=bevn_eco_in7)
-summary(m_BW_time3)
 m_BW_time3_num <- lm(BW~birth_Y_M_num, data=bevn_eco_in7)
 summary(m_BW_time3_num)
 
@@ -466,7 +463,7 @@ summary(m_BW_month)
 m_BW_sex <- lm(BW~sex, data=bevn_eco_in7)
 summary(m_BW_sex) #male is the reference (male=1, female=2)
 ```
-Males are around 132.5g heavier than females, and this is highly significant
+Males are around 132.05g heavier than females, and this is highly significant
 
 ### BW related to maternal age or to parity
 ```{r BW related to mat age/parity}
@@ -503,7 +500,7 @@ summary(m_BW_nat_cat2)
 m_BW_GA <- lm(BW ~GA_weeks, data=bevn_eco_in7)
 summary(m_BW_GA)
 ```
-BW increases with GA : each GA longer by a week is associated with an increase of 187g. 
+BW increases with GA : each GA longer by a week is associated with an increase of 177g. 
 
 ### BW category and language region
 ```{r}
