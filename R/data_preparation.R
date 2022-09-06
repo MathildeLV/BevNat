@@ -60,7 +60,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
                                     ifelse(bevn_eco$country_of_birth==8235|bevn_eco$country_of_birth==8572|bevn_eco$country_of_birth==8573|bevn_eco$country_of_birth==8574|bevn_eco$country_of_birth==8576|bevn_eco$country_of_birth==8577|bevn_eco$country_of_birth==8578 | (bevn_eco$country_of_birth > 8259 & bevn_eco$country_of_birth < 8267), 'Eastern Europe','other')))))))))
  table(bevn_eco$country_of_birth_cat3, useNA = "always")
  bevn_eco$country_of_birth_cat3 <- relevel (bevn_eco$country_of_birth_cat3, ref = "Switz")
- 
+
 
 ## Mutter: Staatsangehörigkeit = Nationality Mother
   #categorizing nationality of the mother in : Switzerland or Outside of Switzerland
