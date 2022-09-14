@@ -39,23 +39,22 @@ summarise(n = n(),
     count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
 
     #moth nat cat 2
-    count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switz"), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
-    count_mat_nat_cat_2_Af= sum(mother_nationality_cat2=="Africa"), perc_mat_nat_cat_2_Af=100*count_mat_nat_cat_2_Af/n,
-    count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia"), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
-    count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe"), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
-    count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America"), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
-    count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania"), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
-    count_mat_nat_cat_2_ot= sum(mother_nationality_cat2=="other"), perc_mat_nat_cat_2_ot=100*count_mat_nat_cat_2_ot/n,
-    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America "), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+    count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switzerland", na.rm = T), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
+    count_mat_nat_cat_2_Af= sum(mother_nationality_cat2=="Africa", na.rm = T), perc_mat_nat_cat_2_Af=100*count_mat_nat_cat_2_Af/n,
+    count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia", na.rm = T), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
+    count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe", na.rm = T), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
+    count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America", na.rm = T), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
+    count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania", na.rm = T), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
+    count_mat_nat_cat_2_NA= sum(is.na(mother_nationality_cat2)), perc_mat_nat_cat_2_NA=100*count_mat_nat_cat_2_NA/n,
+    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America ", na.rm = T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
 
     count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
     count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
 
-    count_lang_G=sum(Language=="German", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
+    count_lang_G=sum(Language=="German or Romansh", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
     count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
     count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
-    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n,
-    
+
     mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 2),     #SSEP
     sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 2)
           ) %>%     
@@ -63,7 +62,7 @@ summarise(n = n(),
   ungroup()
   taba
   
-  
+
 formatteda <- taba %>%
   mutate(n=n,
          "Maternal age (years)"= stringr::str_glue("{mat_age_c} ± {sd_mat_age_c}"),    #mat age continuous
@@ -84,38 +83,38 @@ formatteda <- taba %>%
         "missing" = round({perc_parity_NA}, digits=2),
 
         "Switzerland_" = round({perc_mat_nat_cat_1_1}, digits=2),  #mat nationality cat 1
-        "Other_" = round({perc_mat_nat_cat_1_2}, digits=2),
+        "Other" = round({perc_mat_nat_cat_1_2}, digits=2),
         
         "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=2),  #mat nationality cat 2
         "Africa" = round({perc_mat_nat_cat_2_Af}, digits=2),
         "Asia" = round({perc_mat_nat_cat_2_As}, digits=2),
         "Europe" = round({perc_mat_nat_cat_2_E}, digits=2),
         "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=2),
-        "Other" = round({perc_mat_nat_cat_2_ot}, digits=2),
+        "Missing" = round({perc_mat_nat_cat_2_NA}, digits=2),
         "Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
         "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
 
         "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
         "Urban" = round({perc_Urban3_1}, digits=2),
         
-        "German"= round({perc_lang_G}, digits=2), #Language region
+        "German or Romansh"= round({perc_lang_G}, digits=2), #Language region
         "French"= round({perc_lang_F}, digits=2),
         "Italian"= round({perc_lang_I}, digits=2),
-        "Romansh"= round({perc_lang_R}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Maternal age", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh", "Mean SSEP")
+  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland_", "Other", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Missing", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
 formatteda
+
 
 mat_in_gt <- formatteda%>%
   gt()%>%
   tab_header(title="maternal characteristics") %>%
-  tab_spanner(label = "Maternal age (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
+  tab_spanner(label = "Maternal age category (years)", columns  = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
   tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3", "missing")) %>%
-  tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other_") ) %>%
-  tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other") ) %>%
+  tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other") ) %>%
+  tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Missing") ) %>%
   tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
-  tab_spanner(label= "Language region", columns =c("German","French", "Italian", "Romansh"))
+  tab_spanner(label= "Language region", columns =c("German or Romansh", "French", "Italian"))
 
 mat_in_gt
 
@@ -150,23 +149,22 @@ summarise(n = n(),
     count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
 
     #moth nat cat 2
-    count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switz"), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
-    count_mat_nat_cat_2_Af= sum(mother_nationality_cat2=="Africa"), perc_mat_nat_cat_2_Af=100*count_mat_nat_cat_2_Af/n,
-    count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia"), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
-    count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe"), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
-    count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America"), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
-    count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania"), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
-    count_mat_nat_cat_2_ot= sum(mother_nationality_cat2=="other"), perc_mat_nat_cat_2_ot=100*count_mat_nat_cat_2_ot/n,
-    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America "), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+    count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switzerland", na.rm = T), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
+    count_mat_nat_cat_2_Af= sum(mother_nationality_cat2=="Africa", na.rm = T), perc_mat_nat_cat_2_Af=100*count_mat_nat_cat_2_Af/n,
+    count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia", na.rm = T), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
+    count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe", na.rm = T), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
+    count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America", na.rm = T), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
+    count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania", na.rm = T), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
+    count_mat_nat_cat_2_NA= sum(is.na(mother_nationality_cat2)), perc_mat_nat_cat_2_NA=100*count_mat_nat_cat_2_NA/n,
+    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America ", na.rm = T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
 
     count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
     count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
 
-    count_lang_G=sum(Language=="German", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
+    count_lang_G=sum(Language=="German or Romansh", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
     count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
     count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
-    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n,
-    
+
     mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 2),     #SSEP
     sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 2)
           ) %>%     
@@ -193,38 +191,37 @@ formattedb <- tabb %>%
         ">3" = round({perc_parity_4}, digits=2),
         
         "Switzerland_" = round({perc_mat_nat_cat_1_1}, digits=2),  #mat nationality cat 1
-        "Other_" = round({perc_mat_nat_cat_1_2}, digits=2),
+        "Other" = round({perc_mat_nat_cat_1_2}, digits=2),
         
         "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=2),  #mat nationality cat 2
         "Africa" = round({perc_mat_nat_cat_2_Af}, digits=2),
         "Asia" = round({perc_mat_nat_cat_2_As}, digits=2),
         "Europe" = round({perc_mat_nat_cat_2_E}, digits=2),
         "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=2),
-        "Other" = round({perc_mat_nat_cat_2_ot}, digits=2),
+        "Missing" = round({perc_mat_nat_cat_2_NA}, digits=2),
         "Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
         "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
 
         "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
         "Urban" = round({perc_Urban3_1}, digits=2),
         
-        "German"= round({perc_lang_G}, digits=2), #Language region
+        "German or Romansh"= round({perc_lang_G}, digits=2), #Language region
         "French"= round({perc_lang_F}, digits=2),
         "Italian"= round({perc_lang_I}, digits=2),
-        "Romansh"= round({perc_lang_R}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Maternal age", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh", "Mean SSEP")
+  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Missing", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
 formattedb
 
 mat_in7_gt <- formattedb%>%
   gt()%>%
   tab_header(title="maternal characteristics") %>%
-  tab_spanner(label = "Maternal age (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
+  tab_spanner(label = "Maternal age category (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
   tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3")) %>%
-  tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other_") ) %>%
-  tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other") ) %>%
+  tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other") ) %>%
+  tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Missing") ) %>%
   tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
-  tab_spanner(label= "Language region", columns =c("German","French", "Italian", "Romansh"))
+  tab_spanner(label= "Language region", columns =c("German or Romansh","French", "Italian"))
 
 mat_in7_gt
 
@@ -259,23 +256,22 @@ summarise(n = n(),
     count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
 
     #moth nat cat 2
-    count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switz"), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
-    count_mat_nat_cat_2_Af= sum(mother_nationality_cat2=="Africa"), perc_mat_nat_cat_2_Af=100*count_mat_nat_cat_2_Af/n,
-    count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia"), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
-    count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe"), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
-    count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America"), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
-    count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania"), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
-    count_mat_nat_cat_2_ot= sum(mother_nationality_cat2=="other"), perc_mat_nat_cat_2_ot=100*count_mat_nat_cat_2_ot/n,
-    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America "), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+    count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switzerland", na.rm=T), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
+    count_mat_nat_cat_2_Af= sum(mother_nationality_cat2=="Africa", na.rm=T), perc_mat_nat_cat_2_Af=100*count_mat_nat_cat_2_Af/n,
+    count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia", na.rm=T), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
+    count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe", na.rm=T), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
+    count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America", na.rm=T), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
+    count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania", na.rm=T), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
+    count_mat_nat_cat_2_NA= sum(mother_nationality_cat2=="Missing"), perc_mat_nat_cat_2_NA=100*count_mat_nat_cat_2_NA/n,
+    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America ", na.rm=T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
 
     count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
     count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
 
-    count_lang_G=sum(Language=="German", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
+    count_lang_G=sum(Language=="German or Romansh", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
     count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
     count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
-    count_lang_R=sum(Language=="Romansh", na.rm = T), perc_lang_R=100*count_lang_R/n,
-    
+
     mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 2),     #SSEP
     sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 2)
           ) %>%     
@@ -302,38 +298,37 @@ formattedc <- tabc %>%
         ">3" = round({perc_parity_4}, digits=2),
         
         "Switzerland_" = round({perc_mat_nat_cat_1_1}, digits=2),  #mat nationality cat 1
-        "Other_" = round({perc_mat_nat_cat_1_2}, digits=2),
+        "Other" = round({perc_mat_nat_cat_1_2}, digits=2),
         
         "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=2),  #mat nationality cat 2
         "Africa" = round({perc_mat_nat_cat_2_Af}, digits=2),
         "Asia" = round({perc_mat_nat_cat_2_As}, digits=2),
         "Europe" = round({perc_mat_nat_cat_2_E}, digits=2),
         "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=2),
-        "Other" = round({perc_mat_nat_cat_2_ot}, digits=2),
+        "Missing" = round({perc_mat_nat_cat_2_NA}, digits=2),
         "Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
         "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
 
         "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
         "Urban" = round({perc_Urban3_1}, digits=2),
         
-        "German"= round({perc_lang_G}, digits=2), #Language region
+        "German or Romansh"= round({perc_lang_G}, digits=2), #Language region
         "French"= round({perc_lang_F}, digits=2),
         "Italian"= round({perc_lang_I}, digits=2),
-        "Romansh"= round({perc_lang_R}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Maternal age", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other_", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German", "French", "Italian", "Romansh", "Mean SSEP")
+  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
 formattedc
 
 mat_in6_gt <- formattedc%>%
   gt()%>%
   tab_header(title="maternal characteristics") %>%
-  tab_spanner(label = "Maternal age (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
+  tab_spanner(label = "Maternal age category (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
   tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3")) %>%
-  tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other_") ) %>%
+  tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other") ) %>%
   tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other") ) %>%
   tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
-  tab_spanner(label= "Language region", columns =c("German","French", "Italian", "Romansh"))
+  tab_spanner(label= "Language region", columns =c("German or Romansh","French", "Italian"))
 
 mat_in6_gt
 
