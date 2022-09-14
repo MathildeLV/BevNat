@@ -1,8 +1,15 @@
 ---
 title: "Graphics"
 author: "Mathilde Le Vu"
-date: '2022-08-30'
-output: html_document
+date:  "`r Sys.Date()`"
+html_document: 
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -26,15 +33,21 @@ gg_nation_birthy +  ggtitle("Maternal nationality through the years") +
 BW_sex <- ggplot(bevn_eco_in7, aes(x=BW, colour=sex)) + geom_density()
 BW_sex
 
-
 BW_birthyear_in7 <- ggplot(bevn_eco_in7, aes(x=BW, colour=as.factor(birthyear))) + geom_density()
 BW_birthyear_in7
+BW_birthyear_in7 + xlim(1500, 5500)
+BW_birthyear_in7 + xlim(3000, 3800)
+
 
 BW_birthyear_in6 <- ggplot(bevn_eco_in6, aes(x=BW, colour=as.factor(birthyear))) + geom_density()
 BW_birthyear_in6
+BW_birthyear_in6 + xlim(1500, 5500)
+BW_birthyear_in6 + xlim(3000, 3800)
 
 BW_birthyear_in <- ggplot(bevn_eco, aes(x=BW, colour=as.factor(birthyear))) + geom_density()
 BW_birthyear_in
+BW_birthyear_in + xlim(1500, 5500)
+BW_birthyear_in + xlim(3000, 3800)
 ```
 
 
@@ -42,15 +55,17 @@ BW_birthyear_in
 
 ```{r}
 GA_sex <- ggplot(bevn_eco_in7, aes(x=GA_days, colour=sex)) + geom_density()
-GA_sex
+GA_sex + xlim(240,300)
 
 GA_birthyear_in <- ggplot(bevn_eco_in7, aes(x=GA_days, colour=as.factor(birthyear))) + geom_density()
 GA_birthyear_in
+GA_birthyear_in + xlim(240, 300)
 
 GA_birthyear_in6 <- ggplot(bevn_eco_in7, aes(x=GA_days, colour=as.factor(birthyear))) + geom_density()
 GA_birthyear_in6
+GA_birthyear_in6 + xlim(240, 300)
 
 GA_birthyear_in7 <- ggplot(bevn_eco_in7, aes(x=GA_days, colour=as.factor(birthyear))) + geom_density()
 GA_birthyear_in7
-
+GA_birthyear_in7 + xlim(240, 300)
 ```
