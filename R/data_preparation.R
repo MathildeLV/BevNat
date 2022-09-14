@@ -118,19 +118,25 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   bevn_eco$GA_days <- as.numeric(bevn_eco$GA_days)
   bevn_eco$GA_weeks <- bevn_eco$GA_days / 7
   
-## Kind: Gewicht in Gramm = weight at birth (g)
+##Birthweight categories  
+  ## Kind: Gewicht in Gramm = weight at birth (g)
   #categorize in LBW, "normal" (arbitrary decision) and high BW
   bevn_eco$LBW <- ifelse(bevn_eco$BW<2500, 1, 0)
   bevn_eco$LBW <- as.factor(bevn_eco$LBW)
 
   
-## Kind: Gewicht in Gramm = weight at birth (g)
+  ## Kind: Gewicht in Gramm = weight at birth (g)
   bevn_eco$BW_cat2 <- cut(bevn_eco$BW, breaks=c(0, 499, 8000, 10000), include.lowest=TRUE)
   table(bevn_eco$BW_cat2, useNA="always")
   
-## Bw Macrosomia
+  ## Bw Macrosomia
   bevn_eco$Bw_Macro <- cut(bevn_eco$BW, breaks=c(0, 4000, 10000), include.lowest=TRUE)
   table(bevn_eco$Bw_Macro, useNA="always")
+  
+  ##BW LBW, normal, Macrosomia
+  bevn_eco$BW_cat3 <- cut(bevn_eco$BW, breaks=c(0, 2500, 4000, 10000), include.lowest=TRUE)
+  table(bevn_eco$BW_cat3, useNA="always")
+
   ## BL = BL (cm)
   bevn_eco$BL_cat <- cut(bevn_eco$BL, breaks=c(0, 19, 64, 100), include.lowest=TRUE)
   table(bevn_eco$BL_cat, useNA="always")
