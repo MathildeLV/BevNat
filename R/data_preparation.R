@@ -77,6 +77,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
                                                ifelse((bevn_eco$mother_nationality > 8600 & bevn_eco$mother_nationality < 8686), 'Oceania', NA
                                                ))))))))
   table(bevn_eco$mother_nationality_cat2, useNA = "always")
+  bevn_eco$mother_nationality_cat2 <- relevel (bevn_eco$mother_nationality_cat2, ref = "Switzerland")
   
   table(bevn_eco$mother_nationality_cat2, bevn_eco$mother_nationality, useNA = "always")
   bevn_eco %>%
@@ -136,6 +137,8 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   ##BW LBW, normal, Macrosomia
   bevn_eco$BW_cat3 <- cut(bevn_eco$BW, breaks=c(0, 2500, 4000, 10000), include.lowest=TRUE)
   table(bevn_eco$BW_cat3, useNA="always")
+  bevn_eco$BW_cat3 <- relevel (bevn_eco$BW_cat3, ref = 2)
+  
 
   ## BL = BL (cm)
   bevn_eco$BL_cat <- cut(bevn_eco$BL, breaks=c(0, 19, 64, 100), include.lowest=TRUE)
