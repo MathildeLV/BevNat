@@ -111,3 +111,26 @@ dim(bevn_eco_in0)
   dim(bevn_eco_in6)-dim(bevn_eco_in7)
    dim(bevn_eco_in7)
   #Exclusion of 3327  additional entries. New nb entries: 1103352
+   
+   
+## Dataset to zoom in 2008-2010 (for the 2009 eco crisis)  
+   #stillbirth outcome
+   bevn_eco_in6_2008_10 <- bevn_eco_in6 %>%
+    filter(birthyear>2007 & birthyear <2011)
+   table(bevn_eco_in6_2008_10$birthyear, useNA = "always")
+   
+   #birthweight outcome
+    bevn_eco_in7_2008_10 <- bevn_eco_in7 %>%
+    filter(birthyear>2007 & birthyear <2011)
+   table(bevn_eco_in7_2008_10$birthyear, useNA = "always")
+   
+## Dataset to zoom in 2017-2020 for covid   
+   #stillbirth outcome
+   bevn_eco_in6_2017_20 <- bevn_eco_in6 %>%
+   filter(birthyear>2016)
+   table(bevn_eco_in6_2017_20$birthyear, useNA = "always")
+
+   #birthweight outcome
+   bevn_eco_in7_2017_20 <- bevn_eco_in7 %>%
+     filter(birthyear>2016)
+   table(bevn_eco_in7_2017_20$birthyear, useNA = "always")
