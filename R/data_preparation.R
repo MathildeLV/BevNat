@@ -134,11 +134,54 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   bevn_eco$Bw_Macro <- cut(bevn_eco$BW, breaks=c(0, 4000, 10000), include.lowest=TRUE)
   table(bevn_eco$Bw_Macro, useNA="always")
   
-  ##BW LBW, normal, Macrosomia
-  bevn_eco$BW_cat3 <- cut(bevn_eco$BW, breaks=c(0, 2500, 4000, 10000), include.lowest=TRUE)
-  table(bevn_eco$BW_cat3, useNA="always")
-  bevn_eco$BW_cat3 <- relevel (bevn_eco$BW_cat3, ref = 2)
   
+  mydat$x1 <- as.character(mydat$x1)
+  mydat$x1[mydat$x1 == 'd'] <- 'f'
+  # optional
+  mydat$x1 <- as.factor(mydat$x1)
+  
+  ##BW LBW, normal, Macrosomia
+  bevn_eco <- bevn_eco %>%
+    mutate(BW_cat3char = case_when (BW<2500 & BW>0 ~"Low birthweight",
+           BW<4000 & BW>2500 ~"Normal birthweight",
+           BW==2500 ~"Normal birthweight",
+           BW>4000 | BW==4000~"Macrosomia"
+           ))
+    table(bevn_eco$BW_cat3char, useNA="always")
+  
+  bevn_eco <- bevn_eco %>%
+    mutate(BW_ordered = case_when (BW<2500 & BW>0 ~"1",
+                                   BW<4000 & BW>2500 ~"2",
+                                   BW==2500 ~"2",
+                                   BW>4000 | BW==4000~"3"
+    ),
+    BW_ordered=as.numeric(BW_ordered))        
+    table(bevn_eco$BW_ordered, useNA="always")
+  
+  # Low vs normal
+  bevn_eco <- bevn_eco %>%
+    mutate(LBW_norm = case_when (BW<2500 & BW>0 ~"1",
+                                 BW<4000 & BW>2500 | BW ==2500 ~"0"
+    ),
+    LBW_norm=as.factor(LBW_norm))
+  table(bevn_eco$LBW_norm, useNA="always")
+  
+  # Macrosomia versus normal
+  bevn_eco <- bevn_eco %>%
+    mutate(macro_norm = case_when (BW>4000 | BW==4000~"1",
+                                 BW<4000 & BW>2500 | BW ==2500 ~"0"
+    ),
+    macro_norm=as.factor(macro_norm))
+   table(bevn_eco$macro_norm, useNA="always")
+  
+  
+  # Recoding stillbirth variable
+  bevn_eco <- bevn_eco %>%
+    dplyr::mutate(lebend.geboren.oder.nicht = as.character(lebend.geboren.oder.nicht),
+                  stillbirth = dplyr::recode(lebend.geboren.oder.nicht, 
+                                             "1" = "0",
+                                             "2" = "1"),
+                  stillbirth = as.factor(stillbirth))
 
   ## BL = BL (cm)
   bevn_eco$BL_cat <- cut(bevn_eco$BL, breaks=c(0, 19, 64, 100), include.lowest=TRUE)
@@ -150,7 +193,6 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   ##creating categories: single VS multiple pregnancies
   bevn_eco$singleton_or_multiple <- cut(bevn_eco$nb_of_babies, breaks=c(0,1,6), include.lowest = TRUE, labels=c("singleton", "multiple"))
   table(bevn_eco$singleton_or_multiple)
-  
   
   
   
@@ -176,6 +218,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   #extract month
   bevn_eco$month <-  format(bevn_eco$birth_Y_M_1stday, "%m")   
   bevn_eco$month <- as.numeric(bevn_eco$month)
+  bevn_eco$month1 <- as.factor(bevn_eco$month)
   table(bevn_eco$month)  
   
   #GA category
@@ -251,3 +294,8 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
       uniqv <- na.omit(unique(v))
       uniqv[which.max(tabulate(match(v, uniqv)))]
     }
+    
+    
+    
+    subset(bevn_eco, birth_Y_M_num==1, c(birth_Y_M_num, birth_Y_M))
+    
