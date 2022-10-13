@@ -127,11 +127,11 @@ Also, mean ssep can be used as a linear term
 ## Removing month variable and using mean ssep as linear term
 
 ```{r}
-  m_BW_bam_2009_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=7) + s(birth_Y_M_num) + parity_cat + sex + Urban3  + Language + mother_nationality_cat2, data=bevn_eco_in7_2008_10)
+  m_BW_bam_2009_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age, k=7) + s(birth_Y_M_num) + parity_cat + sex + Urban3  + Language + mother_nationality_cat2 + mean_ssep2, data=bevn_eco_in7_2008_10)
   summary(m_BW_bam_2009_2)
-   plot(m_BW_bam_2009_2, select=1, ylim=c(0, 4000),shade = TRUE, shade.col = "lightblue",shift = coef(m_BW_bam_2009)[1])
-  plot(m_BW_bam_2009_2, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",shift = coef(m_BW_bam_2009)[1])
-  plot(m_BW_bam_2009_2, select=3, ylim=c(3310, 3360),shade = TRUE, shade.col = "lightblue", shift = coef(m_BW_bam_2009_2)[1],  xlab  = "13 : 2008-01,  20: 2008-08,  30: 2009-06,  40: 2010-04,  50: 2011-02")
+   plot(m_BW_bam_2009_2, select=1, ylim=c(0, 4000),shade = TRUE, shade.col = "lightblue",shift = coef(m_BW_bam_2009_2)[1]) #GA
+  plot(m_BW_bam_2009_2, select=2, ylim=c(3200, 3350),shade = TRUE, shade.col = "lightblue",shift = coef(m_BW_bam_2009_2)[1]) #mat age
+  plot(m_BW_bam_2009_2, select=3, ylim=c(3250, 3350),shade = TRUE, shade.col = "lightblue", shift = coef(m_BW_bam_2009_2)[1],  xlab  = "13 : 2008-01,  20: 2008-08,  30: 2009-06,  40: 2010-04,  50: 2011-02") # time
 
   gam.check(m_BW_bam_2009_2)
   concurvity(m_BW_bam_2009_2, full=TRUE) #values are now fine.
@@ -141,7 +141,7 @@ Also, mean ssep can be used as a linear term
   Vb2 <- vcov(m_BW_bam_2009_2, unconditional = TRUE)
   se2 <- sqrt(diag(Vb2))
   my.ci2 <- data.frame(cbind(beta2, lci = beta2-1.96*se2, uci = beta2 + 1.96*se2))
-  round(head(my.ci2,14), 2)
+  round(head(my.ci2,15), 2)
 ```
 
 # 2017-2020
