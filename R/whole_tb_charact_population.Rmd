@@ -143,7 +143,8 @@ summarise(n = n(),
     count_parity_2= sum(parity_cat=="(1,2]", na.rm = T), perc_parity_2= 100*count_parity_2/n,
     count_parity_3= sum(parity_cat=="(2,3]", na.rm = T), perc_parity_3= 100*count_parity_3/n,
     count_parity_4= sum(parity_cat=="(3,20]", na.rm = T),  perc_parity_4= 100*count_parity_4/n,
-          
+    count_parity_NA = sum(is.na(parity_cat)), perc_parity_NA=100*count_parity_NA/n,
+
         #moth nat cat 1
     count_mat_nat_cat_1_1= sum(mother_nationality_cat1=="Switzerland", na.rm = T),     perc_mat_nat_cat_1_1=100*count_mat_nat_cat_1_1/n,  
     count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
@@ -189,6 +190,7 @@ formattedb <- tabb %>%
         "2" = round({perc_parity_2}, digits=2),
         "3" = round({perc_parity_3}, digits=2),
         ">3" = round({perc_parity_4}, digits=2),
+        "missing" = round({perc_parity_NA}, digits=2),
         
         "Switzerland_" = round({perc_mat_nat_cat_1_1}, digits=2),  #mat nationality cat 1
         "Other" = round({perc_mat_nat_cat_1_2}, digits=2),
@@ -210,14 +212,14 @@ formattedb <- tabb %>%
         "Italian"= round({perc_lang_I}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Missing", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
+  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland_", "Other", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Missing", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
 formattedb
 
 mat_in7_gt <- formattedb%>%
   gt()%>%
   tab_header(title="maternal characteristics") %>%
   tab_spanner(label = "Maternal age category (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
-  tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3")) %>%
+  tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3", "missing")) %>%
   tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other") ) %>%
   tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Missing") ) %>%
   tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
@@ -250,6 +252,7 @@ summarise(n = n(),
     count_parity_2= sum(parity_cat=="(1,2]", na.rm = T), perc_parity_2= 100*count_parity_2/n,
     count_parity_3= sum(parity_cat=="(2,3]", na.rm = T), perc_parity_3= 100*count_parity_3/n,
     count_parity_4= sum(parity_cat=="(3,20]", na.rm = T),  perc_parity_4= 100*count_parity_4/n,
+    count_parity_NA = sum(is.na(parity_cat)),  perc_parity_NA=100*count_parity_NA/n,
           
         #moth nat cat 1
     count_mat_nat_cat_1_1= sum(mother_nationality_cat1=="Switzerland", na.rm = T),     perc_mat_nat_cat_1_1=100*count_mat_nat_cat_1_1/n,  
@@ -264,6 +267,7 @@ summarise(n = n(),
     count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania", na.rm=T), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
     count_mat_nat_cat_2_NA= sum(mother_nationality_cat2=="Missing"), perc_mat_nat_cat_2_NA=100*count_mat_nat_cat_2_NA/n,
     count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America ", na.rm=T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+    count_mat_nat_cat_2_NA= sum(is.na(mother_nationality_cat2)), perc_mat_nat_cat_2_NA=100*count_mat_nat_cat_2_NA/n,
 
     count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
     count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
@@ -296,7 +300,8 @@ formattedc <- tabc %>%
         "2" = round({perc_parity_2}, digits=2),
         "3" = round({perc_parity_3}, digits=2),
         ">3" = round({perc_parity_4}, digits=2),
-        
+        "missing" = round({perc_parity_NA}, digits=2),
+
         "Switzerland_" = round({perc_mat_nat_cat_1_1}, digits=2),  #mat nationality cat 1
         "Other" = round({perc_mat_nat_cat_1_2}, digits=2),
         
@@ -308,6 +313,7 @@ formattedc <- tabc %>%
         "Missing" = round({perc_mat_nat_cat_2_NA}, digits=2),
         "Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
         "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
+        "Missing" = round({perc_mat_nat_cat_2_NA}, digits=2),
 
         "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
         "Urban" = round({perc_Urban3_1}, digits=2),
@@ -317,16 +323,16 @@ formattedc <- tabc %>%
         "Italian"= round({perc_lang_I}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "Switzerland_", "Other", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
+  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland_", "Other", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Missing", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
 formattedc
 
 mat_in6_gt <- formattedc%>%
   gt()%>%
   tab_header(title="maternal characteristics") %>%
   tab_spanner(label = "Maternal age category (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
-  tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3")) %>%
+  tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3", "missing")) %>%
   tab_spanner(label = "Nationality 1", columns =c("Switzerland_", "Other") ) %>%
-  tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Other") ) %>%
+  tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Oceania", "Missing") ) %>%
   tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
   tab_spanner(label= "Language region", columns =c("German or Romansh","French", "Italian"))
 
@@ -355,19 +361,17 @@ summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthwei
             count_females = sum(sex == "2"),   percent_females = 100*count_females/n,       #sex
             count_males = sum(sex == "1"),     percent_males = 100*count_males/n,
           
-           count_SB_0 = sum(stillbirth=="0", na.rm=T), percent_SB_0=100*count_SB_0/n,         #stillbirth
-           count_SB_1 = sum(stillbirth=="1", na.rm=T), percent_SB_1=100*count_SB_1/n,
+           count_SB_1 = sum(stillbirth=="1", na.rm=T), percent_SB_1=100*count_SB_1/n, #stillbirth
           
-           count_PTB_0 = sum(PTB=="0", na.rm=T), percent_PTB_0=100*count_PTB_0/n,    #preterm birth     
-           count_PTB_1 = sum(PTB=="1", na.rm=T), percent_PTB_1=100*count_PTB_1/n,
+           count_PTB_1 = sum(PTB=="1", na.rm=T), percent_PTB_1=100*count_PTB_1/n, #preterm birth
+           
+           count_LBW_1 = sum(LBW=="1", na.rm=T), percent_LBW_1=100*count_LBW_1/n,     #lowbirthweight    
           
-           count_LBW_0 = sum(LBW=="0", na.rm=T), percent_LBW_0=100*count_LBW_0/n,    #low birth weight    
-           count_LBW_1 = sum(LBW=="1", na.rm=T), percent_LBW_1=100*count_LBW_1/n,          
+          count_macro_1 = sum(macro_norm=="1", na.rm=T), percent_macro_1=100*count_macro_1/n,  
           )%>%
   ungroup()
   tab0
 
-  
 formatted0 <- tab0 %>%
   mutate("Birthweight (g)"= stringr::str_glue("{mean_birthweight} ± {sd_birthweight}"),    #birthweight
          n=n,
@@ -376,26 +380,22 @@ formatted0 <- tab0 %>%
         female =round({percent_females}, digits=2),
         male = round({percent_males}, digits=2),
         
-        no = round({percent_SB_0}, digits=2),
-        yes = round({percent_SB_1}, digits=2),
+        Stillbirth = round({percent_SB_1}, digits=2),
         
-        no_ =round({percent_PTB_0}, digits=2),
-        yes_ =round({percent_PTB_1}, digits=2),
+        Preterm_birth=round({percent_PTB_1}, digits=2),
         
-        no. =round({percent_LBW_0}, digits=2),
-        yes. =round({percent_LBW_1}, digits=2),
+        Low_birth_weight =round({percent_LBW_1}, digits=2),
+        
+        Macrosomia=round({percent_macro_1}, digits=2)
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, no, yes, no_, yes_, no., yes.)
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, Stillbirth, Preterm_birth, Low_birth_weight, Macrosomia)
 formatted0
 
 neonat_in_gt <- formatted0%>%
   gt()%>%
-  tab_header(title="neonate characteristics") %>%
-  tab_spanner(label = "Sex", columns = c(female, male))  %>%
-  tab_spanner (label = "Stillbirth", columns = c(no, yes)) %>%
-  tab_spanner(label = "Preterm birth", columns =c(no_, yes_) ) %>%
-  tab_spanner(label= "Low birth weight", columns =c(no., yes.))
+  tab_header(title="Neonatal characteristics at inclusion") %>%
+  tab_spanner(label = "Sex", columns = c(female, male))  
 neonat_in_gt
 
 neonat_in_gt %>%
@@ -414,12 +414,12 @@ summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthwei
             n = n(),
             count_females = sum(sex == "2"),   percent_females = 100*count_females/n,       #sex
             count_males = sum(sex == "1"),     percent_males = 100*count_males/n,
+           
+           count_PTB_1 = sum(PTB=="1", na.rm=T), percent_PTB_1=100*count_PTB_1/n, #preterm birth
+           
+           count_LBW_1 = sum(LBW=="1", na.rm=T), percent_LBW_1=100*count_LBW_1/n,     #lowbirthweight    
           
-           count_PTB_0 = sum(PTB=="0"), percent_PTB_0=100*count_PTB_0/n,    #preterm birth     
-           count_PTB_1 = sum(PTB=="1"), percent_PTB_1=100*count_PTB_1/n,
-          
-           count_LBW_0 = sum(LBW=="0"), percent_LBW_0=100*count_LBW_0/n,    #low birth weight    
-           count_LBW_1 = sum(LBW=="1"), percent_LBW_1=100*count_LBW_1/n,          
+          count_macro_1 = sum(macro_norm=="1", na.rm=T), percent_macro_1=100*count_macro_1/n,  
           )%>%
   ungroup()
   tab1
@@ -433,23 +433,21 @@ formatted1 <- tab1 %>%
         female =round({percent_females}, digits=2),
         male = round({percent_males}, digits=2),
         
-        no_ =round({percent_PTB_0}, digits=2),
-        yes_ =round({percent_PTB_1}, digits=2),
+        Preterm_birth=round({percent_PTB_1}, digits=2),
         
-        no. =round({percent_LBW_0}, digits=2),
-        yes. =round({percent_LBW_1}, digits=2),
+        Low_birth_weight =round({percent_LBW_1}, digits=2),
+        
+        Macrosomia=round({percent_macro_1}, digits=2)
         
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, no_, yes_, no., yes.)
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, Preterm_birth, Low_birth_weight, Macrosomia)
 formatted1
 
 neonat_in7_gt <- formatted1%>%
   gt()%>%
-  tab_header(title="neonate characteristics") %>%
-  tab_spanner(label = "Sex", columns = c(female, male))  %>%
-  tab_spanner(label = "Preterm birth", columns =c(no_, yes_) ) %>%
-  tab_spanner(label= "Low birth weight", columns =c(no., yes.))
+  tab_header(title="Neonatal characteristics in dataset in7") %>%
+  tab_spanner(label = "Sex", columns = c(female, male))
 neonat_in7_gt
 
 neonat_in7_gt %>%
@@ -469,14 +467,13 @@ summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthwei
             count_females = sum(sex == "2"),   percent_females = 100*count_females/n,       #sex
             count_males = sum(sex == "1"),     percent_males = 100*count_males/n,
           
-           count_SB_0 = sum(stillbirth=="0"), percent_SB_0=100*count_SB_0/n,         #stillbirth
-           count_SB_1 = sum(stillbirth=="1"), percent_SB_1=100*count_SB_1/n,
+           count_SB_1 = sum(stillbirth=="1", na.rm=T), percent_SB_1=100*count_SB_1/n, #stillbirth
           
-           count_PTB_0 = sum(PTB=="0"), percent_PTB_0=100*count_PTB_0/n,    #preterm birth     
-           count_PTB_1 = sum(PTB=="1"), percent_PTB_1=100*count_PTB_1/n,
+           count_PTB_1 = sum(PTB=="1", na.rm=T), percent_PTB_1=100*count_PTB_1/n, #preterm birth
+           
+           count_LBW_1 = sum(LBW=="1", na.rm=T), percent_LBW_1=100*count_LBW_1/n,     #lowbirthweight    
           
-           count_LBW_0 = sum(LBW=="0"), percent_LBW_0=100*count_LBW_0/n,    #low birth weight    
-           count_LBW_1 = sum(LBW=="1"), percent_LBW_1=100*count_LBW_1/n,          
+          count_macro_1 = sum(macro_norm=="1", na.rm=T), percent_macro_1=100*count_macro_1/n,  
           )%>%
   ungroup()
   tab2
@@ -490,26 +487,22 @@ formatted2 <- tab2 %>%
         female =round({percent_females}, digits=2),
         male = round({percent_males}, digits=2),
         
-        no = round({percent_SB_0}, digits=2),
-        yes = round({percent_SB_1}, digits=2),
+        Stillbirth = round({percent_SB_1}, digits=2),
         
-        no_ =round({percent_PTB_0}, digits=2),
-        yes_ =round({percent_PTB_1}, digits=2),
+        Preterm_birth=round({percent_PTB_1}, digits=2),
         
-        no. =round({percent_LBW_0}, digits=2),
-        yes. =round({percent_LBW_1}, digits=2),
+        Low_birth_weight =round({percent_LBW_1}, digits=2),
+        
+        Macrosomia=round({percent_macro_1}, digits=2)
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, no, yes, no_, yes_, no., yes.)
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, Stillbirth, Preterm_birth, Low_birth_weight, Macrosomia)
 formatted2
 
 neonat_in6_gt <- formatted2%>%
   gt()%>%
-  tab_header(title="neonate characteristics") %>%
-  tab_spanner(label = "Sex", columns = c(female, male))  %>%
-  tab_spanner (label = "Stillbirth", columns = c(no, yes)) %>%
-  tab_spanner(label = "Preterm birth", columns =c(no_, yes_) ) %>%
-  tab_spanner(label= "Low birth weight", columns =c(no., yes.))
+  tab_header(title="Neonatal characteristics in dataset in6") %>%
+  tab_spanner(label = "Sex", columns = c(female, male)) 
 neonat_in6_gt
 
 neonat_in6_gt %>%
