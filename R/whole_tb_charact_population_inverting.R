@@ -19,8 +19,8 @@ mat_in_inv
 mat_in_inv_v1 <- add_column(mat_in_inv, .before = 1,
                    name = c("n", "Maternal age (years): mean ± sd ", "Maternal age category: 
            (10-20]  (%)", "(20-25]  (%) ", "(25-30]  (%)", "(30-35]  (%)", "(35-40]  (%)", "> 40  (%)", "Parity: 1  (%)", "2  (%)", "3  (%)", ">  (%)3", 
-                            "missing  (%)", "Mother nationalty (cat1): Switzerland  (%)", "Other  (%)", "Mother nationality (cat2): Switzerland  (%)", "Africa  (%)", "Asia  (%)", "Europe  (%)", 
-                            "Northern America  (%)", "Southern and Central America  (%)", "Oceania  (%)", "Missing  (%)", "Urbanicity: Rural  (%)",
+                            "missing  (%)", "Mother nationality (cat2): Switzerland  (%)", "Africa  (%)", "Asia  (%)", "Europe  (%)", 
+                            "Northern America  (%)", "Southern and Central America  (%)", "Missing  or Oceania (%)", "Urbanicity: Rural  (%)",
                             "Urban  (%)", "Language region: German or Romansh  (%)", "French  (%)", "Italian  (%)", "Mean SSEP: mean ± sd ")
 )
 mat_in_inv_v1
@@ -39,8 +39,8 @@ mat_in_inv_v1 %>%
 mat_in_inv_v2 <- add_column(mat_in_inv, .before = 1,
                    name = c("n", "Maternal age (years) ", "(10-20]", 
                             "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40", "1", "2", "3", ">3", 
-                            "missing", "Switzerland", "Other", "Switzerland", "Africa", "Asia", "Europe", 
-                            "Northern America", "Southern and Central America", "Oceania", "Missing", "Rural",
+                            "missing", "Switzerland", "Africa", "Asia", "Europe", 
+                            "Northern America", "Southern and Central America", "Missing or Oceania", "Rural",
                             "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
 )
 
@@ -53,15 +53,13 @@ mat_in_inv_v2 <- mat_in_inv_v2 %>%
     rows = 3:8) %>%
   tab_row_group(label="Parity",
     rows=9:13) %>%
-  tab_row_group(label="Maternal Nationality: cat1",
-    rows=14:15) %>%
   tab_row_group(label="Maternal Nationality: cat2",
-    rows=16:23) %>%
+    rows=14:20) %>%
   tab_row_group(label="Urbanicity",
-    rows=24:25) %>%
+    rows=21:22) %>%
   tab_row_group(label="Language region",
-    rows=26:28) %>%
-  row_group_order(groups=c("Maternal age (categorical)", "Parity", "Maternal Nationality: cat1", "Maternal Nationality: cat2",
+    rows=23:26) %>%
+  row_group_order(groups=c("Maternal age (categorical)", "Parity", "Maternal Nationality: cat2",
                            "Urbanicity", "Language region")
                            )%>%
   cols_label(name = "birthyear")
@@ -90,8 +88,8 @@ mat_in_inv_6
 mat_in_inv_6 <- add_column(mat_in_inv_6, .before = 1,
                             name = c("n", "Maternal age (years) ", "(10-20]", 
                                      "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40", "1", "2", "3", ">3", 
-                                     "missing", "Switzerland", "Other", "Switzerland", "Africa", "Asia", "Europe", 
-                                     "Northern America", "Southern and Central America", "Oceania", "Missing", "Rural",
+                                     "missing", "Switzerland", "Africa", "Asia", "Europe", 
+                                     "Northern America", "Southern and Central America", "Missing or Oceania", "Rural",
                                      "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
 )
 
@@ -104,15 +102,13 @@ mat_in_inv_6 <- mat_in_inv_6 %>%
                 rows = 3:8) %>%
   tab_row_group(label="Parity",
                 rows=9:13) %>%
-  tab_row_group(label="Maternal Nationality: cat1",
-                rows=14:15) %>%
   tab_row_group(label="Maternal Nationality: cat2",
-                rows=16:23) %>%
+                rows=14:20) %>%
   tab_row_group(label="Urbanicity",
-                rows=24:25) %>%
+                rows=21:22) %>%
   tab_row_group(label="Language region",
-                rows=26:28) %>%
-  row_group_order(groups=c("Maternal age (categorical)", "Parity", "Maternal Nationality: cat1", "Maternal Nationality: cat2",
+                rows=23:26) %>%
+  row_group_order(groups=c("Maternal age (categorical)", "Parity", "Maternal Nationality: cat2",
                            "Urbanicity", "Language region")
   )%>%
   cols_label(name = "birthyear")
@@ -140,8 +136,8 @@ mat_in_inv_7
 mat_in_inv_7 <- add_column(mat_in_inv_7, .before = 1,
                            name = c("n", "Maternal age (years) ", "(10-20]", 
                                     "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40", "1", "2", "3", ">3", 
-                                    "missing", "Switzerland", "Other", "Switzerland", "Africa", "Asia", "Europe", 
-                                    "Northern America", "Southern and Central America", "Oceania", "Missing", "Rural",
+                                    "missing", "Switzerland", "Africa", "Asia", "Europe", 
+                                    "Northern America", "Southern and Central America", "Missing or Oceania", "Rural",
                                     "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
 )
 
@@ -154,15 +150,13 @@ mat_in_inv_7 <- mat_in_inv_7 %>%
                 rows = 3:8) %>%
   tab_row_group(label="Parity",
                 rows=9:13) %>%
-  tab_row_group(label="Maternal Nationality: cat1",
-                rows=14:15) %>%
   tab_row_group(label="Maternal Nationality: cat2",
-                rows=16:23) %>%
+                rows=14:20) %>%
   tab_row_group(label="Urbanicity",
-                rows=24:25) %>%
+                rows=21:22) %>%
   tab_row_group(label="Language region",
-                rows=26:28) %>%
-  row_group_order(groups=c("Maternal age (categorical)", "Parity", "Maternal Nationality: cat1", "Maternal Nationality: cat2",
+                rows=23:25) %>%
+  row_group_order(groups=c("Maternal age (categorical)", "Parity", "Maternal Nationality: cat2",
                            "Urbanicity", "Language region")
   )%>%
   cols_label(name = "birthyear")
