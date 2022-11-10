@@ -68,7 +68,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   bevn_eco$mother_nationality_cat1 <- relevel (bevn_eco$mother_nationality_cat1, ref = "Switzerland")
   
   # Categorizing nationality of the mother in : Switzerland, Europe, Africa, Americas, Asia, Oceania, other
-  bevn_eco$mother_nationality_cat2 <- as.factor(ifelse(bevn_eco$mother_nationality == 8100, 'Switzerland', 
+  bevn_eco$mother_nationality_cat2_with_Oc <- as.factor(ifelse(bevn_eco$mother_nationality == 8100, 'Switzerland', 
                                               ifelse((bevn_eco$mother_nationality > 8200 & bevn_eco$mother_nationality < 8281) | (bevn_eco$mother_nationality > 8571 & bevn_eco$mother_nationality < 8575) | (bevn_eco$mother_nationality > 8575 & bevn_eco$mother_nationality < 8579), 'Europe',
                                               ifelse((bevn_eco$mother_nationality > 8300 & bevn_eco$mother_nationality < 8385) | (bevn_eco$mother_nationality == 8551), 'Africa',
                                                ifelse((bevn_eco$mother_nationality > 8400 & bevn_eco$mother_nationality < 8404) | (bevn_eco$mother_nationality > 8404 & bevn_eco$mother_nationality < 8413) | (bevn_eco$mother_nationality > 8413 & bevn_eco$mother_nationality < 8422) | (bevn_eco$mother_nationality >8423 & bevn_eco$mother_nationality < 8434) | (bevn_eco$mother_nationality > 8434 & bevn_eco$mother_nationality < 8439) | (bevn_eco$mother_nationality > 8439 & bevn_eco$mother_nationality < 8447) | (bevn_eco$mother_nationality > 8447 & bevn_eco$mother_nationality < 8487), 'Southern and Central America ',
@@ -76,15 +76,26 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
                                                ifelse((bevn_eco$mother_nationality > 8500 & bevn_eco$mother_nationality < 8551) | (bevn_eco$mother_nationality >8551 & bevn_eco$mother_nationality < 8572) | bevn_eco$mother_nationality== 8575 | bevn_eco$mother_nationality== 8579, 'Asia',
                                                ifelse((bevn_eco$mother_nationality > 8600 & bevn_eco$mother_nationality < 8686), 'Oceania', NA
                                                ))))))))
-  table(bevn_eco$mother_nationality_cat2, useNA = "always")
+  table(bevn_eco$mother_nationality_cat2_with_Oc, useNA = "always")
+  # too few mothers from Oceania: decided to pool NAs+ mothers from Oceanian nationality
+  
+  # Categorizing nationality of the mother in : Switzerland, Europe, Africa, Americas, Asia, NA (NA includes NA + Oceania)
+  bevn_eco$mother_nationality_cat2 <- as.factor(ifelse(bevn_eco$mother_nationality == 8100, 'Switzerland', 
+                                                ifelse((bevn_eco$mother_nationality > 8200 & bevn_eco$mother_nationality < 8281) | (bevn_eco$mother_nationality > 8571 & bevn_eco$mother_nationality < 8575) | (bevn_eco$mother_nationality > 8575 & bevn_eco$mother_nationality < 8579), 'Europe',
+                                                ifelse((bevn_eco$mother_nationality > 8300 & bevn_eco$mother_nationality < 8385) | (bevn_eco$mother_nationality == 8551), 'Africa',
+                                                ifelse((bevn_eco$mother_nationality > 8400 & bevn_eco$mother_nationality < 8404) | (bevn_eco$mother_nationality > 8404 & bevn_eco$mother_nationality < 8413) | (bevn_eco$mother_nationality > 8413 & bevn_eco$mother_nationality < 8422) | (bevn_eco$mother_nationality >8423 & bevn_eco$mother_nationality < 8434) | (bevn_eco$mother_nationality > 8434 & bevn_eco$mother_nationality < 8439) | (bevn_eco$mother_nationality > 8439 & bevn_eco$mother_nationality < 8447) | (bevn_eco$mother_nationality > 8447 & bevn_eco$mother_nationality < 8487), 'Southern and Central America ',
+                                                ifelse(bevn_eco$mother_nationality == 8404 | bevn_eco$mother_nationality == 8413 | bevn_eco$mother_nationality == 8423 | bevn_eco$mother_nationality== 8434 | bevn_eco$mother_nationality== 8439 | bevn_eco$mother_nationality == 8447, 'Northern America',
+                                                ifelse((bevn_eco$mother_nationality > 8500 & bevn_eco$mother_nationality < 8551) | (bevn_eco$mother_nationality >8551 & bevn_eco$mother_nationality < 8572) | bevn_eco$mother_nationality== 8575 | bevn_eco$mother_nationality== 8579, 'Asia',
+                                                NA)))))))
   bevn_eco$mother_nationality_cat2 <- relevel (bevn_eco$mother_nationality_cat2, ref = "Switzerland")
+  table(bevn_eco$mother_nationality_cat2, useNA = "always")
   
   table(bevn_eco$mother_nationality_cat2, bevn_eco$mother_nationality, useNA = "always")
   bevn_eco %>%
   filter(is.na(mother_nationality_cat2)) %>%
   summarise(mother_nationality, mother_nationality_cat2)
   
-      #categorizing nationality of the mother in : Switzerland, different parts of Europe, other
+  #categorizing nationality of the mother in : Switzerland, different parts of Europe, other
   bevn_eco$mother_nationality_cat3 <- as.factor(ifelse(bevn_eco$mother_nationality == 8100, 'Switzerland',
                                             ifelse(bevn_eco$mother_nationality == 8207 | bevn_eco$mother_nationality == 8208 | bevn_eco$mother_nationality == 8209 | bevn_eco$mother_nationality == 8222 | bevn_eco$mother_nationality == 8229 | bevn_eco$mother_nationality == 8230 | bevn_eco$mother_nationality == 8238 | bevn_eco$mother_nationality == 8243 | bevn_eco$mother_nationality == 8244,  'Central Europe',
                                             ifelse (bevn_eco$mother_nationality == 8201 | bevn_eco$mother_nationality == 8205 | bevn_eco$mother_nationality ==8220 | bevn_eco$mother_nationality == 8232 | bevn_eco$mother_nationality == 82880 | (bevn_eco$mother_nationality > 8247 & bevn_eco$mother_nationality< 8258) , 'SE Europe',
@@ -234,6 +245,26 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
    bevn_eco$PTB <- ifelse(bevn_eco$GA_weeks<37, 1, 0)
    bevn_eco$PTB <- as.factor(bevn_eco$PTB)
    
+   # Parity category, 1, 2, 3, 4+
+   bevn_eco <- bevn_eco %>%
+     dplyr::mutate(parity_cat = cut (parity, breaks=c(0,1,2,3,20)))  
+   bevn_eco
+   table(bevn_eco$parity_cat, useNA = "always")
+   
+   # Maternal age category
+   table(bevn_eco$Mutter..Alter.in.erreichten.Jahren)
+   bevn_eco <- bevn_eco %>%
+     dplyr:: mutate(mat_age_cat = cut (Mutter..Alter.in.erreichten.Jahren, breaks=c(10,20,25,30, 35, 40, 70)))  
+   
+   table(bevn_eco$mat_age_cat, useNA = "always")
+   bevn_eco$mat_age_cat <- relevel (bevn_eco$mat_age_cat, ref = 3)
+   
+   # Paternal age category
+   table(bevn_eco$Vater..Alter.in.erreichten.Jahren)
+   bevn_eco <- bevn_eco %>%
+     dplyr:: mutate(pat_age_cat = cut (Vater..Alter.in.erreichten.Jahren, breaks=c(10,20,30, 40, 50, 70, 100)))  
+   
+   table(bevn_eco$pat_age_cat, useNA = "always")
    
   #Stillbirth to 0/1 binary variable (1 is stillbirth)
   bevn_eco <- bevn_eco %>%
@@ -243,26 +274,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
                                "2" = "1"),
            stillbirth = as.factor(stillbirth))
   
-# Parity category, 1, 2, 3, 4+
-  bevn_eco <- bevn_eco %>%
-    dplyr::mutate(parity_cat = cut (parity, breaks=c(0,1,2,3,20)))  
-  bevn_eco
-  table(bevn_eco$parity_cat, useNA = "always")
-  
-# Maternal age category
-  table(bevn_eco$Mutter..Alter.in.erreichten.Jahren)
-  bevn_eco <- bevn_eco %>%
-    dplyr:: mutate(mat_age_cat = cut (Mutter..Alter.in.erreichten.Jahren, breaks=c(10,20,25,30, 35, 40, 70)))  
-  
-  table(bevn_eco$mat_age_cat, useNA = "always")
-  bevn_eco$mat_age_cat <- relevel (bevn_eco$mat_age_cat, ref = 3)
-  
-# Paternal age category
-  table(bevn_eco$Vater..Alter.in.erreichten.Jahren)
-  bevn_eco <- bevn_eco %>%
-    dplyr:: mutate(pat_age_cat = cut (Vater..Alter.in.erreichten.Jahren, breaks=c(10,20,30, 40, 50, 70, 100)))  
-  
-  table(bevn_eco$pat_age_cat, useNA = "always")
+
   
 
 
