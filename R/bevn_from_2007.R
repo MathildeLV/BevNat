@@ -6,9 +6,7 @@ bevn <- read.csv2(here("data", "birth_iem.csv"))
 
 #GA missing from which year?
 summary(bevn$Kind..Gestationsalter.in.Tagen)
-bevn <- bevn %>%
-  mutate(kind_ga_days_cat = cut (Kind..Gestationsalter.in.Tagen, breaks=c(112,200, 280, 330), include.lowest=TRUE))  
-table(bevn$Ereignisjahr, bevn$kind_ga_days_cat, useNA="always")
+
 
 bevn2007 <- bevn %>%
   filter(Ereignisjahr>2006)
