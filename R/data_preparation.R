@@ -146,11 +146,6 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   table(bevn_eco$Bw_Macro, useNA="always")
   
   
-  mydat$x1 <- as.character(mydat$x1)
-  mydat$x1[mydat$x1 == 'd'] <- 'f'
-  # optional
-  mydat$x1 <- as.factor(mydat$x1)
-  
   ##BW LBW, normal, Macrosomia
   bevn_eco <- bevn_eco %>%
     mutate(BW_cat3char = case_when (BW<2500 & BW>0 ~"Low birthweight",
@@ -185,14 +180,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
     macro_norm=as.factor(macro_norm))
    table(bevn_eco$macro_norm, useNA="always")
   
-  
-  # Recoding stillbirth variable
-  bevn_eco <- bevn_eco %>%
-    dplyr::mutate(lebend.geboren.oder.nicht = as.character(lebend.geboren.oder.nicht),
-                  stillbirth = dplyr::recode(lebend.geboren.oder.nicht, 
-                                             "1" = "0",
-                                             "2" = "1"),
-                  stillbirth = as.factor(stillbirth))
+
 
   ## BL = BL (cm)
   bevn_eco$BL_cat <- cut(bevn_eco$BL, breaks=c(0, 19, 64, 100), include.lowest=TRUE)
@@ -275,10 +263,6 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
            stillbirth = as.factor(stillbirth))
   
 
-  
-
-
-    
 # Chr as factor variables
   #sex of neonate
    # bevn_eco <- bevn_eco %>%
