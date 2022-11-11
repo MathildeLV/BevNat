@@ -134,6 +134,13 @@ round(prop.table(table(bevn_eco_in7$sex, useNA="always"))*100,3)
 summary(bevn_eco$GA_weeks)
 summary(bevn_eco_in6$GA_weeks)
 summary(bevn_eco_in7$GA_weeks)
+##PTB
+summary(bevn_eco$PTB)
+round(prop.table(table(bevn_eco$PTB, useNA="always"))*100, 3)
+summary(bevn_eco_in6$PTB)
+round(prop.table(table(bevn_eco_in6$PTB, useNA="always"))*100, 3)
+summary(bevn_eco_in7$PTB)
+round(prop.table(table(bevn_eco_in7$PTB, useNA="always"))*100, 3)
 ```
 
 ## Length at birth (cm)
@@ -468,7 +475,7 @@ m_BW_time4_num <- lm(BW~birthmonth, data=bevn_eco_in7)
 summary(m_BW_time4_num)
 
 #change by month: seasonal
-m_BW_month <- lm(BW~month, data=bevn_eco_in7)
+m_BW_month <- lm(BW~month1, data=bevn_eco_in7)
 summary(m_BW_month)
 ```
 
@@ -574,7 +581,7 @@ Stillbirth related to sex, time, seasonal monthly effect, maternal age, parity, 
                     family= "binomial",data=bevn_eco_in6)
   summary(m_SB_birthmonth) 
 
-  m_month_seasonal <- glm(stillbirth~month, family = "binomial", data=bevn_eco_in6)
+  m_month_seasonal <- glm(stillbirth~month1, family = "binomial", data=bevn_eco_in6)
   summary(m_month_seasonal)
 
 #maternal age
