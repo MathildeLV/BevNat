@@ -225,7 +225,7 @@ neo_in6_inv
 ## In dataset 7
 neo_in7_inv <- t(formatted1)
 rownames(neo_in7_inv) <- colnames(formatted1)
-colnames(v) <- rownames(formatted1)
+colnames(neo_in7_inv) <- rownames(formatted1)
 neo_in7_inv
 
 #removing the first row that is useless, to have fir row (and col names) as birthyear
@@ -247,3 +247,4 @@ neo_in7_inv %>%
   cols_label(name = "Birthyear") %>%
   gtsave(here("output/tables", "neonatal_characteristics_in7_inverted.html"))
 neo_in7_inv
+
