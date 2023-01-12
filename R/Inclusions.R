@@ -162,3 +162,62 @@ dim(bevn_eco_in0)
    bevn_eco_in7_S_C_Am <- bevn_eco_in7 %>%
      filter(mother_nationality_cat2=="Southern and Central America")
    table(bevn_eco_in7_S_C_Am$mother_nationality_cat2, useNA = "always")
+   
+## Dataset 7 with different SSEP categories
+   ## mean_SSEP_cat1: tertiles
+   ### only Low SSEP
+   bevn_eco_in7_L_SSEP1 <- bevn_eco_in7 %>%
+     filter(mean_ssep2_cat1=="low SSEP")
+   table(bevn_eco_in7_L_SSEP1$mean_ssep2_cat1, useNA = "always")
+   ### only medium SSEP
+   bevn_eco_in7_M_SSEP1 <- bevn_eco_in7 %>%
+     filter(mean_ssep2_cat1=="medium SSEP")
+   table(bevn_eco_in7_M_SSEP1$mean_ssep2_cat1, useNA = "always")
+   ### only high SSEP
+   bevn_eco_in7_H_SSEP1 <- bevn_eco_in7 %>%
+     filter(mean_ssep2_cat1=="high SSEP")
+   table(bevn_eco_in7_H_SSEP1$mean_ssep2_cat1, useNA = "always")
+   
+  ## mean_SSEP_cat2: 5th and 95th percentiles
+   ### only Low SSEP
+   bevn_eco_in7_L_SSEP2 <- bevn_eco_in7 %>%
+     filter(mean_ssep2_cat2=="low SSEP")
+   table(bevn_eco_in7_L_SSEP2$mean_ssep2_cat2, useNA = "always")
+   ### only medium SSEP
+   bevn_eco_in7_M_SSEP2 <- bevn_eco_in7 %>%
+     filter(mean_ssep2_cat2=="medium SSEP")
+   table(bevn_eco_in7_M_SSEP2$mean_ssep2_cat2, useNA = "always")
+   ### only high SSEP
+   bevn_eco_in7_H_SSEP2 <- bevn_eco_in7 %>%
+     filter(mean_ssep2_cat2=="high SSEP")
+   table(bevn_eco_in7_H_SSEP2$mean_ssep2_cat2, useNA = "always")
+   
+  ## mean_SSEP_cat3: lowest 20% vs. middle (2nd to 4th quintiles) vs. highest 20%. 
+   ### only Low SSEP
+   bevn_eco_in7_L_SSEP3 <- bevn_eco_in7 %>%
+     filter(mean_ssep2_cat3=="low SSEP")
+   table(bevn_eco_in7_L_SSEP3$mean_ssep2_cat3, useNA = "always")
+   ### only medium SSEP
+   bevn_eco_in7_M_SSEP3 <- bevn_eco_in7 %>%
+     filter(mean_ssep2_cat3=="medium SSEP")
+   table(bevn_eco_in7_M_SSEP3$mean_ssep2_cat3, useNA = "always")
+   ### only high SSEP
+   bevn_eco_in7_H_SSEP3 <- bevn_eco_in7 %>%
+     filter(mean_ssep2_cat3=="high SSEP")
+   table(bevn_eco_in7_H_SSEP3$mean_ssep2_cat3, useNA = "always") 
+  
+   
+## Dataset 7 with different Language regions
+   bevn_eco_in7_German <- bevn_eco_in7 %>%
+     filter(Language=="German or Romansh")
+   table(bevn_eco_in7_German$Language, useNA = "always")
+   ### only medium SSEP
+   bevn_eco_in7_French <- bevn_eco_in7 %>%
+     filter(Language=="French")
+   table(bevn_eco_in7_French$Language, useNA = "always")
+   ### only high SSEP
+   bevn_eco_in7_Italian <- bevn_eco_in7 %>%
+     filter(Language=="Italian")
+   table(bevn_eco_in7_Italian$Language, useNA = "always")
+   
+   
