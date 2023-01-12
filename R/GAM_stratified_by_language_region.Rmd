@@ -1,0 +1,53 @@
+---
+title: "GAM stratified by language region"
+author: "Mathilde Le Vu"
+date:  "`r Sys.Date()`"
+html_document: 
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
+---
+
+
+## German language region
+
+```{r}
+m_BW_bam_German<- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW, data=bevn_eco_in7_German)  
+  summary(m_BW_bam_German)
+  plot(m_BW_bam_German, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP)[1]) #GA
+  plot(m_BW_bam_German, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_German)[1]) #mat age
+  plot(m_BW_bam_German, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_German)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_German, select=4, ylim=c(3330, 3370),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_German)[1]) #month
+  plot(m_BW_bam_German, select=5, ylim=c(3300, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_German)[1]) #mean ssep
+  plot(m_BW_bam_German, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_German)[1]) #mean altitude
+```
+
+## French language region
+
+```{r}
+m_BW_bam_French<- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW, data=bevn_eco_in7_French)  
+  summary(m_BW_bam_French)
+  plot(m_BW_bam_French, select=1, ylim=c(0, 4300),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP)[1]) #GA
+  plot(m_BW_bam_French, select=2, ylim=c(3150, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_French)[1]) #mat age
+  plot(m_BW_bam_French, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_French)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_French, select=4, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_French)[1]) #month
+  plot(m_BW_bam_French, select=5, ylim=c(3200, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_French)[1]) #mean ssep
+  plot(m_BW_bam_French, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_French)[1]) #mean altitude
+```
+
+## Italian language region
+
+```{r}
+m_BW_bam_Italian<- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW, data=bevn_eco_in7_Italian)  
+  summary(m_BW_bam_Italian)
+    plot(m_BW_bam_Italian, select=1, ylim=c(0, 4300),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP)[1]) #GA
+  plot(m_BW_bam_Italian, select=2, ylim=c(3150, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Italian)[1]) #mat age
+  plot(m_BW_bam_Italian, select=3, ylim=c(3200, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Italian)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_Italian, select=4, ylim=c(3200, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Italian)[1]) #month
+  plot(m_BW_bam_Italian, select=5, ylim=c(3200, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Italian)[1]) #mean ssep
+plot(m_BW_bam_Italian, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Italian)[1]) #mean altitude
+```
