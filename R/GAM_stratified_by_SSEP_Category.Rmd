@@ -1,0 +1,99 @@
+---
+title: "GAM stratified by SEP (3 groups)"
+author: "Mathilde Le Vu"
+date:  "`r Sys.Date()`"
+html_document: 
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
+---
+# Unstratified model with categorical SSEP
+## Category 1
+```{r}
+m_BW_bam5_2_SEP_cat1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + + mean_ssep2_cat1 + Language + mother_nationality_cat2 + civil_status3 + HW, data=bevn_eco_in7)  
+summary(m_BW_bam5_2_SEP_cat1)
+```
+
+## Category 2
+```{r}
+m_BW_bam5_2_SEP_cat2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + + mean_ssep2_cat2 + Language + mother_nationality_cat2 + civil_status3 + HW, data=bevn_eco_in7)  
+summary(m_BW_bam5_2_SEP_cat2)
+```
+
+# Stratification by SEP category 1
+## Low SSEP
+
+```{r}
+m_BW_bam_L_SSEP1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW, data=bevn_eco_in7_L_SSEP1)  
+  summary(m_BW_bam_L_SSEP1)
+    plot(m_BW_bam_L_SSEP1, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP)[1]) #GA
+  plot(m_BW_bam_L_SSEP1, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP1)[1]) #mat age
+  plot(m_BW_bam_L_SSEP1, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP1)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_L_SSEP1, select=4, ylim=c(3330, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP1)[1]) #month
+  plot(m_BW_bam_L_SSEP1, select=5, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP1)[1]) #mean altitude
+```
+
+## Medium SSEP
+
+```{r}
+m_BW_bam_M_SSEP1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW, data=bevn_eco_in7_M_SSEP1)  
+  summary(m_BW_bam_M_SSEP1)
+  plot(m_BW_bam_M_SSEP1, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP1)[1]) #GA
+  plot(m_BW_bam_M_SSEP1, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP1)[1]) #mat age
+  plot(m_BW_bam_M_SSEP1, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP1)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_M_SSEP1, select=4, ylim=c(3320, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP1)[1]) #month
+  plot(m_BW_bam_M_SSEP1, select=5, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP1)[1]) #mean altitude
+```
+
+## High SSEP
+
+```{r}
+m_BW_bam_H_SSEP1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW, data=bevn_eco_in7_H_SSEP1)  
+  summary(m_BW_bam_H_SSEP)
+  plot(m_BW_bam_H_SSEP, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP)[1]) #GA
+  plot(m_BW_bam_H_SSEP, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP)[1]) #mat age
+  plot(m_BW_bam_H_SSEP, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_H_SSEP, select=4, ylim=c(3345, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP)[1]) #month
+    plot(m_BW_bam_H_SSEP, select=5, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP)[1]) #mean altitude
+```
+
+# Stratification by SEP category 2
+## Low SSEP
+
+```{r}
+m_BW_bam_L_SSEP2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW, data=bevn_eco_in7_L_SSEP2)  
+  summary(m_BW_bam_L_SSEP2)
+    plot(m_BW_bam_L_SSEP2, select=1, ylim=c(0, 4300),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP2)[1]) #GA
+  plot(m_BW_bam_L_SSEP2, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP2)[1]) #mat age
+  plot(m_BW_bam_L_SSEP2, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP2)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_L_SSEP2, select=4, ylim=c(3300, 3340),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP2)[1]) #month
+  plot(m_BW_bam_L_SSEP2, select=5, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_L_SSEP2)[1]) #mean altitude
+```
+
+## Medium SSEP
+
+```{r}
+m_BW_bam_M_SSEP2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW, data=bevn_eco_in7_M_SSEP2)  
+  summary(m_BW_bam_M_SSEP2)
+  plot(m_BW_bam_M_SSEP2, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP2)[1]) #GA
+  plot(m_BW_bam_M_SSEP2, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP2)[1]) #mat age
+  plot(m_BW_bam_M_SSEP2, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP2)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_M_SSEP2, select=4, ylim=c(3320, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP2)[1]) #month
+  plot(m_BW_bam_M_SSEP2, select=5, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_M_SSEP2)[1]) #mean altitude
+```
+
+## High SSEP
+
+```{r}
+m_BW_bam_H_SSEP2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW, data=bevn_eco_in7_H_SSEP2)  
+  summary(m_BW_bam_H_SSEP2)
+  plot(m_BW_bam_H_SSEP2, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP2)[1]) #GA
+  plot(m_BW_bam_H_SSEP2, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP2)[1]) #mat age
+  plot(m_BW_bam_H_SSEP2, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP2)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_H_SSEP2, select=4, ylim=c(3340, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP2)[1]) #month
+    plot(m_BW_bam_H_SSEP2, select=5, ylim=c(3000, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_H_SSEP2)[1]) #mean altitude
+```
