@@ -131,7 +131,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   bevn_eco$GA_days <- as.numeric(bevn_eco$GA_days)
   bevn_eco$GA_weeks <- bevn_eco$GA_days / 7
   
-##Birthweight categories  
+## Birthweight categories  
   ## Kind: Gewicht in Gramm = weight at birth (g)
   #categorize in LBW, "normal" (arbitrary decision) and high BW
   bevn_eco$LBW <- ifelse(bevn_eco$BW<2500, 1, 0)
@@ -327,8 +327,34 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
                                   "Partnership dissolved"= "Single"),
              civil_status3=as.factor(civil_status3))
     bevn_eco$civil_status3 <- relevel (bevn_eco$civil_status3, ref = "Married")
-  
+  table(bevn_eco$civil_status)
     
+  # SSEP category
+    ## 1st category: tertile 
+    quantile (bevn_eco$mean_ssep2, probs = seq (0, 1, 0.33), na.rm = TRUE) 
+    bevn_eco <- bevn_eco %>%
+    mutate(mean_ssep2_cat1 = cut (mean_ssep2, breaks=c(23.6, 54.79, 62.15, 86.7), include.lowest = T, labels = c("low SSEP", "medium SSEP", "high SSEP")))
+    bevn_eco$mean_ssep2_cat1 <- relevel (bevn_eco$mean_ssep2_cat1, ref = "medium SSEP")
+   table(bevn_eco$mean_ssep2_cat1, useNA="always")
+    round(prop.table(table(bevn_eco$mean_ssep2_cat1, useNA="always"))*100,2)
+    table(bevn_eco$mean_ssep2_cat1, useNA="always")
+    round(prop.table(table(bevn_eco$mean_ssep2_cat1, useNA="always"))*100,2)
+    
+    ## 2nd category: 5TH percentile as lowest, 95% as highest
+    quantile (bevn_eco$mean_ssep2, probs = seq (0, 1, 0.05), na.rm = TRUE) 
+    bevn_eco <- bevn_eco %>%
+      mutate(mean_ssep2_cat2 = cut (mean_ssep2, breaks=c(23.6, 43.61, 71.71, 86.7), include.lowest = T, labels = c("low SSEP", "medium SSEP", "high SSEP")))
+    bevn_eco$mean_ssep2_cat2 <- relevel (bevn_eco$mean_ssep2_cat2, ref = "medium SSEP")
+    table(bevn_eco$mean_ssep2_cat2, useNA="always")
+    round(prop.table(table(bevn_eco$mean_ssep2_cat2, useNA="always"))*100,2)
+    
+    ## 3rd category: lowest 20% vs. middle (2nd to 4th quintiles) vs. highest 20%. 
+    quantile (bevn_eco$mean_ssep2, probs = seq (0, 1, 0.2), na.rm = TRUE) 
+    bevn_eco <- bevn_eco %>%
+      mutate(mean_ssep2_cat3 = cut (mean_ssep2, breaks=c(23.6, 50.86, 65.42, 86.7), include.lowest = T, labels = c("low SSEP", "medium SSEP", "high SSEP")))
+    bevn_eco$mean_ssep2_cat3 <- relevel (bevn_eco$mean_ssep2_cat3, ref = "medium SSEP")
+    table(bevn_eco$mean_ssep2_cat3, useNA="always")
+    round(prop.table(table(bevn_eco$mean_ssep2_cat3, useNA="always"))*100,2)
     
     
     
