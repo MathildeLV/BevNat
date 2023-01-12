@@ -134,3 +134,31 @@ dim(bevn_eco_in0)
    bevn_eco_in7_2017_20 <- bevn_eco_in7 %>%
      filter(birthyear>2016)
    table(bevn_eco_in7_2017_20$birthyear, useNA = "always")
+   
+   
+## Dataset 7 with different maternal nationality categories
+   table(bevn_eco_in7$mother_nationality_cat2)
+   ### only Swiss mothers
+   bevn_eco_in7_Swiss <- bevn_eco_in7 %>%
+     filter(mother_nationality_cat2=="Switzerland")
+   table(bevn_eco_in7_Swiss$mother_nationality_cat2, useNA = "always")
+   ### only African
+   bevn_eco_in7_Afr <- bevn_eco_in7 %>%
+     filter(mother_nationality_cat2=="Africa")
+   table(bevn_eco_in7_Afr$mother_nationality_cat2, useNA = "always")
+   ### only Asian
+   bevn_eco_in7_Asi <- bevn_eco_in7 %>%
+     filter(mother_nationality_cat2=="Asia")
+   table(bevn_eco_in7_Asi$mother_nationality_cat2, useNA = "always")
+   ### only Europe (excl. Switz)
+   bevn_eco_in7_Eur <- bevn_eco_in7 %>%
+     filter(mother_nationality_cat2=="Europe")
+   table(bevn_eco_in7_Eur$mother_nationality_cat2, useNA = "always")
+   ### only North America
+   bevn_eco_in7_Nort_Am <- bevn_eco_in7 %>%
+     filter(mother_nationality_cat2=="Northern America")
+   table(bevn_eco_in7_Nort_Am$mother_nationality_cat2, useNA = "always")
+   ### only Southern and Central America
+   bevn_eco_in7_S_C_Am <- bevn_eco_in7 %>%
+     filter(mother_nationality_cat2=="Southern and Central America")
+   table(bevn_eco_in7_S_C_Am$mother_nationality_cat2, useNA = "always")
