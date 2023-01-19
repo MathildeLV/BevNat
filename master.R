@@ -64,6 +64,7 @@ render("R/GAM_summary_meeting_20221111.Rmd", output_file = paste0("../output/",t
 render("R/GAM_stratified_by_maternal_nationality_SEP.Rmd", output_file = paste0("../output/",today(),"GAM_stratif_by_mat_nationality_SEP.html"))
 render("R/GAM_stratified_by_SSEP_Category.Rmd", output_file = paste0("../output/",today(),"GAM_stratif_by_SSEP_Category.html"))
 render("R/GAM_stratified_by_language_region.Rmd", output_file = paste0("../output/",today(),"GAM_stratif_by_language_region.html"))
+render("R/GAM_interaction_SSEP_X_language_region.Rmd", output_file = paste0("../output/",today(),"GAM_interaction_SSEP_X_language_reg.html"))
 
 ## Tables and graphs
 render("R/whole_tb_charact_population.Rmd", output_file = paste0("../output/",today(),"whole_tb_charact_population.html"))
