@@ -12,12 +12,18 @@ editor_options:
   chunk_output_type: console
 ---
 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
 # Birthweight
 ## Interaction SSEP and Mother nationality
 
 ### Model without interaction (for comparison)
 ```{r}
-m_BW_bam5_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW, data=bevn_eco_in7)  
+m_BW_bam5_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7)  
   summary(m_BW_bam5_2)
 
   plot(m_BW_bam5_2, select=1, ylim=c(0, 4000),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam5_2)[1]) #GA
@@ -25,13 +31,23 @@ m_BW_bam5_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, 
   plot(m_BW_bam5_2, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam5_2)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
   plot(m_BW_bam5_2, select=4, ylim=c(3330, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam5_2)[1]) #month
   plot(m_BW_bam5_2, select=5, ylim=c(3250, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam5_2)[1]) #mean ssep
-    plot(m_BW_bam5_2, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam5_2)[1]) #mean altitude
+  plot(m_BW_bam5_2, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam5_2)[1]) #mean altitude
+
+#getting the CI 95% and d
+  beta <- coef(m_BW_bam5_2)
+  Vb <- vcov(m_BW_bam5_2, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 1184367
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,18), 2)  
 ```
 
 ### Model with interaction (for comparison)
 
 ```{r}
-  m_BW_bam_SEP_int_nation <- bam(BW ~s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") +  s(mean_ssep2, by=mother_nationality_cat2) + s(mean_Alt_mean2)+ parity_cat + sex  +  Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW, data=bevn_eco_in7)
+  m_BW_bam_SEP_int_nation <- bam(BW ~s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") +  s(mean_ssep2, by=mother_nationality_cat2) + s(mean_Alt_mean2)+ parity_cat + sex  +  Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW +
+GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7)
   summary(m_BW_bam_SEP_int_nation)
 
     plot(m_BW_bam_SEP_int_nation, select=1, ylim=c(0, 4000), shift = coef(m_BW_bam_SEP_int_nation)[1], shade = TRUE, shade.col = "lightblue") #GA
@@ -44,7 +60,15 @@ m_BW_bam5_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, 
     plot(m_BW_bam_SEP_int_nation, select=8, ylim=c(3200, 3400), shift = coef(m_BW_bam_SEP_int_nation)[1], shade = TRUE, shade.col = "lightblue") #ssep * Europe excluding Switzerland
     plot(m_BW_bam_SEP_int_nation, select=9, ylim=c(3200, 3550), shift = coef(m_BW_bam_SEP_int_nation)[1], shade = TRUE, shade.col = "lightblue") #ssep * Nothern America
     plot(m_BW_bam_SEP_int_nation, select=10, ylim=c(3200, 3400), shift = coef(m_BW_bam_SEP_int_nation)[1], shade = TRUE, shade.col = "lightblue") #ssep * Southern and Central America
-      plot(m_BW_bam_SEP_int_nation, select=11, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_SEP_int_nation)[1]) #mean altitude
+    plot(m_BW_bam_SEP_int_nation, select=11, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_SEP_int_nation)[1]) #mean altitude
+      
+  beta <- coef(m_BW_bam_SEP_int_nation)
+  Vb <- vcov(m_BW_bam_SEP_int_nation, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 1184367
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,18), 2) 
 ```
 
 ## Stratification by Mother nationality
@@ -52,72 +76,120 @@ m_BW_bam5_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, 
 ### Swiss mothers
 
 ```{r}
-m_BW_bam_swiss <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW, data=bevn_eco_in7_Swiss)  
+m_BW_bam_swiss <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Swiss)  
   summary(m_BW_bam_swiss)
-    plot(m_BW_bam_swiss, select=1, ylim=c(0, 4000),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1]) #GA
+  plot(m_BW_bam_swiss, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1]) #GA
   plot(m_BW_bam_swiss, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1]) #mat age
-  plot(m_BW_bam_swiss, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
-  plot(m_BW_bam_swiss, select=4, ylim=c(3330, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1]) #month
+  plot(m_BW_bam_swiss, select=3, ylim=c(3290, 3490),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_swiss, select=4, ylim=c(3330, 3365),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1]) #month
   plot(m_BW_bam_swiss, select=5, ylim=c(3250, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1]) #mean ssep
-    plot(m_BW_bam_swiss, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1]) #mean altitude
+  plot(m_BW_bam_swiss, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_swiss)[1]) #mean altitude
+    
+  beta <- coef(m_BW_bam_swiss)
+  Vb <- vcov(m_BW_bam_swiss, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 731225
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,13), 2) 
 ```
 
 ### African mothers
 ```{r}
-m_BW_bam_Afr <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW, data=bevn_eco_in7_Afr)  
+m_BW_bam_Afr <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Afr)  
   summary(m_BW_bam_Afr)
-    plot(m_BW_bam_Afr, select=1, ylim=c(0, 4000),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1]) #GA
+  plot(m_BW_bam_Afr, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1]) #GA
   plot(m_BW_bam_Afr, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1]) #mat age
-  plot(m_BW_bam_Afr, select=3, ylim=c(3300, 3450),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
-  plot(m_BW_bam_Afr, select=4, ylim=c(3350, 3370),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1]) #month
+  plot(m_BW_bam_Afr, select=3, ylim=c(3290, 3490),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_Afr, select=4, ylim=c(3350, 3365),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1]) #month
   plot(m_BW_bam_Afr, select=5, ylim=c(3250, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1]) #mean ssep
-    plot(m_BW_bam_Afr, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1]) #mean altitude
+  plot(m_BW_bam_Afr, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Afr)[1]) #mean altitude
+    
+  beta <- coef(m_BW_bam_Afr)
+  Vb <- vcov(m_BW_bam_Afr, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 34388
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,13), 2)
 ```
 
 ### Asian mothers
 ```{r}
-m_BW_bam_Asi <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW, data=bevn_eco_in7_Asi)  
+m_BW_bam_Asi <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Asi)  
   summary(m_BW_bam_Asi)
-    plot(m_BW_bam_Asi, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Asi)[1]) #GA
+  plot(m_BW_bam_Asi, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Asi)[1]) #GA
   plot(m_BW_bam_Asi, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Asi)[1]) #mat age
-  plot(m_BW_bam_Asi, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Asi)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_Asi, select=3, ylim=c(3290, 3490),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Asi)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
   plot(m_BW_bam_Asi, select=4, ylim=c(3300, 3310),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Asi)[1]) #month
   plot(m_BW_bam_Asi, select=5, ylim=c(3250, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Asi)[1]) #mean ssep
-    plot(m_BW_bam_Asi, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Asi)[1]) #mean altitude
+  plot(m_BW_bam_Asi, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Asi)[1]) #mean altitude
+    
+  beta <- coef(m_BW_bam_Asi)
+  Vb <- vcov(m_BW_bam_Asi, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 41664
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,13), 2)
 ```
 
 ### European (excl. Switz) mothers
 ```{r}
-m_BW_bam_Eur <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW, data=bevn_eco_in7_Eur)  
+m_BW_bam_Eur <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Eur)  
   summary(m_BW_bam_Eur)
-    plot(m_BW_bam_Eur, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Eur)[1]) #GA
+  plot(m_BW_bam_Eur, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Eur)[1]) #GA
   plot(m_BW_bam_Eur, select=2, ylim=c(3300, 3500),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Eur)[1]) #mat age
-  plot(m_BW_bam_Eur, select=3, ylim=c(3380, 3430),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Eur)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_Eur, select=3, ylim=c(3290, 3490),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Eur)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
   plot(m_BW_bam_Eur, select=4, ylim=c(3380, 3420),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Eur)[1]) #month
   plot(m_BW_bam_Eur, select=5, ylim=c(3250, 3450),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Eur)[1]) #mean ssep
-    plot(m_BW_bam_Eur, select=6, ylim=c(3100, 3450),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Eur)[1]) #mean altitude
+  plot(m_BW_bam_Eur, select=6, ylim=c(3100, 3450),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Eur)[1]) #mean altitude
+    
+  beta <- coef(m_BW_bam_Eur)
+  Vb <- vcov(m_BW_bam_Eur, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 348490
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,13), 2)    
 ```
 
 ### Northern American mothers
 ```{r}
-m_BW_bam_Nort_Am <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW, data=bevn_eco_in7_Nort_Am)  
+m_BW_bam_Nort_Am <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Nort_Am)  
   summary(m_BW_bam_Nort_Am)
-    plot(m_BW_bam_Nort_Am, select=1, ylim=c(0, 4000),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Nort_Am)[1]) #GA
+  plot(m_BW_bam_Nort_Am, select=1, ylim=c(0, 4000),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Nort_Am)[1]) #GA
   plot(m_BW_bam_Nort_Am, select=2, ylim=c(3300, 3550),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Nort_Am)[1]) #mat age
-  plot(m_BW_bam_Nort_Am, select=3, ylim=c(3300, 3500),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Nort_Am)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_Nort_Am, select=3, ylim=c(3290, 3490),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Nort_Am)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
   plot(m_BW_bam_Nort_Am, select=4, ylim=c(3400, 3450),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Nort_Am)[1]) #month
   plot(m_BW_bam_Nort_Am, select=5, ylim=c(3380, 3500),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Nort_Am)[1]) #mean ssep
-    plot(m_BW_bam_Nort_Am, select=6, ylim=c(3000, 3500),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Nort_Am)[1]) #mean altitude
+  plot(m_BW_bam_Nort_Am, select=6, ylim=c(3000, 3500),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_Nort_Am)[1]) #mean altitude
+    
+  beta <- coef(m_BW_bam_Nort_Am)
+  Vb <- vcov(m_BW_bam_Nort_Am, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 7017
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,13), 2)
 ```
 
 ### Southern and Central American mothers
 ```{r}
-m_BW_bam_S_C_Am <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW, data=bevn_eco_in7_S_C_Am)  
+m_BW_bam_S_C_Am <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_S_C_Am)  
   summary(m_BW_bam_S_C_Am)
-    plot(m_BW_bam_S_C_Am, select=1, ylim=c(0, 4000),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1]) #GA
+  plot(m_BW_bam_S_C_Am, select=1, ylim=c(0, 4000),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1]) #GA
   plot(m_BW_bam_S_C_Am, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1]) #mat age
-  plot(m_BW_bam_S_C_Am, select=3, ylim=c(3300, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
-  plot(m_BW_bam_S_C_Am, select=4, ylim=c(3330, 3350),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1]) #month
+  plot(m_BW_bam_S_C_Am, select=3, ylim=c(3290, 3490),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1],  xlab  = "1 : 2007-01,     25: 2009-01,     50: 2011-02,    75: 2013-03,   100: 2015-04,    125: 2017-05, 150: 2019-06") #birth_Y_M_num
+  plot(m_BW_bam_S_C_Am, select=4, ylim=c(3330, 3360),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1]) #month
   plot(m_BW_bam_S_C_Am, select=5, ylim=c(3250, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1]) #mean ssep
-    plot(m_BW_bam_S_C_Am, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1]) #mean altitude
+  plot(m_BW_bam_S_C_Am, select=6, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_S_C_Am)[1]) #mean altitude
+  
+  beta <- coef(m_BW_bam_S_C_Am)
+  Vb <- vcov(m_BW_bam_S_C_Am, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 21583
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,13), 2)  
 ```
