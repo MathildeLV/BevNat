@@ -134,7 +134,29 @@ dim(bevn_eco_in0)
    bevn_eco_in7_2017_20 <- bevn_eco_in7 %>%
      filter(birthyear>2016)
    table(bevn_eco_in7_2017_20$birthyear, useNA = "always")
+
+## Heatwaves zooms datasets
+   ### Dataset to zoom in 2014-2016 for the 2015 heatwave
+    #### stillbirth outcome
+    bevn_eco_in6_2014_16 <- bevn_eco_in6 %>%
+     filter(birthyear>2013 & birthyear < 2017)
+   table(bevn_eco_in6_2014_16$birthyear, useNA = "always")
    
+   #### #birthweight outcome
+   bevn_eco_in7_2014_16 <- bevn_eco_in7 %>%
+     filter(birthyear>2013 & birthyear < 2017)
+   table(bevn_eco_in7_2014_16$birthyear, useNA = "always")   
+   
+   ### Dataset to zoom in 2017-2019 for the 2018 heatwave
+   #### stillbirth outcome
+   bevn_eco_in6_2017_19 <- bevn_eco_in6 %>%
+     filter(birthyear>2016 & birthyear < 2020)
+   table(bevn_eco_in6_2017_19$birthyear, useNA = "always")
+   
+   #### #birthweight outcome
+   bevn_eco_in7_2017_19 <- bevn_eco_in7 %>%
+     filter(birthyear>2016 & birthyear < 2020)
+   table(bevn_eco_in7_2017_19$birthyear, useNA = "always")  
    
 ## Dataset 7 with different maternal nationality categories
    table(bevn_eco_in7$mother_nationality_cat2)
