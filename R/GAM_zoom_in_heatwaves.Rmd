@@ -1,0 +1,62 @@
+---
+title: "Heatwaves 2015 and 2017 : zooming in the surrounding years"
+author: "Mathilde Le Vu"
+date:  "`r Sys.Date()`"
+html_document: 
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# 2015 Heatwave: 2014-2016 years
+```{r}
+m_BW_bam_HW_2015 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3, data=bevn_eco_in7_2014_16) 
+
+  summary(m_BW_bam_HW_2015)
+  gam.check(m_BW_bam_HW_2015) 
+  
+  plot(m_BW_bam_HW_2015, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2015)[1])
+  plot(m_BW_bam_HW_2015, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2015)[1])
+  plot(m_BW_bam_HW_2015, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2015)[1],  xlab  = "85: 2014-01,                         95: 2014-11,                                 105: 2015-09,                       115: 2016-07")
+  plot(m_BW_bam_HW_2015, select=4, ylim=c(3250, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2015)[1])
+  plot(m_BW_bam_HW_2015, select=5, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2015)[1])
+
+  beta <- coef(m_BW_bam_HW_2015)
+  Vb <- vcov(m_BW_bam_HW_2015, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 247546
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,14), 2) 
+```
+
+# 2018 Heatwave: 2017-2019 years
+
+```{r}
+m_BW_bam_HW_2018 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3, data=bevn_eco_in7_2017_19) 
+
+  summary(m_BW_bam_HW_2018)
+  gam.check(m_BW_bam_HW_2018) 
+  
+  plot(m_BW_bam_HW_2018, select=1, ylim=c(0, 4100),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2018)[1])
+  plot(m_BW_bam_HW_2018, select=2, ylim=c(3200, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2018)[1])
+  plot(m_BW_bam_HW_2018, select=3, ylim=c(3300, 3380),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2018)[1],  xlab  = "121: 2017-01,                         130: 2017-10,                                 140: 2018-08,                       150: 2019-06")
+  plot(m_BW_bam_HW_2018, select=4, ylim=c(3250, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2018)[1])
+  plot(m_BW_bam_HW_2018, select=5, ylim=c(3100, 3400),shade = TRUE, shade.col = "lightblue",  shift = coef(m_BW_bam_HW_2018)[1])
+
+  beta <- coef(m_BW_bam_HW_2018)
+  Vb <- vcov(m_BW_bam_HW_2018, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 249879
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  round(head(my.ci,14), 2) 
+```
