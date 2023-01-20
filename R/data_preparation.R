@@ -130,7 +130,11 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
 ## Gestational age
   bevn_eco$GA_days <- as.numeric(bevn_eco$GA_days)
   bevn_eco$GA_weeks <- bevn_eco$GA_days / 7
-  
+  #bevn_eco$GA_month <- bevn_eco$GA_days / (365/12)
+  #table(bevn_eco$GA_month)
+  bevn_eco$GA_month <- round(bevn_eco$GA_days / (365/12), digits=0)
+  table(bevn_eco$GA_month)
+
 ## Birthweight categories  
   ## Kind: Gewicht in Gramm = weight at birth (g)
   #categorize in LBW, "normal" (arbitrary decision) and high BW
@@ -202,10 +206,10 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   ## Creating a variable combining month+year of birth
     #  I created two variables for date : one combining month+year only (birth_Y_M), and another combining day+month+year (birth_Y_M_1stday).
     #  I set up day to 1st of each month in order to have variable m-d-y, easier to work with.
-  bevn_eco$birth_Y_M <- with(bevn_eco, sprintf("%d-%02d", birthyear, birthmonth))
-  tail(bevn_eco$birth_Y_M)
-  head(bevn_eco$birth_Y_M)
-  bevn_eco$birth_Y_M <- as.factor(bevn_eco$birth_Y_M)
+  bevn_eco$birth_Y_M_a <- with(bevn_eco, sprintf("%d-%02d", birthyear, birthmonth))
+  tail(bevn_eco$birth_Y_M_a)
+  head(bevn_eco$birth_Y_M_a)
+  bevn_eco$birth_Y_M <- as.factor(bevn_eco$birth_Y_M_a)
   bevn_eco$birth_Y_M_num <- as.numeric(bevn_eco$birth_Y_M)
   
 
@@ -219,6 +223,46 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   bevn_eco$month <- as.numeric(bevn_eco$month)
   bevn_eco$month1 <- as.factor(bevn_eco$month)
   table(bevn_eco$month)  
+  
+
+  # Variable to calculate time of beginning of pregnancies: month 1 to 9 : delivery date - gestational age
+  bevn_eco$month_1 <-  as.Date(bevn_eco$birth_Y_M_1stday) %m-% (months(bevn_eco$GA_month))
+  bevn_eco <- bevn_eco %>%
+    mutate(month_1 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month))) %>%
+    mutate(month_2 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -1))) %>%
+    mutate(month_3 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -2))) %>%
+    mutate(month_4 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -3))) %>%
+    mutate(month_5 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -4))) %>%
+    mutate(month_6 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -5))) %>%
+    mutate(month_7 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -6))) %>%
+    mutate(month_8 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -7))) %>%
+    mutate(month_9 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -8))) %>%
+    mutate(month_10 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -9))) %>%
+    mutate(month_11 =  as.Date(birth_Y_M_1stday) %m-% (months(GA_month -10)))
+  
+  
+  
+  bevn_eco %>%
+    select(month_1, month_2, month_3, month_4,month_5, month_6, month_7, month_8, month_9, month_10, month_11, GA_month, GA_weeks, birthyear, birthmonth, birth_Y_M_1stday) %>%
+    tail(30)
+  
+  # If gestational age<9-10months, replace "month 1-X" by NAs
+  bevn_eco <- bevn_eco %>%
+    mutate(month_1 = replace(month_1, (GA_month<1), NA)) %>%
+    mutate(month_2 = replace(month_2, (GA_month<2), NA)) %>%
+    mutate(month_3 = replace(month_3, (GA_month<3), NA)) %>%
+    mutate(month_4 = replace(month_4, (GA_month<4), NA)) %>%
+    mutate(month_5 = replace(month_5, (GA_month<5), NA)) %>%
+    mutate(month_6 = replace(month_6, (GA_month<6), NA)) %>%
+    mutate(month_7 = replace(month_7, (GA_month<7), NA)) %>%
+    mutate(month_8 = replace(month_8, (GA_month<8), NA)) %>%
+    mutate(month_9 = replace(month_9, (GA_month<9), NA)) %>%
+    mutate(month_10 = replace(month_10, (GA_month<10), NA)) %>%
+    mutate(month_11 = replace(month_11, (GA_month<11), NA))
+    
+  bevn_eco %>%
+    select(month_1, month_2, month_3, month_4,month_5, month_6, month_7, month_8, month_9, month_10, month_11, GA_month, GA_weeks, birth_Y_M_1stday) %>%
+    tail(30)
   
   #GA category
   bevn_eco <- bevn_eco %>%
@@ -335,7 +379,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
     bevn_eco <- bevn_eco %>%
     mutate(mean_ssep2_cat1 = cut (mean_ssep2, breaks=c(23.6, 54.79, 62.15, 86.7), include.lowest = T, labels = c("low SSEP", "medium SSEP", "high SSEP")))
     bevn_eco$mean_ssep2_cat1 <- relevel (bevn_eco$mean_ssep2_cat1, ref = "medium SSEP")
-   table(bevn_eco$mean_ssep2_cat1, useNA="always")
+    table(bevn_eco$mean_ssep2_cat1, useNA="always")
     round(prop.table(table(bevn_eco$mean_ssep2_cat1, useNA="always"))*100,2)
     table(bevn_eco$mean_ssep2_cat1, useNA="always")
     round(prop.table(table(bevn_eco$mean_ssep2_cat1, useNA="always"))*100,2)
@@ -364,6 +408,5 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
       uniqv <- na.omit(unique(v))
       uniqv[which.max(tabulate(match(v, uniqv)))]
     }
-    
     
   
