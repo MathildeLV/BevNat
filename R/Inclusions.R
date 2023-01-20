@@ -242,4 +242,19 @@ dim(bevn_eco_in0)
      filter(Language=="Italian")
    table(bevn_eco_in7_Italian$Language, useNA = "always")
    
+
+# Dataset only with COVID-19 exposure
+   bevn_eco_in7_COVID_exp_during_pregnancy <- bevn_eco_in7 %>%
+     filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
+   table(bevn_eco_in7_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
+  
+# Dataset only with 2015-2021 years, to focus on COVID + 5y before
+   bevn_eco_in7_15_21 <- bevn_eco_in7 %>%
+     filter(birthyear>"2014")
+   table(bevn_eco_in7_15_21$birthyear, useNA = "always")    
+   
+# Dataset only with COVID-19 exposure, 2015-21
+   bevn_eco_in7_COVID_exp_during_pregnancy <- bevn_eco_in7_15_21 %>%
+     filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
+   table(bevn_eco_in7_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
    
