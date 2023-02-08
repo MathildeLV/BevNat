@@ -1,0 +1,105 @@
+---
+title: "SB GAM stratified by Language Region"
+author: "Mathilde Le Vu"
+date:  "`r Sys.Date()`"
+html_document: 
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# German
+
+```{r}
+m_SB_bam_German <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+  sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_German)  
+summary(m_SB_bam_German)
+
+  plot(m_SB_bam_German, trans = plogis, select=1, shift = coef(m_SB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #GA
+  plot(m_SB_bam_German, trans = plogis, select=2, ylim=c(0, 0.003), shift = coef(m_SB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #mat age
+  plot(m_SB_bam_German, trans = plogis, select=3, ylim=c(0.0005, 0.0015), shift = coef(m_SB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #time
+    plot(m_SB_bam_German, trans = plogis, select=4, ylim=c(0.001, 0.001), shift = coef(m_SB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #month
+    plot(m_SB_bam_German, trans = plogis, select=5, ylim=c(0.0002, 0.003), shift = coef(m_SB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #sep
+  plot(m_SB_bam_German, trans = plogis, select=6, ylim=c(0.0001, 0.003), shift = coef(m_SB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #altitude
+  
+  k.check(m_SB_bam_German) 
+  concurvity(m_SB_bam_German)
+```
+
+```{r}
+#table to show OR, confidence interval and Cohen's d
+  OR <- exp(coef(m_SB_bam_German))
+  beta <- coef(m_SB_bam_German)
+  Vb <- vcov(m_SB_bam_German, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my.ci_m_SB_bam_L_SSEP1 <- data.frame(cbind(OR, lci, uci, d))
+  round(head(my.ci_m_SB_bam_L_SSEP1, 13), 2)
+```
+
+# French
+
+```{r}
+m_SB_bam_French <- bam(stillbirth ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num)+ s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)  + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_French)  
+summary(m_SB_bam_French)
+  plot(m_SB_bam_French, trans = plogis, select=1, shift = coef(m_SB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #GA
+  plot(m_SB_bam_French, trans = plogis, select=2, ylim=c(0, 0.003), shift = coef(m_SB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #mat age
+    plot(m_SB_bam_French, trans = plogis, select=3, ylim=c(0.0005, 0.0015), shift = coef(m_SB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #time
+  plot(m_SB_bam_French, trans = plogis, select=4, ylim=c(0.001, 0.001), shift = coef(m_SB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #month
+    plot(m_SB_bam_French, trans = plogis, select=5, ylim=c(0.0002, 0.003), shift = coef(m_SB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #sep
+  plot(m_SB_bam_French, trans = plogis, select=6, ylim=c(0.0001, 0.003), shift = coef(m_SB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #altitude
+  
+  k.check(m_SB_bam_French) 
+  concurvity(m_SB_bam_French)
+```
+
+```{r}
+#table to show OR, confidence interval and Cohen's d
+  OR <- exp(coef(m_SB_bam_French))
+  beta <- coef(m_SB_bam_French)
+  Vb <- vcov(m_SB_bam_French, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my.ci <- data.frame(cbind(OR, lci, uci, d))
+  round(head(my.ci, 13), 2)
+```
+
+# Italian
+
+```{r}
+m_SB_bam_Italian <- bam(stillbirth ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)  + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Italian)  
+summary(m_SB_bam_Italian)
+  plot(m_SB_bam_Italian, trans = plogis, select=1, shift = coef(m_SB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #GA
+  plot(m_SB_bam_Italian, trans = plogis, select=2, ylim=c(0, 0.003), shift = coef(m_SB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #mat age
+    plot(m_SB_bam_Italian, trans = plogis, select=3, ylim=c(0.0005, 0.0015), shift = coef(m_SB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #time
+  plot(m_SB_bam_Italian, trans = plogis, select=4, ylim=c(0.001, 0.001), shift = coef(m_SB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #month
+    plot(m_SB_bam_Italian, trans = plogis, select=5, ylim=c(0.0002, 0.003), shift = coef(m_SB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #sep
+  plot(m_SB_bam_Italian, trans = plogis, select=6, ylim=c(0.0001, 0.003), shift = coef(m_SB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #altitude
+  
+  k.check(m_SB_bam_Italian) 
+  concurvity(m_SB_bam_Italian)
+```
+
+```{r}
+#table to show OR, confidence interval and Cohen's d
+  OR <- exp(coef(m_SB_bam_Italian))
+  beta <- coef(m_SB_bam_Italian)
+  Vb <- vcov(m_SB_bam_Italian, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my.ci <- data.frame(cbind(OR, lci, uci, d))
+  round(head(my.ci, 13), 2)
+```
