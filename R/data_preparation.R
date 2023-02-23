@@ -80,7 +80,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   table(bevn_eco$mother_nationality_cat2_with_Oc, useNA = "always")
   # too few mothers from Oceania: decided to pool NAs+ mothers from Oceanian nationality
   
-  # Categorizing nationality of the mother in : Switzerland, Europe, Africa, Americas, Asia, NA (NA includes NA + Oceania)
+  # Categorizing nationality of the mother in : Switzerland, Europe, Africa, North. America,South/Centr America, Asia, NA (NA includes NA + Oceania)
   bevn_eco$mother_nationality_cat2 <- as.factor(ifelse(bevn_eco$mother_nationality == 8100, 'Switzerland', 
                                                 ifelse((bevn_eco$mother_nationality > 8200 & bevn_eco$mother_nationality < 8281) | (bevn_eco$mother_nationality > 8571 & bevn_eco$mother_nationality < 8575) | (bevn_eco$mother_nationality > 8575 & bevn_eco$mother_nationality < 8579), 'Europe',
                                                 ifelse((bevn_eco$mother_nationality > 8300 & bevn_eco$mother_nationality < 8385) | (bevn_eco$mother_nationality == 8551), 'Africa',
@@ -125,7 +125,16 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
 ## Vater: Staatsangehörigkeit = Nationality father
     # categorizing nationality of the father in : inside or outside Switzerland
   bevn_eco$father_nationality_cat1 <- cut(bevn_eco$father_nationality, breaks=c(8000, 8100, 8704), include.lowest=TRUE, labels=c("Switzerland", "Outside Switzerland"))
-  
+  # Categorizing nationality of the father : Switzerland, Europe, Africa, North. America,South/Centr America, Asia, NA (NA includes NA + Oceania)
+  bevn_eco$father_nationality_cat2 <- as.factor(ifelse(bevn_eco$father_nationality == 8100, 'Switzerland', 
+                                                ifelse((bevn_eco$father_nationality > 8200 & bevn_eco$father_nationality < 8281) | (bevn_eco$father_nationality > 8571 & bevn_eco$father_nationality < 8575) | (bevn_eco$father_nationality > 8575 & bevn_eco$father_nationality < 8579), 'Europe',
+                                                ifelse((bevn_eco$father_nationality > 8300 & bevn_eco$father_nationality < 8385) | (bevn_eco$father_nationality == 8551), 'Africa',
+                                                ifelse((bevn_eco$father_nationality > 8400 & bevn_eco$father_nationality < 8404) | (bevn_eco$father_nationality > 8404 & bevn_eco$father_nationality < 8413) | (bevn_eco$father_nationality > 8413 & bevn_eco$father_nationality < 8422) | (bevn_eco$father_nationality >8423 & bevn_eco$father_nationality < 8434) | (bevn_eco$father_nationality > 8434 & bevn_eco$father_nationality < 8439) | (bevn_eco$father_nationality > 8439 & bevn_eco$father_nationality < 8447) | (bevn_eco$father_nationality > 8447 & bevn_eco$father_nationality < 8487), 'Southern and Central America',
+                                                ifelse(bevn_eco$father_nationality == 8404 | bevn_eco$father_nationality == 8413 | bevn_eco$father_nationality == 8423 | bevn_eco$father_nationality== 8434 | bevn_eco$father_nationality== 8439 | bevn_eco$father_nationality == 8447, 'Northern America',
+                                                ifelse((bevn_eco$v > 8500 & bevn_eco$father_nationality < 8551) | (bevn_eco$father_nationality >8551 & bevn_eco$father_nationality < 8572) | bevn_eco$father_nationality== 8575 | bevn_eco$father_nationality== 8579, 'Asia',
+                                                NA)))))))
+  bevn_eco$father_nationality_cat2 <- relevel (bevn_eco$father_nationality_cat2, ref = "Switzerland")
+  table(bevn_eco$father_nationality_cat2, useNA = "always")
   
 ## Gestational age
   bevn_eco$GA_days <- as.numeric(bevn_eco$GA_days)
@@ -140,7 +149,9 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   #categorize in LBW, "normal" (arbitrary decision) and high BW
   bevn_eco$LBW <- ifelse(bevn_eco$BW<2500, 1, 0)
   bevn_eco$LBW <- as.factor(bevn_eco$LBW)
-
+  #very LBW
+  bevn_eco$VLBW <- ifelse(bevn_eco$BW<1000, 1, 0)
+  bevn_eco$VLBW <- as.factor(bevn_eco$VLBW)
   
   ## Kind: Gewicht in Gramm = weight at birth (g)
   bevn_eco$BW_cat2 <- cut(bevn_eco$BW, breaks=c(0, 499, 8000, 10000), include.lowest=TRUE)
@@ -152,12 +163,12 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
 
   ##BW LBW, normal, Macrosomia
   bevn_eco <- bevn_eco %>%
-    mutate(BW_cat3char = case_when (BW<2500 & BW>0 ~"Low birthweight",
+    mutate(BW_cat3 = case_when (BW<2500 & BW>0 ~"Low birthweight",
            BW<4000 & BW>2500 ~"Normal birthweight",
            BW==2500 ~"Normal birthweight",
            BW>4000 | BW==4000~"Macrosomia"
            ))
-    table(bevn_eco$BW_cat3char, useNA="always")
+    table(bevn_eco$BW_cat3, useNA="always")
   
   bevn_eco <- bevn_eco %>%
     mutate(BW_ordered = case_when (BW<2500 & BW>0 ~"1",
@@ -276,6 +287,8 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
    # Third GA category, GA< or >= 37weeks, PTB
    bevn_eco$PTB <- ifelse(bevn_eco$GA_weeks<37, 1, 0)
    bevn_eco$PTB <- as.factor(bevn_eco$PTB)
+   bevn_eco$VPTB <- ifelse(bevn_eco$GA_weeks<34, 1, 0)
+   bevn_eco$VPTB <- as.factor(bevn_eco$VPTB)
    
    # Parity category, 1, 2, 3, 4+
    bevn_eco <- bevn_eco %>%
@@ -283,18 +296,20 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
    bevn_eco
    table(bevn_eco$parity_cat, useNA = "always")
    
-   # Maternal age category
-   table(bevn_eco$Mutter..Alter.in.erreichten.Jahren)
+   # Maternal age categories (10-20, 20-25, 25-30, 30-35, 35-40, 40-70)
+   table(bevn_eco$mat_age)
    bevn_eco <- bevn_eco %>%
-     dplyr:: mutate(mat_age_cat = cut (Mutter..Alter.in.erreichten.Jahren, breaks=c(10,20,25,30, 35, 40, 70)))  
-   
+     dplyr:: mutate(mat_age_cat = cut (mat_age, breaks=c(10,20,25,30, 35, 40, 70))) %>% 
+     dplyr::mutate(mat_age_cat2 = case_when(mat_age <30 ~"0", mat_age>30 | mat_age==32 ~"1"))
    table(bevn_eco$mat_age_cat, useNA = "always")
+   table(bevn_eco$mat_age_cat2, useNA = "always")
+   round(prop.table(table(bevn_eco$mat_age_cat2, useNA="always"))*100,2)
    bevn_eco$mat_age_cat <- relevel (bevn_eco$mat_age_cat, ref = 3)
-   
+
    # Paternal age category
    table(bevn_eco$Vater..Alter.in.erreichten.Jahren)
    bevn_eco <- bevn_eco %>%
-     dplyr:: mutate(pat_age_cat = cut (Vater..Alter.in.erreichten.Jahren, breaks=c(10,20,30, 40, 50, 70, 100)))  
+     dplyr:: mutate(pat_age_cat = cut (pat_age, breaks=c(10,20,30, 40, 50, 70, 100)))  
    
    table(bevn_eco$pat_age_cat, useNA = "always")
    
@@ -399,14 +414,3 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
     bevn_eco$mean_ssep2_cat3 <- relevel (bevn_eco$mean_ssep2_cat3, ref = "medium SSEP")
     table(bevn_eco$mean_ssep2_cat3, useNA="always")
     round(prop.table(table(bevn_eco$mean_ssep2_cat3, useNA="always"))*100,2)
-    
-    
-    
-    
-#creating a function to calculate the mode of a variable
-    getmode <- function(v) {
-      uniqv <- na.omit(unique(v))
-      uniqv[which.max(tabulate(match(v, uniqv)))]
-    }
-    
-  
