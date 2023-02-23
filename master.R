@@ -22,6 +22,7 @@ library(nnet)
 library(network)
 library(RDS)
 library(quantreg)
+library(scales)
 
 library(conflicted)
 conflict_prefer("filter", "dplyr")
@@ -48,7 +49,14 @@ source("R/merging.R")
 source("R/data_preparation.R") #to run separately
 source("R/dummyvariables_crisis.R")
 source("R/Inclusions.R")
+source("R/functions.R")
 
+#graph parameters
+lwdline <- 1.5 
+size_axis <- 12
+size_axis_title <- 15
+size_legend <- 10
+size_legend_title <- 13
 
 # Render Rmd files in html
 #Univ/descriptive and multiv analysis
@@ -61,12 +69,31 @@ render("R/gam_gest_age.Rmd", output_file = paste0("../output/",today(),"gam_gest
 render("R/gam_LBW_normal_macro.Rmd", output_file = paste0("../output/",today(),"gam_LBW_normal_macro.html"))
 render("R/GAM_summary.Rmd", output_file = paste0("../output/",today(),"GAM_summary.html"))
 render("R/GAM_summary_meeting_20221111.Rmd", output_file = paste0("../output/",today(),"GAM_summary_meeting_20221111.html"))
-render("R/GAM_stratified_by_maternal_nationality_SEP.Rmd", output_file = paste0("../output/",today(),"GAM_stratif_by_mat_nationality_SEP.html"))
-render("R/GAM_stratified_by_SSEP_Category.Rmd", output_file = paste0("../output/",today(),"GAM_stratif_by_SSEP_Category.html"))
-render("R/GAM_stratified_by_language_region.Rmd", output_file = paste0("../output/",today(),"GAM_stratif_by_language_region.html"))
-render("R/GAM_interaction_SSEP_X_language_region.Rmd", output_file = paste0("../output/",today(),"GAM_interaction_SSEP_X_language_reg.html"))
+render("R/GAM_Summary_all_var_different_outcomes.Rmd", output_file = paste0("../output/",today(),"GAM_summary_all_var_different_outcomes.html"))
 
+### Additional GAM: stratification, interaction, etc
+  ## BW outcome
+  render("R/stratified_models/BW_GAM_stratified_by_maternal_nationality_SEP.Rmd", output_file = paste0("../../output/stratification/",today(),"BW_GAM_stratif_by_mat_nationality_SEP.html"))
+  render("R/stratified_models/BW_GAM_stratified_by_SSEP_Category.Rmd", output_file = paste0("../../output/stratification/",today(),"BW_GAM_stratif_by_SSEP_Category.html"))
+  render("R/stratified_models/BW_GAM_stratified_by_language_region.Rmd", output_file = paste0("../../output/stratification/",today(),"BW_GAM_stratif_by_language_region.html"))
+  render("R/stratified_models/BW_GAM_interaction_SSEP_X_language_region.Rmd", output_file = paste0("../../output/stratification/",today(),"BW_GAM_interaction_SSEP_X_language_reg.html"))
+  render("R/GAM_zoom_in_heatwaves.Rmd", output_file = paste0("../output/",today(),"GAM_zoom_in_heatwaves.html"))
+  render("R/GAM_COVID_2015_2021.Rmd", output_file = paste0("../output/",today(),"GAM_COVID_2015_2021.html"))
+
+  ## PTB outcome
+  render("R/stratified_models/PTB_GAM_stratified_by_SSEP_Category.Rmd", output_file = paste0("../../output/stratification/",today(),"PTB_GAM_stratif_by_SSEP_Category.html"))
+  render("R/stratified_models/PTB_GAM_stratified_by_maternal_nationality.Rmd", output_file = paste0("../../output/stratification/",today(),"PTB_GAM_stratif_by_maternal_nationality.html"))
+  render("R/stratified_models/PTB_GAM_stratified_by_Language_Region.Rmd", output_file = paste0("../../output/stratification/",today(),"PTB_GAM_stratif_by_Language_Region.html"))
+  
+  ## SB outcome
+  render("R/stratified_models/SB_GAM_stratified_by_SSEP_Category.Rmd", output_file = paste0("../../output/stratification/",today(),"SB_GAM_stratif_by_SSEP_Category.html"))
+  render("R/stratified_models/SB_GAM_stratified_by_Language_Region.Rmd", output_file = paste0("../../output/stratification/",today(),"SB_GAM_stratif_by_Language_Region.html"))
+  render("R/stratified_models/SB_GAM_stratified_by_Maternal_Nationality.Rmd", output_file = paste0("../../output/stratification/",today(),"SB_GAM_stratif_by_Maternal_Nationality.html"))
+  
 ## Tables and graphs
 render("R/whole_tb_charact_population.Rmd", output_file = paste0("../output/",today(),"whole_tb_charact_population.html"))
-render("R/graphics.Rmd", output_file = paste0("../output/",today(),"graphics.html"))
+render("R/graphs/graphics.Rmd", output_file = paste0("../../output/graphs/",today(),"graphics.html"))
 source("R/whole_tb_charact_population_inverting.R")
+render("R/stratified_models/graphs/BW_GAM_graphs_stratification_nationality_language_SEP.Rmd", output_file = paste0("../../../output/stratification/graphs/",today(),"BW_GAM_stratification_nationality_language_SEP.html"))
+render("R/stratified_models/graphs/PTB_GAM_graphs_stratification_nationality_language_SEP.Rmd", output_file = paste0("../../../output/stratification/graphs/",today(),"PTB_GAM_stratification_nationality_language_SEP.html"))
+render("R/stratified_models/graphs/SB_GAM_graphs_stratification_nationality_language_SEP.Rmd", output_file = paste0("../../../output/stratification/graphs/",today(),"SB_GAM_stratification_nationality_language_SEP.html"))
