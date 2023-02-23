@@ -309,7 +309,7 @@ plot_SB_GA <- ggplot(data=plot_m_SB_bam2_GA)+
         legend.text=element_text(size=size_legend),
         legend.title=element_text(size=size_legend_title),
         legend.position="bottom")+
-  scale_x_continuous(breaks=seq(0,60,by=5))
+  scale_x_continuous(breaks=seq(0,45,by=5))
 plot_SB_GA
 ```
 
@@ -368,7 +368,7 @@ plot_SB_time
 
 ## Graph seasonality X Stillbirth
 ```{r}
-plot_SB_mat_age <- ggplot(data=plot_m_SB_bam2_month)+
+plot_SB_month <- ggplot(data=plot_m_SB_bam2_month)+
   geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("#9557DC"))+
   geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='#69D8F3')+
   xlab("Month")+
@@ -382,8 +382,8 @@ plot_SB_mat_age <- ggplot(data=plot_m_SB_bam2_month)+
         legend.text=element_text(size=size_legend),
         legend.title=element_text(size=size_legend_title),
         legend.position="bottom")+
-  scale_x_continuous(breaks=seq(1,12,by=5))
-plot_SB_mat_age
+  scale_x_continuous(breaks=seq(1,12,by=1))
+plot_SB_month
 ```
 
 ## Graph SSEP X Stillbirth
@@ -422,8 +422,8 @@ plot_SB_altitude <- ggplot(data=plot_m_SB_bam2_alt)+
         legend.text=element_text(size=size_legend),
         legend.title=element_text(size=size_legend_title),
         legend.position="bottom")+
-  scale_x_continuous(breaks=seq(23,100,by=5))
-plot_SB_SSEP
+  scale_x_continuous(breaks=seq(0,2000,by=200))
+plot_SB_altitude
 ```
 
 ```{r echo=FALSE}
@@ -476,7 +476,7 @@ plot_PTB_BW <- ggplot(data=plot_m_PTB_bam_BW)+
         legend.text=element_text(size=size_legend),
         legend.title=element_text(size=size_legend_title),
         legend.position="bottom") +
-  scale_x_continuous(breaks=seq(0,10000,by=1000))
+  scale_x_continuous(breaks=seq(0,8000,by=1000))
 
 plot_PTB_BW
 ```
@@ -556,7 +556,7 @@ plot_PTB_seasonality
 
 ## Graph SSEP X preterm birth
 ```{r}
-plot_PTB_seasonality <- ggplot(data=plot_m_PTB_bam_sep)+
+plot_PTB_SSEP <- ggplot(data=plot_m_PTB_bam_sep)+
   geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("#9557DC"))+
   geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='#69D8F3')+
   xlab("SSEP")+
@@ -571,12 +571,12 @@ plot_PTB_seasonality <- ggplot(data=plot_m_PTB_bam_sep)+
         legend.title=element_text(size=size_legend_title),
         legend.position="bottom") +
   scale_x_continuous(breaks=seq(23,100,by=5))
-plot_PTB_seasonality
+plot_PTB_SSEP
 ```
 
 ## Graph altitude X preterm birth
 ```{r}
-plot_PTB_seasonality <- ggplot(data=plot_m_PTB_bam_altitude)+
+plot_PTB_altitude <- ggplot(data=plot_m_PTB_bam_altitude)+
   geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("#9557DC"))+
   geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='#69D8F3')+
   xlab("Altitude (MASL)")+
@@ -591,7 +591,7 @@ plot_PTB_seasonality <- ggplot(data=plot_m_PTB_bam_altitude)+
         legend.title=element_text(size=size_legend_title),
         legend.position="bottom") +
   scale_x_continuous(breaks=seq(0,2000,by=200))
-plot_PTB_seasonality
+plot_PTB_altitude
 ```
 
 ## Table for the model's estimates
