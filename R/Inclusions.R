@@ -3,7 +3,7 @@
 
 # Births taking place inside of Switzerland
 table(bevn_eco$country_of_birth_cat1, useNA = "always")
-# removal of 124074  (outside of Switz) and 1 (NA) entries
+# removal of 130979  (outside of Switz) and 1 (NA) entries
 
 bevn_eco_in0 <- bevn_eco %>%
   filter(country_of_birth_cat1=="Switzerland")
@@ -11,23 +11,24 @@ table(bevn_eco_in0$country_of_birth_cat1)
 
 dim(bevn_eco)-dim(bevn_eco_in0)
 dim(bevn_eco_in0)
-#removal of 124075 entries. new nb entries: 1202203
+#removal of 130980 entries. new nb entries: 1 294 777
 
 #GA missing
   table(bevn_eco$GA_weeks, useNA = "always")
-  #removal of 138581 entries with missing GA
+  #removal of 145 513 entries with missing GA
   bevn_eco_in1 <- bevn_eco_in0 %>%
   filter(!is.na(GA_weeks))
   dim(bevn_eco_in0)-dim(bevn_eco_in1)
   dim(bevn_eco_in1)
   table(bevn_eco_in1$GA_weeks, useNA = "always")
   
-#removal of 14518 entries. new nb of entries: 1187685
+#removal of 14518 entries. new nb of entries: 1 280 230     
 
   
 #Place of residence of the mother: exclude mothers domiciled abroad / resident_status
 +  round(prop.table(table(bevn_eco$resident_status, useNA="always"))*100,2)
-  #we will exclude 158606 (status resident=9, domiciled abroad or status= 2 or 4 = non permanent resident or short stay) and no NA
+  #we will exclude 158 409 (status resident=9 domiciled abroad) + status= 2 (non permanent resident, 8 786) + status=4 (1 014, short stay) and 2 NA
+  #total excluded 168 211       
   
    bevn_eco_in2 <- bevn_eco_in1 %>%
     filter(resident_status==1)
@@ -35,13 +36,13 @@ dim(bevn_eco_in0)
    
    dim(bevn_eco_in1)-dim(bevn_eco_in2)
    dim(bevn_eco_in2)
-   #Exclusion of 37160  additional entries. New nb entries: 1150525 
+   #Exclusion of 40 088  additional entries. New nb entries: 1 240 142 
    
    
 # Singletons only
    table(bevn_eco$singleton_or_multiple, useNA = "always")
    round(prop.table(table(bevn_eco$singleton_or_multiple, useNA="always"))*100,2)
-  #we will exclude 48139 multiple births (2+) and no NA
+  #we will exclude 51112 multiple births (2+) and no NA
    
    bevn_eco_in3 <- bevn_eco_in2 %>%
      filter(singleton_or_multiple=="singleton")
@@ -49,14 +50,14 @@ dim(bevn_eco_in0)
    
    dim(bevn_eco_in2)-dim(bevn_eco_in3)
    dim(bevn_eco_in3)
-   #Exclusion of 41426 additional entries. New nb entries: 1109099
+   #Exclusion of 44 127 additional entries. New nb entries: 1 196 015
    
 
 # Exclude entries with BW<500 and GA<22 weeks, exclude missing
    table(bevn_eco$BW_cat2, useNA="always")
    table(bevn_eco$GA_weeks_cat2, useNA="always")
    
-   #we will exclude 752  entries with GA<22 weeks, 2407 with BW < 500g (13+14497=14510)  NA
+   #we will exclude 835 entries with GA<22 weeks, 2 611 with BW < 500g and 131 265 missing BW(NA)
  
   #check if missing birthweights are for births outside of Switz
    table(bevn_eco$BW_cat2, bevn_eco$country_of_birth_cat1, useNA = "always")
@@ -64,16 +65,16 @@ dim(bevn_eco_in0)
    # (124062) 99.78% of missing BW happened outside of Switz, 0.22%(269) happened inside Switzerland
    
    bevn_eco_in4 <- bevn_eco_in3 %>%
-     filter(GA_weeks >22 & BW > 500) %>%
+     filter(GA_weeks >22 | BW > 500) %>%
      filter(!is.na(BW)) 
-
+   
    dim(bevn_eco_in3)-dim(bevn_eco_in4)
    dim(bevn_eco_in4)
-   #Exclusion of 2180 additional entries. New nb entries: 1106919       
-   
+   #Exclusion of 920 additional entries. New nb entries: 1 195 095       
+
 # BL between 20 and 65cm only, exclude missing 
    table(bevn_eco$BL_cat, useNA="always")
-   # We will exclude 124295  NAs and 177 BL<20cm, and no BL>60cm
+   # We will exclude 131216  NAs and 204 BL<20cm, and no BL>60cm
    
    #check if missing BL are for births outside of Switz
    table(bevn_eco$BL_cat, bevn_eco$country_of_birth_cat1, useNA = "always")
@@ -87,22 +88,22 @@ dim(bevn_eco_in0)
    
    dim(bevn_eco_in4)-dim(bevn_eco_in5)
    dim(bevn_eco_in5)
-   #Exclusion of 128 additional entries. New nb entries: 1106679            
+   #Exclusion of 197 additional entries. New nb entries: 1 194 898                 
    
 # Maternal age: exclude missing and exclude age > 50 (to discuss w/ Kaspar)
    table(bevn_eco$mat_age, useNA="always")
-   #no missing and 225 >50yo
+   #no missing and 243 >50yo
    bevn_eco_in6 <- bevn_eco_in5 %>%
     filter(!is.na(mat_age)) %>%
    filter(mat_age<51)
    
    dim(bevn_eco_in5)-dim(bevn_eco_in6)
    dim(bevn_eco_in6)
-   #Exclusion of 112 additional entries and no missing NA
+   #Exclusion of 124 additional entries and no missing NA. New nb of entries: 1 194 774     
    
 # Live births only
    table(bevn_eco$stillbirth, useNA="always")
-   # We will exclude 5218  stillborn and no NAs
+   # We will exclude 5634 stillborn and no NAs
    
    bevn_eco_in7 <- bevn_eco_in6 %>%
      filter(stillbirth==0)
@@ -110,7 +111,7 @@ dim(bevn_eco_in0)
    
   dim(bevn_eco_in6)-dim(bevn_eco_in7)
    dim(bevn_eco_in7)
-  #Exclusion of 3327  additional entries. New nb entries: 1103352
+  #Exclusion of 4501  additional entries. New nb entries: 1190273     
    
    
 ## Dataset to zoom in 2008-2010 (for the 2009 eco crisis)  
@@ -158,103 +159,154 @@ dim(bevn_eco_in0)
      filter(birthyear>2016 & birthyear < 2020)
    table(bevn_eco_in7_2017_19$birthyear, useNA = "always")  
    
-## Dataset 7 with different maternal nationality categories
+## Dataset 6 and 7 with different maternal nationality categories
    table(bevn_eco_in7$mother_nationality_cat2)
    ### only Swiss mothers
+   bevn_eco_in6_Swiss <- bevn_eco_in6 %>%
+     filter(mother_nationality_cat2=="Switzerland")
    bevn_eco_in7_Swiss <- bevn_eco_in7 %>%
      filter(mother_nationality_cat2=="Switzerland")
-   table(bevn_eco_in7_Swiss$mother_nationality_cat2, useNA = "always")
    ### only African
+   bevn_eco_in6_Afr <- bevn_eco_in6 %>%
+     filter(mother_nationality_cat2=="Africa")
    bevn_eco_in7_Afr <- bevn_eco_in7 %>%
      filter(mother_nationality_cat2=="Africa")
-   table(bevn_eco_in7_Afr$mother_nationality_cat2, useNA = "always")
    ### only Asian
+   bevn_eco_in6_Asi <- bevn_eco_in6 %>%
+     filter(mother_nationality_cat2=="Asia")
    bevn_eco_in7_Asi <- bevn_eco_in7 %>%
      filter(mother_nationality_cat2=="Asia")
-   table(bevn_eco_in7_Asi$mother_nationality_cat2, useNA = "always")
    ### only Europe (excl. Switz)
+   bevn_eco_in6_Eur <- bevn_eco_in6 %>%
+     filter(mother_nationality_cat2=="Europe")
    bevn_eco_in7_Eur <- bevn_eco_in7 %>%
      filter(mother_nationality_cat2=="Europe")
-   table(bevn_eco_in7_Eur$mother_nationality_cat2, useNA = "always")
    ### only North America
+   bevn_eco_in6_Nort_Am <- bevn_eco_in6 %>%
+     filter(mother_nationality_cat2=="Northern America")
    bevn_eco_in7_Nort_Am <- bevn_eco_in7 %>%
      filter(mother_nationality_cat2=="Northern America")
-   table(bevn_eco_in7_Nort_Am$mother_nationality_cat2, useNA = "always")
    ### only Southern and Central America
+   bevn_eco_in6_S_C_Am <- bevn_eco_in6 %>%
+     filter(mother_nationality_cat2=="Southern and Central America")
    bevn_eco_in7_S_C_Am <- bevn_eco_in7 %>%
      filter(mother_nationality_cat2=="Southern and Central America")
-   table(bevn_eco_in7_S_C_Am$mother_nationality_cat2, useNA = "always")
-   
-## Dataset 7 with different SSEP categories
+
+## Dataset 6 and 7 with different SSEP categories
    ## mean_SSEP_cat1: tertiles
    ### only Low SSEP
+   bevn_eco_in6_L_SSEP1 <- bevn_eco_in6 %>%
+     filter(mean_ssep2_cat1=="low SSEP")
+   table(bevn_eco_in6_L_SSEP1$mean_ssep2_cat1, useNA = "always")
    bevn_eco_in7_L_SSEP1 <- bevn_eco_in7 %>%
      filter(mean_ssep2_cat1=="low SSEP")
    table(bevn_eco_in7_L_SSEP1$mean_ssep2_cat1, useNA = "always")
    ### only medium SSEP
+   bevn_eco_in6_M_SSEP1 <- bevn_eco_in6 %>%
+     filter(mean_ssep2_cat1=="medium SSEP")
+   table(bevn_eco_in6_M_SSEP1$mean_ssep2_cat1, useNA = "always")
    bevn_eco_in7_M_SSEP1 <- bevn_eco_in7 %>%
      filter(mean_ssep2_cat1=="medium SSEP")
    table(bevn_eco_in7_M_SSEP1$mean_ssep2_cat1, useNA = "always")
    ### only high SSEP
+   bevn_eco_in6_H_SSEP1 <- bevn_eco_in6 %>%
+     filter(mean_ssep2_cat1=="high SSEP")
+   table(bevn_eco_in6_H_SSEP1$mean_ssep2_cat1, useNA = "always")
    bevn_eco_in7_H_SSEP1 <- bevn_eco_in7 %>%
      filter(mean_ssep2_cat1=="high SSEP")
    table(bevn_eco_in7_H_SSEP1$mean_ssep2_cat1, useNA = "always")
    
   ## mean_SSEP_cat2: 5th and 95th percentiles
    ### only Low SSEP
+   bevn_eco_in6_L_SSEP2 <- bevn_eco_in6 %>%
+     filter(mean_ssep2_cat2=="low SSEP")
    bevn_eco_in7_L_SSEP2 <- bevn_eco_in7 %>%
      filter(mean_ssep2_cat2=="low SSEP")
    table(bevn_eco_in7_L_SSEP2$mean_ssep2_cat2, useNA = "always")
    ### only medium SSEP
+   bevn_eco_in6_M_SSEP2 <- bevn_eco_in6 %>%
+     filter(mean_ssep2_cat2=="medium SSEP")
    bevn_eco_in7_M_SSEP2 <- bevn_eco_in7 %>%
      filter(mean_ssep2_cat2=="medium SSEP")
    table(bevn_eco_in7_M_SSEP2$mean_ssep2_cat2, useNA = "always")
    ### only high SSEP
+   bevn_eco_in6_H_SSEP2 <- bevn_eco_in6 %>%
+     filter(mean_ssep2_cat2=="high SSEP")
    bevn_eco_in7_H_SSEP2 <- bevn_eco_in7 %>%
      filter(mean_ssep2_cat2=="high SSEP")
    table(bevn_eco_in7_H_SSEP2$mean_ssep2_cat2, useNA = "always")
    
   ## mean_SSEP_cat3: lowest 20% vs. middle (2nd to 4th quintiles) vs. highest 20%. 
    ### only Low SSEP
+   bevn_eco_in6_L_SSEP3 <- bevn_eco_in6 %>%
+     filter(mean_ssep2_cat3=="low SSEP")
    bevn_eco_in7_L_SSEP3 <- bevn_eco_in7 %>%
      filter(mean_ssep2_cat3=="low SSEP")
    table(bevn_eco_in7_L_SSEP3$mean_ssep2_cat3, useNA = "always")
    ### only medium SSEP
+   bevn_eco_in6_M_SSEP3 <- bevn_eco_in6 %>%
+     filter(mean_ssep2_cat3=="medium SSEP")
    bevn_eco_in7_M_SSEP3 <- bevn_eco_in7 %>%
      filter(mean_ssep2_cat3=="medium SSEP")
    table(bevn_eco_in7_M_SSEP3$mean_ssep2_cat3, useNA = "always")
    ### only high SSEP
+   bevn_eco_in6_H_SSEP3 <- bevn_eco_in6 %>%
+     filter(mean_ssep2_cat3=="high SSEP")
    bevn_eco_in7_H_SSEP3 <- bevn_eco_in7 %>%
      filter(mean_ssep2_cat3=="high SSEP")
    table(bevn_eco_in7_H_SSEP3$mean_ssep2_cat3, useNA = "always") 
   
    
-## Dataset 7 with different Language regions
+## Dataset 6 and 7 with different Language regions
+   bevn_eco_in6_German <- bevn_eco_in6 %>%
+     filter(Language=="German or Romansh")
    bevn_eco_in7_German <- bevn_eco_in7 %>%
      filter(Language=="German or Romansh")
    table(bevn_eco_in7_German$Language, useNA = "always")
    ### only medium SSEP
+   bevn_eco_in6_French <- bevn_eco_in6 %>%
+     filter(Language=="French")
    bevn_eco_in7_French <- bevn_eco_in7 %>%
      filter(Language=="French")
    table(bevn_eco_in7_French$Language, useNA = "always")
    ### only high SSEP
+   bevn_eco_in6_Italian <- bevn_eco_in6 %>%
+     filter(Language=="Italian")
    bevn_eco_in7_Italian <- bevn_eco_in7 %>%
      filter(Language=="Italian")
    table(bevn_eco_in7_Italian$Language, useNA = "always")
    
-
-# Dataset only with COVID-19 exposure
-   bevn_eco_in7_COVID_exp_during_pregnancy <- bevn_eco_in7 %>%
-     filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
-   table(bevn_eco_in7_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
-  
-# Dataset only with 2015-2021 years, to focus on COVID + 5y before
+## Dataset 6 and 7 with different maternal age categories AND first parities
+   # < 32 yo
+   bevn_eco_in6_below32 <- bevn_eco_in6 %>%
+     filter(mat_age_cat2==0) %>%
+     filter(parity==1)
+   bevn_eco_in7_below32 <- bevn_eco_in7 %>%
+     filter(mat_age_cat2==0) %>%
+     filter(parity==1)
+   ### >= 32 yo
+   bevn_eco_in6_above_32 <- bevn_eco_in6 %>%
+     filter(mat_age_cat2==1) %>%
+      filter(parity==1)
+   bevn_eco_in7_above_32 <- bevn_eco_in7 %>%
+     filter(mat_age_cat2==1) %>%
+     filter(parity==1)
+   
+   table(bevn_eco_in7_French$Language, useNA = "always")
+   
+# Dataset 6 and 7 only with 2015-2021 years, to focus on COVID + 5y before
    bevn_eco_in7_15_21 <- bevn_eco_in7 %>%
      filter(birthyear>"2014")
-   table(bevn_eco_in7_15_21$birthyear, useNA = "always")    
+   table(bevn_eco_in7_15_21$birthyear, useNA = "always") 
+   bevn_eco_in6_15_21 <- bevn_eco_in6 %>%
+     filter(birthyear>"2014")
+   table(bevn_eco_in6_15_21$birthyear, useNA = "always") 
    
-# Dataset only with COVID-19 exposure, 2015-21
+# Dataset 6 and 7 only with COVID-19 exposure, 2015-21
    bevn_eco_in7_COVID_exp_during_pregnancy <- bevn_eco_in7_15_21 %>%
      filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
    table(bevn_eco_in7_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
+   bevn_eco_in6_COVID_exp_during_pregnancy <- bevn_eco_in6_15_21 %>%
+     filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
+   table(bevn_eco_in6_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
    
