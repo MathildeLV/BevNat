@@ -53,7 +53,7 @@ dim(bevn_eco_in0)
    #Exclusion of 44 127 additional entries. New nb entries: 1 196 015
    
 
-# Exclude entries with BW<500 and GA<22 weeks, exclude missing
+# Exclude entries with BW<500 OR GA<22 weeks, exclude missing
    table(bevn_eco$BW_cat2, useNA="always")
    table(bevn_eco$GA_weeks_cat2, useNA="always")
    
@@ -72,6 +72,10 @@ dim(bevn_eco_in0)
    dim(bevn_eco_in4)
    #Exclusion of 920 additional entries. New nb entries: 1 195 095       
 
+   #TO DISCUSS: exclusion of BW <100g or BW >7.5kg
+   bevn_eco_in4 <- bevn_eco_in4 %>%
+     filter(BW > 100 & BW < 7500) 
+   
 # BL between 20 and 65cm only, exclude missing 
    table(bevn_eco$BL_cat, useNA="always")
    # We will exclude 131216  NAs and 204 BL<20cm, and no BL>60cm
