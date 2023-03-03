@@ -14,15 +14,21 @@ GAM_plot_function_continuous <- function(model, var_nr) {
 
 # Model with a binary outcome (ex: PTB)
 GAM_plot_function_binary <- function(model, var_nr) {
-  plot <- plot(model, select=var_nr,trans = plogis)
-  
+  plot <- plot(model, select=var_nr)
   plot_x <- plot[[var_nr]]$x 
-  plot_fit <- plot[[var_nr]]$fit
+  plot_fit <- ((plot[[var_nr]]$fit+ coef(model)[1]))
+  plot_CIl<- plot_fit-(1.96*(plot[[var_nr]]$se))
+  plot_CIu<- plot_fit+(1.96*(plot[[var_nr]]$se))
+  plot_data <-  data.frame(x=plot_x, fit=plogis(plot_fit),CIl=plogis(plot_CIl),CIu=plogis(plot_CIu))
+}
+GAM_plot_function_binarybis <- function(model, var_nr) {
+  plot <- plot(model, select=var_nr)
+  plot_x <- plot[[var_nr]]$x 
+  plot_fit <- ((plot[[var_nr]]$fit+ coef(model)[1]))
   plot_CIl<- plot_fit-(1.96*(plot[[var_nr]]$se))
   plot_CIu<- plot_fit+(1.96*(plot[[var_nr]]$se))
   plot_data <-  data.frame(x=plot_x, fit=exp(plot_fit),CIl=exp(plot_CIl),CIu=exp(plot_CIu))
 }
-
 
 # Table for estimates and conf interval and Cohen's d
   ## Continuous outcomes:
