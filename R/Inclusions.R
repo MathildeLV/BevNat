@@ -267,13 +267,13 @@ dim(bevn_eco_in0)
    bevn_eco_in7_German <- bevn_eco_in7 %>%
      filter(Language=="German or Romansh")
    table(bevn_eco_in7_German$Language, useNA = "always")
-   ### only medium SSEP
+   ### only French language region
    bevn_eco_in6_French <- bevn_eco_in6 %>%
      filter(Language=="French")
    bevn_eco_in7_French <- bevn_eco_in7 %>%
      filter(Language=="French")
    table(bevn_eco_in7_French$Language, useNA = "always")
-   ### only high SSEP
+   ### only Italian language region
    bevn_eco_in6_Italian <- bevn_eco_in6 %>%
      filter(Language=="Italian")
    bevn_eco_in7_Italian <- bevn_eco_in7 %>%
@@ -314,3 +314,51 @@ dim(bevn_eco_in0)
      filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
    table(bevn_eco_in6_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
    
+# Dataset 6 and 7 with Basel-stadt only
+   bevn_eco_in6_Basel <- bevn_eco_in6 %>%
+     filter(com==2701 | com==2702 | com==2703)
+   bevn_eco_in7_Basel <- bevn_eco_in7 %>%
+     filter(com==2701 | com==2702 | com==2703)
+   bevn_eco_in7_Baselbelow35 <- bevn_eco_in7_Basel %>%
+     filter(mat_age<35)
+   bevn_eco_in7_Baselabove35 <- bevn_eco_in7_Basel %>%
+     filter(mat_age>35 | mat_age==35)
+   
+# dataset 7 with first parities only
+   #global dataset (remark: parity not available for stillbirth cases, so we only do the sensitivity analysis with BW and PTB outcome variables)
+   bevn_eco_in7_primiparous <- bevn_eco_in7 %>%
+     filter(parity==1)
+   ## Primiparous X different maternal nationality categories
+   table(bevn_eco_in7_primiparous$mother_nationality_cat2)
+    bevn_eco_in7_primiparous_Swiss <- bevn_eco_in7_primiparous %>%
+     filter(mother_nationality_cat2=="Switzerland")
+   bevn_eco_in7_primiparous_Afr <- bevn_eco_in7_primiparous %>%
+     filter(mother_nationality_cat2=="Africa")
+    bevn_eco_in7_primiparous_Asi <- bevn_eco_in7_primiparous %>%
+     filter(mother_nationality_cat2=="Asia")
+   bevn_eco_in7_primiparous_Eur <- bevn_eco_in7_primiparous %>%
+     filter(mother_nationality_cat2=="Europe")
+    bevn_eco_in7_primiparous_Nort_Am <- bevn_eco_in7_primiparous %>%
+     filter(mother_nationality_cat2=="Northern America")
+   bevn_eco_in7_primiparous_S_C_Am <- bevn_eco_in7_primiparous %>%
+     filter(mother_nationality_cat2=="Southern and Central America")
+  
+   ## Primiparous X different SSEP (tertiles)
+   table(bevn_eco_in7_primiparous$mean_ssep2_cat1, useNA = "always")
+    bevn_eco_in7_primiparous_L_SSEP1 <- bevn_eco_in7_primiparous %>%
+     filter(mean_ssep2_cat1=="low SSEP")
+   table(bevn_eco_in7_primiparous_L_SSEP1$mean_ssep2_cat1, useNA = "always")
+   bevn_eco_in7_primiparous_M_SSEP1 <- bevn_eco_in7_primiparous %>%
+     filter(mean_ssep2_cat1=="medium SSEP")
+   table(bevn_eco_in7_primiparous_M_SSEP1$mean_ssep2_cat1, useNA = "always")
+   bevn_eco_in7_primiparous_H_SSEP1 <- bevn_eco_in7_primiparous %>%
+     filter(mean_ssep2_cat1=="high SSEP")
+   table(bevn_eco_in7_primiparous_H_SSEP1$mean_ssep2_cat1, useNA = "always")
+   
+   ## Primiparous X different language regions
+   bevn_eco_in7_primiparous_German <- bevn_eco_in7_primiparous %>%
+     filter(Language=="German or Romansh")
+    bevn_eco_in7_primiparous_French <- bevn_eco_in7_primiparous %>%
+     filter(Language=="French")
+   bevn_eco_in7_primiparous_Italian <- bevn_eco_in7_primiparous %>%
+     filter(Language=="Italian")
