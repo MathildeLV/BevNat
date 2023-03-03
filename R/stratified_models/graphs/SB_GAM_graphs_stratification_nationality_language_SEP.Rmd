@@ -25,11 +25,11 @@ m_SB_bam_M_SSEP1 <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num)
 m_SB_bam_H_SSEP1 <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_H_SSEP1)  
 
 #function to extract the plot information
-plot_m_SB_bam_L_SSEP1 <- GAM_plot_function_binary(m_SB_bam_L_SSEP1) %>%
+plot_m_SB_bam_L_SSEP1 <- GAM_plot_function_binary(m_SB_bam_L_SSEP1, 3) %>%
   mutate(SEP="low")
-plot_m_SB_bam_M_SSEP1 <- GAM_plot_function_binary(m_SB_bam_M_SSEP1) %>%
+plot_m_SB_bam_M_SSEP1 <- GAM_plot_function_binary(m_SB_bam_M_SSEP1, 3) %>%
   mutate(SEP="medium")
-plot_m_SB_bam_H_SSEP1 <- GAM_plot_function_binary(m_SB_bam_H_SSEP1) %>%
+plot_m_SB_bam_H_SSEP1 <- GAM_plot_function_binary(m_SB_bam_H_SSEP1, 3) %>%
   mutate(SEP="high")
 ```
 
@@ -92,25 +92,24 @@ ggplot_SB_SEP
 # Stratification by maternal nationality
 ```{r include=FALSE}
 m_SB_bam_swiss <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Swiss)  
-m_SB_bam_Afr <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Afr)  
-m_SB_bam_Asi <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Asi)  
+m_SB_bam_Afr <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Afr)
+m_SB_bam_Asi <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Asi)
 m_SB_bam_Eur <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Eur)  
 m_SB_bam_Nort_Am <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Nort_Am)  
 m_SB_bam_S_C_Am <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_S_C_Am)  
 
-
 #function to extract the plot information
-plot_m_SB_bam_swiss <- GAM_plot_function_binary(m_SB_bam_swiss) %>%
+plot_m_SB_bam_swiss <- GAM_plot_function_binary(m_SB_bam_swiss, 3) %>%
   mutate(nationality="Swiss")
-plot_m_SB_bam_Afr <- GAM_plot_function_binary(m_SB_bam_Afr) %>%
+plot_m_SB_bam_Afr <- GAM_plot_function_binary(m_SB_bam_Afr, 3) %>%
   mutate(nationality="African")
-plot_m_SB_bam_Asi <- GAM_plot_function_binary(m_SB_bam_Asi) %>%
+plot_m_SB_bam_Asi <- GAM_plot_function_binary(m_SB_bam_Asi, 3) %>%
   mutate(nationality="Asian")
-plot_m_SB_bam_Eur <- GAM_plot_function_binary(m_SB_bam_Eur) %>%
+plot_m_SB_bam_Eur <- GAM_plot_function_binary(m_SB_bam_Eur, 3) %>%
   mutate(nationality="European")
-plot_m_SB_bam_Nort_Am <- GAM_plot_function_binary(m_SB_bam_Nort_Am) %>%
+plot_m_SB_bam_Nort_Am <- GAM_plot_function_binary(m_SB_bam_Nort_Am, 3) %>%
   mutate(nationality="Northern American")
-plot_m_SB_bam_S_C_Am <- GAM_plot_function_binary(m_SB_bam_S_C_Am) %>%
+plot_m_SB_bam_S_C_Am <- GAM_plot_function_binary(m_SB_bam_S_C_Am, 3) %>%
   mutate(nationality="Southern/Central American")
 ```
 
@@ -167,11 +166,11 @@ m_SB_bam_French<- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) +
 m_SB_bam_Italian<- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2) + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Italian)  
  
 # extracting the plot information
-plot_m_SB_bam_German <- GAM_plot_function_binary(m_SB_bam_German) %>%
+plot_m_SB_bam_German <- GAM_plot_function_binary(m_SB_bam_German, 3) %>%
   mutate(language_region="German")
-plot_m_SB_bam_French <- GAM_plot_function_binary(m_SB_bam_French) %>%
+plot_m_SB_bam_French <- GAM_plot_function_binary(m_SB_bam_French, 3) %>%
   mutate(language_region="French")
-plot_m_SB_bam_Italian <- GAM_plot_function_binary(m_SB_bam_Italian) %>%
+plot_m_SB_bam_Italian <- GAM_plot_function_binary(m_SB_bam_Italian, 3) %>%
   mutate(language_region="Italian")
 ```
 
