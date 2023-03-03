@@ -283,12 +283,22 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
    bevn_eco <- bevn_eco %>%
   mutate(GA_weeks_cat2=cut(GA_weeks, breaks=c(10,21.9,46), include.lowest=TRUE))
    table(bevn_eco$GA_weeks_cat2)
+   #Third GA category
+   bevn_eco <- bevn_eco %>%
+     mutate(GA_weeks_cat3=cut(GA_weeks, breaks=c(10,31.99,33.99,36.99,50), include.lowest=TRUE))
+   table(bevn_eco$GA_weeks_cat3)
    
    # Third GA category, GA< or >= 37weeks, PTB
-   bevn_eco$PTB <- ifelse(bevn_eco$GA_weeks<37, 1, 0)
-   bevn_eco$PTB <- as.factor(bevn_eco$PTB)
-   bevn_eco$VPTB <- ifelse(bevn_eco$GA_weeks<34, 1, 0)
-   bevn_eco$VPTB <- as.factor(bevn_eco$VPTB)
+   bevn_eco <- bevn_eco %>%
+     dplyr::mutate(PTB = case_when(GA_weeks <37 ~"1", GA_weeks>37 | GA_weeks==37 ~"0"))  %>%
+     mutate(PTB = as.factor(PTB)) %>%
+     dplyr::mutate(VPTB = case_when(GA_weeks <32 ~"1", GA_weeks>32 | GA_weeks==32 ~"0"))%>%
+   mutate(VPTB = as.factor(VPTB)) %>%
+     dplyr::mutate(EPTB = case_when(GA_weeks==32 | (GA_weeks <34 & GA_weeks>32) ~"1", GA_weeks>34 | GA_weeks==34 ~"0")) %>%
+     mutate(EPTB=as.factor(EPTB))
+   table(bevn_eco$PTB, bevn_eco$GA_weeks_cat3, useNA = "always")
+   table(bevn_eco$EPTB, bevn_eco$GA_weeks_cat3, useNA = "always")
+   table(bevn_eco$VPTB, bevn_eco$GA_weeks_cat3, useNA = "always")
    
    # Parity category, 1, 2, 3, 4+
    bevn_eco <- bevn_eco %>%
@@ -300,7 +310,7 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
    table(bevn_eco$mat_age)
    bevn_eco <- bevn_eco %>%
      dplyr:: mutate(mat_age_cat = cut (mat_age, breaks=c(10,20,25,30, 35, 40, 70))) %>% 
-     dplyr::mutate(mat_age_cat2 = case_when(mat_age <30 ~"0", mat_age>30 | mat_age==32 ~"1"))
+     dplyr::mutate(mat_age_cat2 = case_when(mat_age <30 ~"0", mat_age>30 | mat_age==30 ~"1"))
    table(bevn_eco$mat_age_cat, useNA = "always")
    table(bevn_eco$mat_age_cat2, useNA = "always")
    round(prop.table(table(bevn_eco$mat_age_cat2, useNA="always"))*100,2)
