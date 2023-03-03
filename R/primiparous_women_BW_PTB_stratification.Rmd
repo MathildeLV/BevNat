@@ -18,14 +18,15 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # Birthweight
 ## test with univariate analysis
+
 ### all parities
 ```{r}
 m_BW_all_parities_univ <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7)
+summary(m_BW_all_parities_univ)
 ```
 
 ### primiparous women
 ```{r}
-summary(m_BW_all_parities_univ)
 m_BW_primiparous_univ <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_primiparous) 
   summary(m_BW_primiparous_univ)
 ```
@@ -101,7 +102,7 @@ x_date <-   bevn_eco_in7_primiparous %>% #careful, mayhave to change the dataset
   distinct(birth_Y_M, .keep_all = TRUE) %>%
   rename(x=birth_Y_M_num)
 
-plot_data_BW_primiparous <- plot_m_BW_time %>%
+plot_data_BW_primiparous <- plot_m_BW_primiparous_time %>%
   mutate(x=round(x,0)) %>%
   left_join(x_date) %>%
   mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
