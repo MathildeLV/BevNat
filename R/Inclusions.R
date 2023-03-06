@@ -72,7 +72,7 @@ dim(bevn_eco_in0)
    dim(bevn_eco_in4)
    #Exclusion of 920 additional entries. New nb entries: 1 195 095       
 
-   #TO DISCUSS: exclusion of BW <100g or BW >7.5kg
+   #TO DISCUSS: exclusion of BW <100g or BW >7.5kg. arbitrary but okay
    bevn_eco_in4 <- bevn_eco_in4 %>%
      filter(BW > 100 & BW < 7500) 
    
@@ -280,24 +280,35 @@ dim(bevn_eco_in0)
      filter(Language=="Italian")
    table(bevn_eco_in7_Italian$Language, useNA = "always")
    
-## Dataset 6 and 7 with different maternal age categories AND first parities
+   ## Dataset 6 and 7 with different maternal age categories AND ALL parities
    # < 32 yo
    bevn_eco_in6_below32 <- bevn_eco_in6 %>%
+     filter(mat_age_cat2==0)
+   bevn_eco_in7_below32 <- bevn_eco_in7 %>%
+     filter(mat_age_cat2==0)
+   ### >= 32 yo
+   bevn_eco_in6_above_32 <- bevn_eco_in6 %>%
+     filter(mat_age_cat2==1)
+   bevn_eco_in7_above_32 <- bevn_eco_in7 %>%
+     filter(mat_age_cat2==1)
+
+   ## Dataset 6 and 7 with different maternal age categories AND first parities
+   # < 32 yo
+   bevn_eco_in6_below32_primiparous <- bevn_eco_in6 %>%
      filter(mat_age_cat2==0) %>%
      filter(parity==1)
-   bevn_eco_in7_below32 <- bevn_eco_in7 %>%
+   bevn_eco_in7_below32_primiparous <- bevn_eco_in7 %>%
      filter(mat_age_cat2==0) %>%
      filter(parity==1)
    ### >= 32 yo
-   bevn_eco_in6_above_32 <- bevn_eco_in6 %>%
+   bevn_eco_in6_above_32_primiparous <- bevn_eco_in6 %>%
      filter(mat_age_cat2==1) %>%
       filter(parity==1)
-   bevn_eco_in7_above_32 <- bevn_eco_in7 %>%
+   bevn_eco_in7_above_32_primiparous <- bevn_eco_in7 %>%
      filter(mat_age_cat2==1) %>%
      filter(parity==1)
    
-   table(bevn_eco_in7_French$Language, useNA = "always")
-   
+
 # Dataset 6 and 7 only with 2015-2021 years, to focus on COVID + 5y before
    bevn_eco_in7_15_21 <- bevn_eco_in7 %>%
      filter(birthyear>"2014")

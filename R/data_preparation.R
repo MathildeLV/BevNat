@@ -310,7 +310,8 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
    table(bevn_eco$mat_age)
    bevn_eco <- bevn_eco %>%
      dplyr:: mutate(mat_age_cat = cut (mat_age, breaks=c(10,20,25,30, 35, 40, 70))) %>% 
-     dplyr::mutate(mat_age_cat2 = case_when(mat_age <30 ~"0", mat_age>30 | mat_age==30 ~"1"))
+     dplyr::mutate(mat_age_cat2 = case_when(mat_age <30 ~"0", mat_age>30 | mat_age==30 ~"1")) %>%
+     dplyr::mutate(mat_age_cat3 = case_when(mat_age <32 ~"0", mat_age>32 | mat_age==32 ~"1"))
    table(bevn_eco$mat_age_cat, useNA = "always")
    table(bevn_eco$mat_age_cat2, useNA = "always")
    round(prop.table(table(bevn_eco$mat_age_cat2, useNA="always"))*100,2)
