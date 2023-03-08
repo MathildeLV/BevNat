@@ -13,11 +13,13 @@ PTB_figure2 <- ggarrange(plot_PTB, ggplot_PTB_SEP, ggplot_PTB_nationality, ggplo
                     ncol = 2, nrow = 2)
 PTB_figure2
 ggsave("PTB_figure2.pdf", PTB_figure2, path = here("output/figures_paper"))
-ggsave("PTB_figure2.jpg", PTB_figure2, path = here("output/figures_paper"))
+ggsave("PTB_figure2.pdf", PTB_figure2, path = here("output/figures_paper"))
 
 
 
 ## Figure 3, stillbirth (no stratification)
+ggsave("SB_figure3.pdf", plot_SB_time, path = here("output/figures_paper"))
+ggsave("SB_figure3.jpg", plot_SB_time, path = here("output/figures_paper"))
 
 # Appendix
   ## S1 : smoothed variables, BW model
@@ -37,7 +39,7 @@ ggsave("PTB_supplfig_2.pdf", PTB_supplfig_2, path = here("output/figures_paper")
 ggsave("PTB_supplfig_2.jpg", PTB_supplfig_2, path = here("output/figures_paper"))
 
   ## S3 : smoothed variables, stillbirth model
-SB_supplfig_3 <- ggarrange(plot_PTB_BW, plot_PTB_mat_age, plot_PTB_seasonality, plot_PTB_SSEP, plot_PTB_altitude,
+SB_supplfig_3 <- ggarrange(plot_SB_GA,  plot_SB_mat_age,  plot_SB_month,  plot_SB_SSEP, plot_SB_altitude,
                            labels = c("A", "B", "C", "D", "E"),
                            ncol = 3, nrow = 2) 
 SB_supplfig_3
