@@ -1,8 +1,15 @@
 ---
 title: 'Stratification: maternal age, first parities only'
 author: "Mathilde Le Vu"
-date: "2023-02-21"
-output: html_document
+date:  "`r Sys.Date()`"
+html_document: 
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}

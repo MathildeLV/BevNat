@@ -18,13 +18,85 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 # Socio economic position : stratification
-## SSEP by tertile
+## SB % by SSEP tertile, unadjusted
+```{r}
+round(prop.table(table(bevn_eco_in6$mean_ssep2_cat1, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+```
+
+## SB % stratified by SSEP tertile, adjusted for time only
+```{r include=FALSE}
+m_SB_bam_L_SSEP1_sp <- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_L_SSEP1)  
+m_SB_bam_M_SSEP1_sp <- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_M_SSEP1)  
+m_SB_bam_H_SSEP1_sp <- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_H_SSEP1)  
+
+#function to extract the plot information
+plot_m_SB_bam_L_SSEP1_sp <- GAM_plot_function_binary(m_SB_bam_L_SSEP1_sp, 1) %>%
+  mutate(SEP="low")
+plot_m_SB_bam_M_SSEP1_sp <- GAM_plot_function_binary(m_SB_bam_M_SSEP1_sp, 1) %>%
+  mutate(SEP="medium")
+plot_m_SB_bam_H_SSEP1_sp <- GAM_plot_function_binary(m_SB_bam_H_SSEP1_sp, 1) %>%
+  mutate(SEP="high")
+```
+
+
+```{r}
+x_date <-   bevn_eco_in6 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_SB_SEP_sp <- plot_m_SB_bam_L_SSEP1_sp  %>%
+  rbind(plot_m_SB_bam_M_SSEP1_sp) %>%
+  rbind(plot_m_SB_bam_H_SSEP1_sp) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+# graph parameters
+lim1 <- as.POSIXct(ymd("2007-01-01"))
+lim2 <- as.POSIXct(ymd("2021-12-01"))
+
+ggplot_SB_SEP_sp <- ggplot(data=plot_SB_SEP_sp)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=SEP),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=SEP),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Stillbirth probability")+
+  # ylim(c(-10,5))+
+  # scale_colour_manual("",
+  #                     values = c("#555555","#555555","#555555"),
+  #                     limits=c("fitall","CIlall","CIuall"),
+  #                     labels=c("fully adjusted","95% CI","95% CI"))+
+  scale_colour_manual('SSEP',                                                #colour manual is for the line
+                      limits=c("low","medium", "high"),
+                      # labels=c("fully adjusted","95% CI","95% CI"),
+                    values =c("darkorchid1","lightpink3", "darkmagenta"))+
+  scale_fill_manual('SSEP',                                              # fill is for CI
+                    limits=c("low","medium", "high"), 
+                    # labels=c("fully adjusted","95% CI","95% CI"),  
+                    values =c("darkorchid1","lightpink3", "darkmagenta"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+    panel.grid.major=element_line(colour = "black", linetype = "dotted"),
+    panel.grid.minor=element_line(colour = "black", linetype = "dotted"))+ 
+  ggtitle("Stillbirth rate through time, stratified by SSEP, unadj. model")
+ggplot_SB_SEP_sp
+```
+
+## SB % stratified by SSEP tertile, adjusted for other covariates
 ```{r include=FALSE}
 m_SB_bam_L_SSEP1 <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_L_SSEP1)  
 m_SB_bam_M_SSEP1 <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_M_SSEP1)  
 m_SB_bam_H_SSEP1 <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_H_SSEP1)  
 
-#function to extract the plot information
 plot_m_SB_bam_L_SSEP1 <- GAM_plot_function_binary(m_SB_bam_L_SSEP1, 3) %>%
   mutate(SEP="low")
 plot_m_SB_bam_M_SSEP1 <- GAM_plot_function_binary(m_SB_bam_M_SSEP1, 3) %>%
@@ -32,7 +104,6 @@ plot_m_SB_bam_M_SSEP1 <- GAM_plot_function_binary(m_SB_bam_M_SSEP1, 3) %>%
 plot_m_SB_bam_H_SSEP1 <- GAM_plot_function_binary(m_SB_bam_H_SSEP1, 3) %>%
   mutate(SEP="high")
 ```
-
 
 ```{r}
 x_date <-   bevn_eco_in6 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
@@ -47,36 +118,27 @@ plot_SB_SEP <- plot_m_SB_bam_L_SSEP1  %>%
   left_join(x_date) %>%
   mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
 
-# graph parameters: later, to set in the master file
-lwdline <- 1.5 
-size_axis <- 12
-size_axis_title <- 15
-size_legend <- 10
-size_legend_title <- 13
+# graph parameters
 lim1 <- as.POSIXct(ymd("2007-01-01"))
 lim2 <- as.POSIXct(ymd("2021-12-01"))
 
 ggplot_SB_SEP <- ggplot(data=plot_SB_SEP)+
+  coord_cartesian(ylim=c(0,0.0025)) +
   geom_line(aes(x=as.POSIXct(date_x),y=fit,col=SEP),lwd=lwdline)+
   geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=SEP),alpha=0.15,lwd=lwdline)+
   xlab("Timeline (years)")+
   ylab("Stillbirth probability")+
-  # ylim(c(-10,5))+
-  # scale_colour_manual("",
-  #                     values = c("#555555","#555555","#555555"),
-  #                     limits=c("fitall","CIlall","CIuall"),
-  #                     labels=c("fully adjusted","95% CI","95% CI"))+
   scale_colour_manual('SSEP',                                                #colour manual is for the line
                       limits=c("low","medium", "high"),
                       # labels=c("fully adjusted","95% CI","95% CI"),
-                      values =c("#69D8F3","#9557DC", "#57DC7F"))+
+                    values =c("darkorchid1","lightpink3", "darkmagenta"))+
   scale_fill_manual('SSEP',                                              # fill is for CI
                     limits=c("low","medium", "high"), 
                     # labels=c("fully adjusted","95% CI","95% CI"),  
-                    values =c("#69D8F3","#9557DC", "#57DC7F"))+
+                    values =c("darkorchid1","lightpink3", "darkmagenta"))+
   scale_x_datetime( breaks = date_breaks("12 month"), 
                     labels = label_date_short(),
-                    limits =c(min(lim1), max(lim2)),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
   theme_bw()+
   theme(axis.text.y=element_text(color="black",size=size_axis),
@@ -84,21 +146,93 @@ ggplot_SB_SEP <- ggplot(data=plot_SB_SEP)+
         axis.title=element_text(size=size_axis_title),
         legend.text=element_text(size=size_legend),
         legend.title=element_text(size=size_legend_title),
-        legend.position="bottom")
-
+        legend.position="bottom",
+    panel.grid.major=element_line(colour = "black", linetype = "dotted"),
+    panel.grid.minor=element_line(colour = "black", linetype = "dotted"))+ 
+  ggtitle("Stillbirth rate through time, stratified by SSEP")
 ggplot_SB_SEP
 ```
 
 # Stratification by maternal nationality
+## SB % by maternal nationality, unadjusted
+```{r}
+round(prop.table(table(bevn_eco_in6$mother_nationality_cat2, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+```
+
+## SB % stratified by maternal nationality, adjusted for time only
 ```{r include=FALSE}
-m_SB_bam_swiss <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Swiss)  
-m_SB_bam_Afr <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Afr)
-m_SB_bam_Asi <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Asi)
-m_SB_bam_Eur <- bam(stillbirth ~ s(GA_weeks) + + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Eur)  
+m_SB_bam_swiss_sp <- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_Swiss)  
+m_SB_bam_Afr_sp <- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_Afr)
+m_SB_bam_Asi_sp <- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_Asi)
+m_SB_bam_Eur_sp <- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_Eur)  
+m_SB_bam_Nort_Am_sp <- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_Nort_Am)  
+m_SB_bam_S_C_Am_sp <- bam(stillbirth ~s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_S_C_Am)  
+
+plot_m_SB_bam_swiss_sp <- GAM_plot_function_binary(m_SB_bam_swiss_sp, 1) %>%
+  mutate(nationality="Swiss")
+plot_m_SB_bam_Afr_sp <- GAM_plot_function_binary(m_SB_bam_Afr_sp, 1) %>%
+  mutate(nationality="African")
+plot_m_SB_bam_Asi_sp <- GAM_plot_function_binary(m_SB_bam_Asi_sp, 1) %>%
+  mutate(nationality="Asian")
+plot_m_SB_bam_Eur_sp <- GAM_plot_function_binary(m_SB_bam_Eur_sp, 1) %>%
+  mutate(nationality="European")
+plot_m_SB_bam_Nort_Am_sp <- GAM_plot_function_binary(m_SB_bam_Nort_Am_sp, 1) %>%
+  mutate(nationality="Northern American")
+plot_m_SB_bam_S_C_Am_sp <- GAM_plot_function_binary(m_SB_bam_S_C_Am_sp, 1) %>%
+  mutate(nationality="Southern/Central American")
+```
+
+```{r}
+plot_SB_nationality_sp <- plot_m_SB_bam_swiss_sp %>%
+  rbind(plot_m_SB_bam_Afr_sp) %>%
+  rbind(plot_m_SB_bam_Asi_sp) %>%
+  rbind(plot_m_SB_bam_Eur_sp) %>%
+  rbind(plot_m_SB_bam_Nort_Am_sp) %>%
+  rbind(plot_m_SB_bam_S_C_Am_sp) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+ggplot_SB_nationality_sp <- ggplot(data=plot_SB_nationality_sp)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=nationality),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=nationality),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Stillbirth probability")+
+  scale_colour_manual('Maternal nationality',
+                      limits=c("Swiss","African", "Asian", "European", "Northern American", "Southern/Central American"),
+                      # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("#69D8F3","gold", "#8B0000", "hotpink", "lightgreen", "#666975"))+
+  scale_fill_manual('Maternal nationality',
+                    limits=c("Swiss","African", "Asian", "European", "Northern American", "Southern/Central American"),
+                    # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("#69D8F3","gold", "#8B0000", "hotpink", "lightgreen", "#666975"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+    panel.grid.major=element_line(colour = "black", linetype = "dotted"),
+    panel.grid.minor=element_line(colour = "black", linetype = "dotted"))
+ggplot_SB_nationality_sp+ 
+  ggtitle("Stillbirth rate through time, stratified by maternal nationality, unadj. model")
+```
+
+## SB % stratified by maternal nationality, adjusted for other covariates
+
+```{r include=FALSE}
+m_SB_bam_swiss <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Swiss)  
+m_SB_bam_Afr <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Afr)
+m_SB_bam_Asi <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Asi)
+m_SB_bam_Eur <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Eur)  
 m_SB_bam_Nort_Am <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Nort_Am)  
 m_SB_bam_S_C_Am <- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_S_C_Am)  
 
-#function to extract the plot information
 plot_m_SB_bam_swiss <- GAM_plot_function_binary(m_SB_bam_swiss, 3) %>%
   mutate(nationality="Swiss")
 plot_m_SB_bam_Afr <- GAM_plot_function_binary(m_SB_bam_Afr, 3) %>%
@@ -112,7 +246,6 @@ plot_m_SB_bam_Nort_Am <- GAM_plot_function_binary(m_SB_bam_Nort_Am, 3) %>%
 plot_m_SB_bam_S_C_Am <- GAM_plot_function_binary(m_SB_bam_S_C_Am, 3) %>%
   mutate(nationality="Southern/Central American")
 ```
-
 
 ```{r}
 plot_SB_nationality <- plot_m_SB_bam_swiss %>%
@@ -130,22 +263,18 @@ ggplot_SB_nationality <- ggplot(data=plot_SB_nationality)+
   geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=nationality),alpha=0.15,lwd=lwdline)+
   xlab("Timeline (years)")+
   ylab("Stillbirth probability")+
-  # ylim(c(-10,5))+
-  # scale_colour_manual("",
-  #                     values = c("#555555","#555555","#555555"),
-  #                     limits=c("fitall","CIlall","CIuall"),
-  #                     labels=c("fully adjusted","95% CI","95% CI"))+
+  coord_cartesian(ylim=c(0,0.0025)) +
   scale_colour_manual('Maternal nationality',
                       limits=c("Swiss","African", "Asian", "European", "Northern American", "Southern/Central American"),
                       # labels=c("fully adjusted","95% CI","95% CI"),
-                      values =c("#69D8F3","#9557DC", "#8B0000", "#558621", "#57DC7F", "#666975"))+
+                      values =c("#69D8F3","gold", "#8B0000", "hotpink", "lightgreen", "#666975"))+
   scale_fill_manual('Maternal nationality',
                     limits=c("Swiss","African", "Asian", "European", "Northern American", "Southern/Central American"),
                     # labels=c("fully adjusted","95% CI","95% CI"),
-                    values =c("#69D8F3","#9557DC", "#8B0000", "#558621", "#57DC7F", "#666975"))+
+                      values =c("#69D8F3","gold", "#8B0000", "hotpink", "lightgreen", "#666975"))+
   scale_x_datetime( breaks = date_breaks("12 month"), 
                     labels = label_date_short(),
-                    limits =c(min(lim1), max(lim2)),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
   theme_bw()+
   theme(axis.text.y=element_text(color="black",size=size_axis),
@@ -153,19 +282,77 @@ ggplot_SB_nationality <- ggplot(data=plot_SB_nationality)+
         axis.title=element_text(size=size_axis_title),
         legend.text=element_text(size=size_legend),
         legend.title=element_text(size=size_legend_title),
-        legend.position="bottom")
-
+        legend.position="bottom",
+    panel.grid.major=element_line(colour = "black", linetype = "dotted"),
+    panel.grid.minor=element_line(colour = "black", linetype = "dotted"))+ 
+  ggtitle("Stillbirth rate through time, stratified by maternal nationality")
 ggplot_SB_nationality
 ```
 
 # Stratification by langage region
+## SB % by langage region, unadjusted
+```{r}
+round(prop.table(table(bevn_eco_in6$Language, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+```
 
+## SB % stratified by langage region, adjusted for time only
+```{r include=FALSE}
+m_SB_bam_German_sp<- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_German) 
+m_SB_bam_French_sp<- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_French)  
+m_SB_bam_Italian_sp<- bam(stillbirth ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_Italian)  
+ 
+plot_m_SB_bam_German_sp <- GAM_plot_function_binary(m_SB_bam_German_sp, 1) %>%
+  mutate(language_region="German")
+plot_m_SB_bam_French_sp <- GAM_plot_function_binary(m_SB_bam_French_sp, 1) %>%
+  mutate(language_region="French")
+plot_m_SB_bam_Italian_sp <- GAM_plot_function_binary(m_SB_bam_Italian_sp, 1) %>%
+  mutate(language_region="Italian")
+```
+
+```{r}
+plot_SB_language_sp <- plot_m_SB_bam_German_sp %>%
+  rbind(plot_m_SB_bam_French_sp) %>%
+  rbind(plot_m_SB_bam_Italian_sp) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+ggplot_SB_Language_region_sp <- ggplot(data=plot_SB_language_sp)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=language_region),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=language_region),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Stillbirth probability")+
+  scale_colour_manual('Language region',
+                      limits=c("German","French", "Italian"),
+                      # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("aquamarine","cadetblue1", "aquamarine4"))+
+  scale_fill_manual('Language region',
+                    limits=c("German","French", "Italian"),
+                    # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("aquamarine","cadetblue1", "aquamarine4"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+    panel.grid.major=element_line(colour = "black", linetype = "dotted"),
+    panel.grid.minor=element_line(colour = "black", linetype = "dotted"))+ 
+  ggtitle("Stillbirth rate through time, stratified by language region, unadj. model")
+ggplot_SB_Language_region_sp
+```
+
+## SB % stratified by langage region, adjusted for other covariates
 ```{r include=FALSE}
 m_SB_bam_German<- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2) + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_German) 
 m_SB_bam_French<- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2) + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_French)  
 m_SB_bam_Italian<- bam(stillbirth ~ s(GA_weeks) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2) + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_Italian)  
  
-# extracting the plot information
 plot_m_SB_bam_German <- GAM_plot_function_binary(m_SB_bam_German, 3) %>%
   mutate(language_region="German")
 plot_m_SB_bam_French <- GAM_plot_function_binary(m_SB_bam_French, 3) %>%
@@ -173,7 +360,6 @@ plot_m_SB_bam_French <- GAM_plot_function_binary(m_SB_bam_French, 3) %>%
 plot_m_SB_bam_Italian <- GAM_plot_function_binary(m_SB_bam_Italian, 3) %>%
   mutate(language_region="Italian")
 ```
-
 
 ```{r}
 plot_SB_language <- plot_m_SB_bam_German %>%
@@ -188,22 +374,16 @@ ggplot_SB_Language_region <- ggplot(data=plot_SB_language)+
   geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=language_region),alpha=0.15,lwd=lwdline)+
   xlab("Timeline (years)")+
   ylab("Stillbirth probability")+
-  # ylim(c(-10,5))+
-  # scale_colour_manual("",
-  #                     values = c("#555555","#555555","#555555"),
-  #                     limits=c("fitall","CIlall","CIuall"),
-  #                     labels=c("fully adjusted","95% CI","95% CI"))+
+  coord_cartesian(ylim=c(0,0.0025)) +
   scale_colour_manual('Language region',
                       limits=c("German","French", "Italian"),
-                      # labels=c("fully adjusted","95% CI","95% CI"),
-                      values =c("#69D8F3","#9557DC", "#57DC7F"))+
+                      values =c("aquamarine","cadetblue1", "aquamarine4"))+
   scale_fill_manual('Language region',
                     limits=c("German","French", "Italian"),
-                    # labels=c("fully adjusted","95% CI","95% CI"),
-                    values =c("#69D8F3","#9557DC", "#57DC7F"))+
+                      values =c("aquamarine","cadetblue1", "aquamarine4"))+
   scale_x_datetime( breaks = date_breaks("12 month"), 
                     labels = label_date_short(),
-                    limits =c(min(lim1), max(lim2)),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
   theme_bw()+
   theme(axis.text.y=element_text(color="black",size=size_axis),
@@ -211,7 +391,110 @@ ggplot_SB_Language_region <- ggplot(data=plot_SB_language)+
         axis.title=element_text(size=size_axis_title),
         legend.text=element_text(size=size_legend),
         legend.title=element_text(size=size_legend_title),
-        legend.position="bottom")
-
+        legend.position="bottom",
+    panel.grid.major=element_line(colour = "black", linetype = "dotted"),
+    panel.grid.minor=element_line(colour = "black", linetype = "dotted"))+ 
+  ggtitle("Stillbirth rate through time, stratified by language region")
 ggplot_SB_Language_region
+```
+
+# Stratification by maternal age
+## SB % by maternal age, unadjusted
+```{r}
+round(prop.table(table(bevn_eco_in6$mat_age_cat3, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+```
+
+## SB % stratified by maternal age, adjusted for time only
+```{r include=FALSE}
+m_SB_bam_below32_sp <- bam(stillbirth~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_below32) 
+m_SB_bam_above32_sp <- bam(stillbirth~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6_above_32)  
+
+plot_m_SB_bam_below32_sp <- GAM_plot_function_binary(m_SB_bam_German_sp, 1) %>%
+  mutate(maternal_age="< 32 years old")
+plot_m_SB_bam_above32_sp <- GAM_plot_function_binary(m_SB_bam_French_sp, 1) %>%
+  mutate(maternal_age=">= 32 years old")
+```
+
+```{r}
+plot_SB_mat_age_sp <- plot_m_SB_bam_below32_sp %>%
+  rbind(plot_m_SB_bam_above32_sp) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+ggplot_SB_mat_age_sp <- ggplot(data=plot_SB_mat_age_sp)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=maternal_age),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=maternal_age),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Stillbirh risk")+
+  scale_colour_manual('Maternal age',
+                      limits=c("< 32 years old",">= 32 years old"),
+                      # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("seagreen","seagreen1"))+
+  scale_fill_manual('Maternal age',
+                    limits=c("< 32 years old",">= 32 years old"),
+                    # labels=c("fully adjusted","95% CI","95% CI"),
+                    values =c("seagreen","seagreen1"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+    panel.grid.major=element_line(colour = "black", linetype = "dotted"),
+    panel.grid.minor=element_line(colour = "black", linetype = "dotted"))+ 
+  ggtitle("Stillbirth rate through time, stratified by maternal age, unadj. model")
+ggplot_SB_mat_age_sp
+```
+
+## SB % stratified by maternal age, adjusted for other covariates
+```{r include=FALSE}
+m_SB_bam_below32 <- bam(stillbirth~ s(GA_weeks) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2) + sex + Urban3 + mother_nationality_cat2  + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_below32) 
+m_SB_bam_above32 <- bam(stillbirth~ s(GA_weeks) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2) + sex + Urban3 + mother_nationality_cat2  + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6_above_32)  
+
+plot_m_SB_bam_below32 <- GAM_plot_function_binary(m_SB_bam_below32, 2) %>%
+  mutate(maternal_age="< 32 years old")
+plot_m_SB_bam_above32 <- GAM_plot_function_binary(m_SB_bam_above32, 2) %>%
+  mutate(maternal_age=">= 32 years old")
+```
+
+```{r}
+plot_SB_mat_age <- plot_m_SB_bam_below32 %>%
+  rbind(plot_m_SB_bam_above32) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+ggplot_SB_mat_age <- ggplot(data=plot_SB_mat_age)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=maternal_age),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=maternal_age),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Stillbirh risk")+
+  coord_cartesian(ylim=c(0,0.0025)) +
+ scale_colour_manual('Maternal age',
+                      limits=c("< 32 years old",">= 32 years old"),
+                      values =c("seagreen","seagreen1"))+
+  scale_fill_manual('Maternal age',
+                    limits=c("< 32 years old",">= 32 years old"),
+                      values =c("seagreen","seagreen1"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+    panel.grid.major=element_line(colour = "black", linetype = "dotted"),
+    panel.grid.minor=element_line(colour = "black", linetype = "dotted"))+ 
+  ggtitle("Stillbirth rate through time, stratified by maternal age")
+ggplot_SB_mat_age
 ```

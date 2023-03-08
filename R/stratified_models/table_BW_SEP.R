@@ -1,4 +1,4 @@
-#Before: RUN THE R FILE: PTB_GAM_stratified_by_Language_Region.Rmd
+#Before: RUN THE R FILE: BW_GAM_stratified_by_SEP.Rmd
 
 #test with suppl column for Crises
 ## bw and language region
@@ -46,11 +46,11 @@ BW_estimates_crises_SEP1 <- BW_estimates_crises_SEP1 %>%
 
 BW_estimates_crises_SEP1 <- setDT(BW_estimates_crises_SEP1, keep.rownames = FALSE)
 
-BW_estimates_crises_Lang_Reg_gt <- BW_estimates_crises_Lang_Reg1 %>%
+BW_estimates_crises_SEP1_gt <- BW_estimates_crises_SEP1 %>%
   gt()%>%
-  tab_header(title="Birthweight, stratified by Language Region") %>%
+  tab_header(title="Birthweight, stratified by SEP") %>%
   tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) 
-BW_estimates_crises_Lang_Reg_gt
+BW_estimates_crises_SEP1_gt
 
-BW_estimates_crises_Lang_Reg_gt <- BW_estimates_crises_Lang_Reg_gt%>%
+BW_estimates_crises_SEP1_gt <- BW_estimates_crises_SEP1_gt%>%
   gtsave(here("output/stratification/tables", "BW_stratified_by_SEP_crises_effect.html"))

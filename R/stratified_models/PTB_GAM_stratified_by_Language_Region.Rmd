@@ -46,8 +46,8 @@ summary(m_PTB_bam_French)
   plot(m_PTB_bam_French, trans = plogis, select=2, ylim=c(0, 0.065), shift = coef(m_PTB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #mat age
   plot(m_PTB_bam_French, trans = plogis, select=3, ylim=c(0.01, 0.03), shift = coef(m_PTB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #time
   plot(m_PTB_bam_French, trans = plogis, select=4, ylim=c(0.015, 0.025), shift = coef(m_PTB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #month
-    plot(m_PTB_bam_German, trans = plogis, select=5, ylim=c(0.0005, 0.025), shift = coef(m_PTB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #ssep
-  plot(m_PTB_bam_German, trans = plogis, select=6, ylim=c(0.0005, 0.025), shift = coef(m_PTB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #altitude
+    plot(m_PTB_bam_French, trans = plogis, select=5, ylim=c(0.0005, 0.025), shift = coef(m_PTB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #ssep
+  plot(m_PTB_bam_French, trans = plogis, select=6, ylim=c(0.0005, 0.025), shift = coef(m_PTB_bam_French)[1], shade = TRUE, shade.col = "lightblue") #altitude
   
   k.check(m_PTB_bam_French) 
   concurvity(m_PTB_bam_French)
@@ -67,8 +67,8 @@ summary(m_PTB_bam_Italian)
   plot(m_PTB_bam_Italian, trans = plogis, select=2, ylim=c(0, 0.065), shift = coef(m_PTB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #mat age
   plot(m_PTB_bam_Italian, trans = plogis, select=3, ylim=c(0.01, 0.03), shift = coef(m_PTB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #time
   plot(m_PTB_bam_Italian, trans = plogis, select=4, ylim=c(0.015, 0.025), shift = coef(m_PTB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #month
-    plot(m_PTB_bam_German, trans = plogis, select=5, ylim=c(0.0005, 0.025), shift = coef(m_PTB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #ssep
-  plot(m_PTB_bam_German, trans = plogis, select=6, ylim=c(0.0005, 0.025), shift = coef(m_PTB_bam_German)[1], shade = TRUE, shade.col = "lightblue") #altitude
+    plot(m_PTB_bam_Italian, trans = plogis, select=5, ylim=c(0.0005, 0.025), shift = coef(m_PTB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #ssep
+  plot(m_PTB_bam_Italian, trans = plogis, select=6, ylim=c(0.0005, 0.025), shift = coef(m_PTB_bam_Italian)[1], shade = TRUE, shade.col = "lightblue") #altitude
   
   k.check(m_PTB_bam_Italian) 
   concurvity(m_PTB_bam_Italian)
