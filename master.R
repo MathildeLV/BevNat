@@ -108,5 +108,7 @@ render("R/whole_tb_charact_population.Rmd", output_file = paste0("../output/",to
 render("R/graphs/graphics.Rmd", output_file = paste0("../../output/graphs/",today(),"graphics.html"))
 source("R/whole_tb_charact_population_inverting.R")
 render("R/stratified_models/graphs/BW_GAM_graphs_stratification_nationality_language_SEP.Rmd", output_file = paste0("../../../output/stratification/graphs/",today(),"BW_GAM_stratification_nationality_language_SEP.html"))
+render("R/stratified_models/graphs/graphs_without_lines_BW_GAM_graphs_stratification_nationality_language_SEP.Rmd", output_file = paste0("../../../output/stratification/graphs/",today(),"graphs_without_lines_BW_GAM_stratification_nationality_language_SEP.html"))
 render("R/stratified_models/graphs/PTB_GAM_graphs_stratification_nationality_language_SEP.Rmd", output_file = paste0("../../../output/stratification/graphs/",today(),"PTB_GAM_stratification_nationality_language_SEP.html"))
+render("R/stratified_models/graphs/graphs_without_lines_PTB_GAM_graphs_stratification_nationality_language_SEP.Rmd", output_file = paste0("../../../output/stratification/graphs/",today(),"graphs_without_lines_PTB_GAM_stratification_nationality_language_SEP.html"))
 render("R/stratified_models/graphs/SB_GAM_graphs_stratification_nationality_language_SEP.Rmd", output_file = paste0("../../../output/stratification/graphs/",today(),"SB_GAM_stratification_nationality_language_SEP.html"))

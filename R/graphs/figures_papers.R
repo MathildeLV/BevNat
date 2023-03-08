@@ -5,7 +5,7 @@ BW_figure1 <- ggarrange(plot_BW_time, plot_BW_SEP, plot_BW_nationality, plot_BW_
                          ncol = 2, nrow = 2) 
 BW_figure1
 ggsave("BW_figure1.pdf", BW_figure1, path = here("output/figures_paper"))
-ggsave("BW_figure2.jpg", BW_figure1, path = here("output/figures_paper"))
+ggsave("BW_figure1.jpg", BW_figure1, path = here("output/figures_paper"))
 
 ## Figure 2, Preternbirth
 PTB_figure2 <- ggarrange(plot_PTB, ggplot_PTB_SEP, ggplot_PTB_nationality, ggplot_PTB_Language_region,
