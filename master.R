@@ -1,4 +1,4 @@
-.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.2.2/library"))
+#.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.2.2/library"))
 
 #packages
 
@@ -23,6 +23,12 @@ library(network)
 library(RDS)
 library(quantreg)
 library(scales)
+#library packages
+library(ggpubr)
+library(egg)
+library(gridExtra)
+library(patchwork)
+
 
 library(conflicted)
 conflict_prefer("filter", "dplyr")
@@ -32,6 +38,7 @@ conflict_prefer("mutate", "dplyr")
 conflict_prefer("recode", "dplyr")
 conflict_prefer("count", "dplyr")
 conflict_prefer("multinom", "nnet")
+conflict_prefer("ggarrange", "egg")
 
 
 #  data from 2007 only
@@ -52,11 +59,12 @@ source("R/Inclusions.R")
 source("R/functions.R")
 
 #graph parameters
-lwdline <- 1.5 
+lwdline <- 1.2
 size_axis <- 12
-size_axis_title <- 15
+size_axis_title <- 14
 size_legend <- 10
-size_legend_title <- 13
+size_legend_title <- 12
+axis.title.x.position <- element_text(margin = margin(t =12))
 
 # Render Rmd files in html
 #Univ/descriptive and multiv analysis
@@ -84,11 +92,16 @@ render("R/GAM_Summary_all_var_different_outcomes.Rmd", output_file = paste0("../
   render("R/stratified_models/PTB_GAM_stratified_by_SSEP_Category.Rmd", output_file = paste0("../../output/stratification/",today(),"PTB_GAM_stratif_by_SSEP_Category.html"))
   render("R/stratified_models/PTB_GAM_stratified_by_maternal_nationality.Rmd", output_file = paste0("../../output/stratification/",today(),"PTB_GAM_stratif_by_maternal_nationality.html"))
   render("R/stratified_models/PTB_GAM_stratified_by_Language_Region.Rmd", output_file = paste0("../../output/stratification/",today(),"PTB_GAM_stratif_by_Language_Region.html"))
+  render("R/stratified_models/PTB_GAM_stratified_by_maternal_age.Rmd", output_file = paste0("../../output/stratification/",today(),"PTB_GAM_stratified_by_mat_age.html"))
+  render("R/stratified_models/Basel_PTB_stratified_by_maternal_age.Rmd", output_file = paste0("../../output/stratification/",today(),"PTB_GAM_Basel_stratified_by_mat_age.html"))
   
   ## SB outcome
   render("R/stratified_models/SB_GAM_stratified_by_SSEP_Category.Rmd", output_file = paste0("../../output/stratification/",today(),"SB_GAM_stratif_by_SSEP_Category.html"))
   render("R/stratified_models/SB_GAM_stratified_by_Language_Region.Rmd", output_file = paste0("../../output/stratification/",today(),"SB_GAM_stratif_by_Language_Region.html"))
   render("R/stratified_models/SB_GAM_stratified_by_Maternal_Nationality.Rmd", output_file = paste0("../../output/stratification/",today(),"SB_GAM_stratif_by_Maternal_Nationality.html"))
+  
+  ## sensitivity analysis: primiparous women only
+  render("R/primiparous_women_BW_PTB_stratification.Rmd", output_file = paste0("../output/primiparous_women/",today(),"BW_PTB_whole_models_and_stratif_by_Language_SEP_nationality_primiparous.html"))
   
 ## Tables and graphs
 render("R/whole_tb_charact_population.Rmd", output_file = paste0("../output/",today(),"whole_tb_charact_population.html"))
