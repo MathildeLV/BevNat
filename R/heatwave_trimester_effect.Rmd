@@ -1,0 +1,195 @@
+---
+title: "Heatwave trimester effect"
+author: "Mathilde Le Vu"
+date:  "`r Sys.Date()`"
+html_document: 
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+# Birthweight
+## First-trimester exposure to heatwave
+
+```{r}
+m_BW_bam_HW_1st_trimester <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_first_trimester + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7) 
+summary(m_BW_bam_HW_1st_trimester)
+gam.check(m_BW_bam_HW_1st_trimester)
+
+  beta <- coef(m_BW_bam_HW_1st_trimester)
+  Vb <- vcov(m_BW_bam_HW_1st_trimester, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 1184860
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci.1sttrim <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  my.ci.1sttrim <- round(head(my.ci.1sttrim,18), 2)
+
+  my_ci_HW_BW_1st_trim <- format(round(my.ci.1sttrim[15, c(1:4)], digits=2), nsmall=2)
+  my_ci_HW_BW_1st_trim
+```
+
+## Second-trimester exposure to heatwave
+
+```{r}
+m_BW_bam_HW_2nd_trimester <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_second_trimester + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7) 
+summary(m_BW_bam_HW_2nd_trimester)
+gam.check(m_BW_bam_HW_2nd_trimester)
+
+  beta <- coef(m_BW_bam_HW_2nd_trimester)
+  Vb <- vcov(m_BW_bam_HW_2nd_trimester, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 1184860
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci.2ndtrim <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  my.ci.2ndtrim <- round(head(my.ci.2ndtrim,18), 2)
+
+  my_ci_HW_BW_2nd_trim <- format(round(my.ci.2ndtrim[15, c(1:4)], digits=2), nsmall=2)
+  my_ci_HW_BW_2nd_trim
+```
+
+## Third-trimester exposure to heatwave
+
+```{r}
+m_BW_bam_HW_3rd_trimester <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_third_trimester + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7) 
+summary(m_BW_bam_HW_3rd_trimester)
+gam.check(m_BW_bam_HW_3rd_trimester)
+
+  beta <- coef(m_BW_bam_HW_3rd_trimester)
+  Vb <- vcov(m_BW_bam_HW_3rd_trimester, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 1184860
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci.3rdtrim <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  my.ci.3rdtrim <- round(head(my.ci.3rdtrim,18), 2)
+  my_ci_HW_BW_3rd_trim <- format(round(my.ci.3rdtrim[15, c(1:4)], digits=2), nsmall=2)
+  my_ci_HW_BW_3rd_trim
+```
+
+
+# Stillbirth
+
+## First-trimester exposure to heatwave
+
+```{r}
+m_SB_bam_HW_1st_trimester <- bam(stillbirth ~ s(GA_weeks) +  s(mat_age) +  s(birth_Y_M_num) +s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)  +  sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_first_trimester + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6) 
+summary(m_SB_bam_HW_1st_trimester)
+gam.check(m_SB_bam_HW_1st_trimester)
+
+  OR <- exp(coef(m_SB_bam_HW_1st_trimester))
+  beta <- coef(m_SB_bam_HW_1st_trimester)
+  Vb <- vcov(m_SB_bam_HW_1st_trimester, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my_ci_SB_1st_trim <- data.frame(cbind(OR, lci, uci, d))
+  my_ci_SB_1st_trim <- round(head(my_ci_SB_1st_trim, 15), 2)
+  my_ci_SB_HW_1st_trim <- format(round(my_ci_SB_1st_trim[12, c(1:4)], digits=2), nsmall=2)
+  my_ci_SB_HW_1st_trim
+```
+
+## Second-trimester exposure to heatwave
+
+```{r}
+m_SB_bam_HW_2nd_trimester <- bam(stillbirth ~ s(GA_weeks) +  s(mat_age) +  s(birth_Y_M_num) +s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)  +  sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_second_trimester + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6) 
+summary(m_SB_bam_HW_2nd_trimester)
+gam.check(m_SB_bam_HW_2nd_trimester)
+
+  OR <- exp(coef(m_SB_bam_HW_2nd_trimester))
+  beta <- coef(m_SB_bam_HW_2nd_trimester)
+  Vb <- vcov(m_SB_bam_HW_2nd_trimester, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my_ci_SB_2nd_trim <- data.frame(cbind(OR, lci, uci, d))
+  my_ci_SB_2nd_trim <- round(head(my_ci_SB_2nd_trim, 15), 2)
+  my_ci_SB_HW_2nd_trim <- format(round(my_ci_SB_2nd_trim[12, c(1:4)], digits=2), nsmall=2)
+  my_ci_SB_HW_2nd_trim
+```
+
+## Third-trimester exposure to heatwave
+
+```{r}
+m_SB_bam_HW_3rd_trimester <- bam(stillbirth ~ s(GA_weeks) +  s(mat_age) +  s(birth_Y_M_num) +s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)  +  sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_third_trimester + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6) 
+summary(m_SB_bam_HW_3rd_trimester)
+gam.check(m_SB_bam_HW_3rd_trimester)
+
+  OR <- exp(coef(m_SB_bam_HW_3rd_trimester))
+  beta <- coef(m_SB_bam_HW_3rd_trimester)
+  Vb <- vcov(m_SB_bam_HW_3rd_trimester, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my_ci_SB_3rd_trim <- data.frame(cbind(OR, lci, uci, d))
+  my_ci_SB_3rd_trim <- round(head(my_ci_SB_3rd_trim, 15), 2)
+  my_ci_SB_HW_3rd_trim <- format(round(my_ci_SB_3rd_trim[12, c(1:4)], digits=2), nsmall=2)
+  my_ci_SB_HW_3rd_trim
+```
+
+# Preterm birth
+
+## First-trimester exposure to heatwave
+
+```{r}
+m_PTB_bam_HW_1st_trimester <- bam(PTB ~ s(BW) +  s(mat_age) + s(birth_Y_M_num)  + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + parity_cat +  sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_first_trimester + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7) 
+summary(m_PTB_bam_HW_1st_trimester)
+
+  OR <- exp(coef(m_PTB_bam_HW_1st_trimester))
+  beta <- coef(m_PTB_bam_HW_1st_trimester)
+  Vb <- vcov(m_PTB_bam_HW_1st_trimester, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my_ci_PTB_1st_trim <- data.frame(cbind(OR, lci, uci, d))
+  my_ci_PTB_1st_trim <- round(head(my_ci_PTB_1st_trim, 18), 2)
+  my_ci_PTB_HW_1st_trim <- format(round(my_ci_PTB_1st_trim[15, c(1:4)], digits=2), nsmall=2)
+  my_ci_PTB_HW_1st_trim
+```
+
+## Second-trimester exposure to heatwave
+
+```{r}
+m_PTB_bam_HW_2nd_trimester <- bam(PTB ~ s(BW) +  s(mat_age) + s(birth_Y_M_num)  + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + parity_cat +  sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_second_trimester + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7) 
+summary(m_PTB_bam_HW_2nd_trimester)
+
+  OR <- exp(coef(m_PTB_bam_HW_2nd_trimester))
+  beta <- coef(m_PTB_bam_HW_2nd_trimester)
+  Vb <- vcov(m_PTB_bam_HW_2nd_trimester, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my_ci_PTB_2nd_trim <- data.frame(cbind(OR, lci, uci, d))
+  my_ci_PTB_2nd_trim <- round(head(my_ci_PTB_2nd_trim, 18), 2)
+  my_ci_PTB_HW_2nd_trim <- format(round(my_ci_PTB_2nd_trim[15, c(1:4)], digits=2), nsmall=2)
+  my_ci_PTB_HW_2nd_trim
+```
+
+## Third-trimester exposure to heatwave
+
+```{r}
+m_PTB_bam_HW_3rd_trimester <- bam(PTB ~ s(BW) +  s(mat_age) + s(birth_Y_M_num)  + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + parity_cat +  sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_third_trimester + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7) 
+summary(m_PTB_bam_HW_3rd_trimester)
+
+  OR <- exp(coef(m_PTB_bam_HW_3rd_trimester))
+  beta <- coef(m_PTB_bam_HW_3rd_trimester)
+  Vb <- vcov(m_PTB_bam_HW_3rd_trimester, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my_ci_PTB_3rd_trim <- data.frame(cbind(OR, lci, uci, d))
+  my_ci_PTB_3rd_trim <- round(head(my_ci_PTB_3rd_trim, 18), 2)
+  my_ci_PTB_HW_3rd_trim <- format(round(my_ci_PTB_3rd_trim[15, c(1:4)], digits=2), nsmall=2)
+  my_ci_PTB_HW_3rd_trim
+```
