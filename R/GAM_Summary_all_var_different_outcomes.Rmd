@@ -290,7 +290,7 @@ $d=\frac{beta}{\sqrt{n}*se}$
 ```
 
 ```{r}
-tab_BW_full['variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ", 
+tab_BW_full['Variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ", 
                               "Sex (ref: male)", "Urban (ref: rural)",
                               "Language region (ref: German)", " ", 
                               "Maternal nationality (ref: Swiss)", " ", " ",
@@ -300,10 +300,10 @@ tab_BW_full['variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ",
                               "COVID first wave (ref: 0)", 
                               "COVID second wave (ref: 0)")
 
-    tab_BW_full['category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
+    tab_BW_full['Category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
                             "Southern/Central America", "Single", " ", " "," ", " ")
-    tab_BW_full<-tab_BW_full[, c('variable', "category", "beta", "lci","uci", "d")]
+    tab_BW_full<-tab_BW_full[, c('Variable', "Category", "beta", "lci","uci", "d")]
 
 BW_full_gt <- tab_BW_full %>%
   gt()%>%
@@ -321,7 +321,44 @@ BW_full_gt <- tab_BW_full %>%
 BW_full_gt
 
 BW_estimates_whole_model_gt <- BW_full_gt%>%
-  gtsave(here("output/tables", "BW_estimates_whole_model_gt.html"))
+  gtsave(here("output/tables_paper", "BW_estimates_whole_model_gt.html"))
+
+BW_estimates_whole_model_gt <- BW_full_gt%>%
+  gtsave(here("output/tables_paper", "BW_estimates_whole_model_gt.docx"))
+```
+
+## Table summarizing smooth term pvalues of the BW model
+```{r}
+ pvalues_smooth_BW_model = summary(m_BW_bam5_2)
+  pvalues_smooth_BW_model <- pvalues_smooth_BW_model$s.table[,4]
+  pvalues_smooth_BW_model <- format(pvalues_smooth_BW_model, scientific=FALSE)
+
+  pvalues_smooth_BW_model_df <- data.frame(pvalues_smooth_BW_model) %>%
+  dplyr::mutate(Variable=c("Gestational age", "Maternal age", "Time", "Seasonality", "SSEP", "Altitude")) %>%
+    rename(c(pvalue=(pvalues_smooth_BW_model)))%>%
+    mutate(pvalue=as.numeric(pvalue)) %>%
+    mutate(pvalue1=pvalue) 
+  
+  pvalues_smooth_BW_model_df$pvalue <-  format(round(pvalues_smooth_BW_model_df$pvalue, digits=3), nsmall=2)
+  
+  pvalues_smooth_BW_model_df <- pvalues_smooth_BW_model_df %>%
+    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.00001",
+                             (pvalue1<0.0001)~ "<0.0001",
+                             (pvalue1<0.001)~ "<0.001")) 
+  
+  pvalues_smooth_BW_model_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_BW_model_df$pvalue1), pvalues_smooth_BW_model_df$pvalue, 
+                                                pvalues_smooth_BW_model_df$pvalue1))
+  
+  BW_full_smooth_pvalues_gt <- pvalues_smooth_BW_model_df %>%
+    select(-one_of('pvalue')) %>%
+    gt()%>% 
+    tab_header(title="Birthweight GAM, smooth variables") 
+  BW_full_smooth_pvalues_gt
+
+  BW_full_smooth_pvalues_gt_save <- BW_full_smooth_pvalues_gt%>%
+  gtsave(here("output/tables_paper", "BW_full_smooth_pvalues_gt.html"))
+  BW_full_smooth_pvalues_gt_save <- BW_full_smooth_pvalues_gt%>%
+    gtsave(here("output/tables_paper", "BW_full_smooth_pvalues_gt.docx"))
 ```
 
 # Stillbirth
@@ -497,7 +534,7 @@ plot_SB_altitude
 
 ```{r}
 #tab_SB_full['variable'] <- c(rownames(tab_SB_full))
-tab_SB_full['variable'] <- c("Intercept", "Sex (ref: male)",
+tab_SB_full['Variable'] <- c("Intercept", "Sex (ref: male)",
                                       "Urban (ref: rural)",
                                       "Language region (ref: German)", " ", 
                                       "Maternal nationality (ref: Swiss)", " ", " ",
@@ -507,10 +544,10 @@ tab_SB_full['variable'] <- c("Intercept", "Sex (ref: male)",
                                       "COVID first wave (ref: 0)", 
                                       "COVID second wave (ref: 0)")
 
-    tab_SB_full['category'] <- c(" ", "Female", "Urban", "French", "Italian", 
+    tab_SB_full['Category'] <- c(" ", "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
                             "Southern and Central America", "Single", " ", " "," ", " ")
-    tab_SB_full<-tab_SB_full[, c('variable', "category", "OR", "lci","uci", "d")]
+    tab_SB_full<-tab_SB_full[, c('Variable', "Category", "OR", "lci","uci", "d")]
 
 SB_full_gt <- tab_SB_full %>%
   gt()%>%
@@ -528,10 +565,48 @@ SB_full_gt <- tab_SB_full %>%
 SB_full_gt
 
 SB_estimates_whole_model_gt <- SB_full_gt%>%
-  gtsave(here("output/tables", "SB_estimates_whole_model_gt.html"))
+  gtsave(here("output/tables_paper", "SB_estimates_whole_model_gt.html"))
+
+SB_estimates_whole_model_gt <- SB_full_gt%>%
+  gtsave(here("output/tables_paper", "SB_estimates_whole_model_gt.docx"))
 ```
 
 Time variable (birth_Y\_M_num) and mean ssep variable could have been put as linear terms, because the model including them as smoothed terms showed that the relationship between these and stillbirth was linear, but I chose to keep them as smooth variable to have models that look "more alike" between the different outcomes (birthweight, PTB).
+
+## Table summarizing smooth term pvalues of the stillbirth model
+
+```{r}
+pvalues_smooth_SB_model = summary(m_SB_bam2)
+  pvalues_smooth_SB_model <- pvalues_smooth_SB_model$s.table[,4]
+  pvalues_smooth_SB_model <- format(pvalues_smooth_SB_model, scientific=FALSE)
+
+  pvalues_smooth_SB_model_df <- data.frame(pvalues_smooth_SB_model) %>%
+  dplyr::mutate(Variable=c("Gestational age", "Maternal age", "Time", "Seasonality", "SSEP", "Altitude")) %>%
+  rename(c(pvalue=(pvalues_smooth_SB_model)))%>%
+  mutate(pvalue=as.numeric(pvalue)) %>%
+  mutate(pvalue1=pvalue) 
+  
+  pvalues_smooth_SB_model_df$pvalue <-  format(round(pvalues_smooth_SB_model_df$pvalue, digits=3), nsmall=2)
+
+  pvalues_smooth_SB_model_df <- pvalues_smooth_SB_model_df %>%
+    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.00001",
+                             (pvalue1<0.0001)~ "<0.0001",
+                             (pvalue1<0.001)~ "<0.001")) 
+  
+  pvalues_smooth_SB_model_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_SB_model_df$pvalue1), pvalues_smooth_SB_model_df$pvalue, 
+                                                 pvalues_smooth_SB_model_df$pvalue1))
+  
+  SB_full_smooth_pvalues_gt <- pvalues_smooth_SB_model_df %>%
+    select(-one_of('pvalue')) %>%
+    gt()%>% 
+    tab_header(title="Stillbirth GAM, smooth variables") 
+  SB_full_smooth_pvalues_gt
+  
+  SB_full_smooth_pvalues_gt_save <- SB_full_smooth_pvalues_gt%>%
+  gtsave(here("output/tables_paper", "SB_full_smooth_pvalues_gt.html"))
+  SB_full_smooth_pvalues_gt_save <- SB_full_smooth_pvalues_gt%>%
+    gtsave(here("output/tables_paper", "SB_full_smooth_pvalues_gt.docx"))
+```
 
 # Preterm birth
 
@@ -708,7 +783,7 @@ plot_PTB_altitude
 ```
 
 ```{r}
-tab_PTB_full['variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ", 
+tab_PTB_full['Variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ", 
                               "Sex (ref: male)", "Urban (ref: rural)",
                               "Language region (ref: German)", " ", 
                               "Maternal nationality (ref: Swiss)", " ", " ",
@@ -718,10 +793,10 @@ tab_PTB_full['variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ",
                               "COVID first wave (ref: 0)", 
                               "COVID second wave (ref: 0)")
 
-    tab_PTB_full['category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
+    tab_PTB_full['Category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
                             "Southern/Central America", "Single", " ", " "," ", " ")
-    tab_PTB_full<-tab_PTB_full[, c('variable', "category", "OR", "lci","uci", "d")]
+    tab_PTB_full<-tab_PTB_full[, c('Variable', "Category", "OR", "lci","uci", "d")]
 
 PTB_full_gt <- tab_PTB_full %>%
   gt()%>%
@@ -739,7 +814,46 @@ PTB_full_gt <- tab_PTB_full %>%
 PTB_full_gt
 
 PTB_estimates_whole_model_gt <- PTB_full_gt%>%
-  gtsave(here("output/tables", "PTB_estimates_whole_model_gt.html"))
+  gtsave(here("output/tables_paper", "PTB_estimates_whole_model_gt.html"))
+
+
+PTB_estimates_whole_model_gt <- PTB_full_gt%>%
+  gtsave(here("output/tables_paper", "PTB_estimates_whole_model_gt.docx"))
+```
+
+## Table summarizing smooth term pvalues of the stillbirth model
+
+```{r}
+pvalues_smooth_PTB_model = summary(m_PTB_bam)
+  pvalues_smooth_PTB_model <- pvalues_smooth_PTB_model$s.table[,4]
+  pvalues_smooth_PTB_model <- format(pvalues_smooth_PTB_model, scientific=FALSE)
+  
+  pvalues_smooth_PTB_model_df <- data.frame(pvalues_smooth_PTB_model) %>%
+    dplyr::mutate(Variable=c("Gestational age", "Maternal age", "Time", "Seasonality", "SSEP", "Altitude")) %>%
+    rename(c(pvalue=(pvalues_smooth_PTB_model)))%>%
+    mutate(pvalue=as.numeric(pvalue)) %>%
+    mutate(pvalue1=pvalue) 
+  
+  pvalues_smooth_PTB_model_df$pvalue <-  format(round(pvalues_smooth_PTB_model_df$pvalue, digits=3), nsmall=2)
+  
+  pvalues_smooth_PTB_model_df <- pvalues_smooth_PTB_model_df %>%
+    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.00001",
+                             (pvalue1<0.0001)~ "<0.0001",
+                             (pvalue1<0.001)~ "<0.001")) 
+  
+  pvalues_smooth_PTB_model_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_PTB_model_df$pvalue1), pvalues_smooth_PTB_model_df$pvalue, 
+                                                 pvalues_smooth_PTB_model_df$pvalue1))
+  
+  PTB_full_smooth_pvalues_gt <- pvalues_smooth_PTB_model_df %>%
+    select(-one_of('pvalue')) %>%
+    gt()%>% 
+    tab_header(title="Preterm birth GAM, smooth variables") 
+  PTB_full_smooth_pvalues_gt
+  
+  PTB_full_smooth_pvalues_gt_save <- PTB_full_smooth_pvalues_gt%>%
+    gtsave(here("output/tables_paper", "PTB_full_smooth_pvalues_gt.html")) 
+  PTB_full_smooth_pvalues_gt_save <- PTB_full_smooth_pvalues_gt%>%
+    gtsave(here("output/tables_paper", "PTB_full_smooth_pvalues_gt.docx"))
 ```
 
 # Very PTB (<32 weeks of GA)
@@ -937,4 +1051,65 @@ EPTB_full_gt
 
 EPTB_estimates_whole_model_gt <- EPTB_full_gt%>%
   gtsave(here("output/tables", "EPTB_estimates_whole_model_gt.html"))
+```
+
+
+```{r}
+m_GA_bam <- bam(GA_weeks ~   s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7) 
+summary(m_GA_bam)
+plot_m_GA_bam <- GAM_plot_function_continuous(m_GA_bam, 3) #time
+
+beta <- coef(m_GA_bam)
+  Vb <- vcov(m_GA_bam, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 1184860
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  tab_GA_full <- round(head(my.ci,18), 2)
+
+
+m_GA_bam <- bam(GA_weeks ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7) 
+
+```
+
+
+```{r}
+x_date <-   bevn_eco_in7 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_GA <- plot_m_GA_bam %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+lim1 <- as.POSIXct(ymd("2007-01-01"))
+lim2 <- as.POSIXct(ymd("2021-12-01"))
+
+plot_GA_time <- ggplot(data=plot_data_GA)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Timeline (years)")+
+  ylab("gest age (w)")+
+  #coord_cartesian(ylim=c(3250,3550)) +
+  scale_colour_manual('BW',  #colour manual is for the line
+                      # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("#9557DC"))+
+  scale_fill_manual('BW',                        # fill is for CI
+                    # labels=c("fully adjusted","95% CI","95% CI"),  
+                    values =c("#9557DC"))+
+   scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)), #to force labelling from 2007 on the x axis
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+theme(axis.title.x = axis.title.x.position)
+plot_GA_time
 ```
