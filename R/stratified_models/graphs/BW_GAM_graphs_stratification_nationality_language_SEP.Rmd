@@ -129,7 +129,7 @@ lim1 <- as.POSIXct(ymd("2007-01-01"))
 lim2 <- as.POSIXct(ymd("2021-12-01"))
 
 plot_SEP <- ggplot(data=plot_data_SEP)+
-  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=SEP),lwd=lwdline)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=SEP, linetype=SEP),lwd=lwdline)+
   geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=SEP),alpha=0.15,lwd=lwdline)+
   xlab("Timeline (years)")+
   ylab("Birthweight (g)")+
@@ -150,7 +150,10 @@ plot_SEP <- ggplot(data=plot_data_SEP)+
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
-  theme_bw()+
+  scale_linetype_manual('SSEP',
+                        limits = c("low", "medium", "high"),
+                        values = c("solid", "dashed", "dotted")) +
+theme_bw()+
   theme(axis.text.y=element_text(color="black",size=size_axis),
         axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
         axis.title=element_text(size=size_axis_title),
@@ -208,7 +211,7 @@ plot_data_nationality_sp <- plot_m_BW_bam_swiss_sp %>%
   mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
 
 plot_nationality_sp <- ggplot(data=plot_data_nationality_sp)+
-  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=nationality),lwd=lwdline)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=nationality, linetype=nationality),lwd=lwdline)+
   geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=nationality),alpha=0.15,lwd=lwdline)+
   xlab("Timeline (years)")+
   ylab("Birthweight (g)")+
@@ -224,6 +227,9 @@ plot_nationality_sp <- ggplot(data=plot_data_nationality_sp)+
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
+  scale_linetype_manual('Maternal nationality',
+                        limits = c("Swiss", "African", "Asian", "European", "Northern American", "Southern/Central American"),
+                        values = c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash")) +
   theme_bw()+
   theme(axis.text.y=element_text(color="black",size=size_axis),
         axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
@@ -275,7 +281,7 @@ plot_data_nationality <- plot_m_BW_bam_swiss %>%
   mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
 
 plot_nationality <- ggplot(data=plot_data_nationality)+
-  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=nationality),lwd=lwdline)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=nationality, linetype=nationality),lwd=lwdline)+
   geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=nationality),alpha=0.15,lwd=lwdline)+
   xlab("Timeline (years)")+
   ylab("Birthweight (g)")+
@@ -290,6 +296,9 @@ plot_nationality <- ggplot(data=plot_data_nationality)+
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
+  scale_linetype_manual('Maternal nationality',
+                        limits = c("Swiss", "African", "Asian", "European", "Northern American", "Southern/Central American"),
+                        values = c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash")) +
   theme_bw()+
   theme(axis.text.y=element_text(color="black",size=size_axis),
         axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
@@ -387,7 +396,7 @@ plot_data_language <- plot_m_BW_bam_German %>%
   mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
 
 plot_language_region <- ggplot(data=plot_data_language)+
-  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=language_region),lwd=lwdline)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=language_region, linetype=language_region),lwd=lwdline)+
   geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=language_region),alpha=0.15,lwd=lwdline)+
   xlab("Timeline (years)")+
   ylab("Birthweight (g)")+
@@ -402,6 +411,9 @@ plot_language_region <- ggplot(data=plot_data_language)+
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
+  scale_linetype_manual('Language region',
+                        limits = c("German", "French", "Italian"),
+                        values = c("solid", "dashed", "dotted")) +
   theme_bw()+
   theme(axis.text.y=element_text(color="black",size=size_axis),
         axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
