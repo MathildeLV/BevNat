@@ -86,7 +86,6 @@ render("R/GAM_Summary_all_var_different_outcomes.Rmd", output_file = paste0("../
   render("R/stratified_models/BW_GAM_stratified_by_language_region.Rmd", output_file = paste0("../../output/stratification/",today(),"BW_GAM_stratif_by_language_region.html"))
   render("R/stratified_models/BW_GAM_interaction_SSEP_X_language_region.Rmd", output_file = paste0("../../output/stratification/",today(),"BW_GAM_interaction_SSEP_X_language_reg.html"))
   render("R/GAM_zoom_in_heatwaves.Rmd", output_file = paste0("../output/",today(),"GAM_zoom_in_heatwaves.html"))
-  render("R/GAM_COVID_2015_2021.Rmd", output_file = paste0("../output/",today(),"GAM_COVID_2015_2021.html"))
 
   ## PTB outcome
   render("R/stratified_models/PTB_GAM_stratified_by_SSEP_Category.Rmd", output_file = paste0("../../output/stratification/",today(),"PTB_GAM_stratif_by_SSEP_Category.html"))
@@ -102,6 +101,12 @@ render("R/GAM_Summary_all_var_different_outcomes.Rmd", output_file = paste0("../
   
   ## sensitivity analysis: primiparous women only
   render("R/primiparous_women_BW_PTB_stratification.Rmd", output_file = paste0("../output/primiparous_women/",today(),"BW_PTB_whole_models_and_stratif_by_Language_SEP_nationality_primiparous.html"))
+  
+  ## trimester effect
+  render("R/trimester_effect_crises/COVID_trimester_effect.Rmd", output_file = paste0("../../output/trimester_effect_crisis",today(),"COVID_trimester_effect.html"))
+  render("R/trimester_effect_crises/great_recession_trimester_effect.Rmd", output_file = paste0("../../output/trimester_effect_crisis",today(),"great_recession_trimester_effect.html"))
+  render("R/trimester_effect_crises/heatwave_trimester_effect.Rmd", output_file = paste0("../../output/trimester_effect_crisis",today(),"heatwave_trimester_effect.html"))
+  source("R/trimester_effect_crises/table_trimester_effect.R")
   
 ## Tables and graphs
 render("R/whole_tb_charact_population.Rmd", output_file = paste0("../output/",today(),"whole_tb_charact_population.html"))
