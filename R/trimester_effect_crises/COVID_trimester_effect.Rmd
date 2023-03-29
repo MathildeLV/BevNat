@@ -35,7 +35,6 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Effect of being exposed during each specific trimester
-Data: all births 2015-2021
 
 ### First-trimester exposure to COVID
 ```{r}
