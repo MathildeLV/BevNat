@@ -339,6 +339,8 @@ dim(bevn_eco_in0)
    #global dataset (remark: parity not available for stillbirth cases, so we only do the sensitivity analysis with BW and PTB outcome variables)
    bevn_eco_in7_primiparous <- bevn_eco_in7 %>%
      filter(parity==1)
+   bevn_eco_in7_multiparous <- bevn_eco_in7 %>%
+     filter(parity>1)
    ## Primiparous X different maternal nationality categories
    table(bevn_eco_in7_primiparous$mother_nationality_cat2)
     bevn_eco_in7_primiparous_Swiss <- bevn_eco_in7_primiparous %>%
@@ -373,3 +375,16 @@ dim(bevn_eco_in0)
      filter(Language=="French")
    bevn_eco_in7_primiparous_Italian <- bevn_eco_in7_primiparous %>%
      filter(Language=="Italian")
+
+   ## Females only
+   bevn_eco_in7_females <- bevn_eco_in7 %>%
+     filter(sex==2)
+   bevn_eco_in6_females <- bevn_eco_in6 %>%
+     filter(sex==2)
+   ## Males only
+   bevn_eco_in7_males <- bevn_eco_in7 %>%
+     filter(sex==1)
+   bevn_eco_in6_males <- bevn_eco_in6 %>%
+     filter(sex==1)
+   
+   
