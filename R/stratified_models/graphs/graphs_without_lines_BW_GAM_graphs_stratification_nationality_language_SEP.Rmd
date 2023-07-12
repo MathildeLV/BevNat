@@ -29,9 +29,9 @@ bevn_eco_in7 %>%
 ## Birthweight stratified by SSEP category, adjusted for all covariates
 
 ```{r include=FALSE}
-m_BW_bam_L_SSEP1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_L_SSEP1)  
-m_BW_bam_M_SSEP1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_M_SSEP1)  
-m_BW_bam_H_SSEP1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_H_SSEP1)  
+m_BW_bam_L_SSEP1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_L_SSEP1)  
+m_BW_bam_M_SSEP1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_M_SSEP1)  
+m_BW_bam_H_SSEP1 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_H_SSEP1)  
 
 #function to extract the plot information
 plot_m_BW_bam_L_SSEP1 <- GAM_plot_function_continuous(m_BW_bam_L_SSEP1, 3) %>%
@@ -111,12 +111,12 @@ bevn_eco_in7 %>%
 ## Birthweight stratified by maternal nationality, adjusted for all covariates
 
 ```{r include=FALSE}
-m_BW_bam_swiss <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Swiss)  
-m_BW_bam_Afr <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Afr)  
-m_BW_bam_Asi <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Asi)  
-m_BW_bam_Eur <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Eur)  
-m_BW_bam_Nort_Am <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Nort_Am)  
-m_BW_bam_S_C_Am <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_S_C_Am)  
+m_BW_bam_swiss <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_Swiss)  
+m_BW_bam_Afr <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_Afr)  
+m_BW_bam_Asi <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_Asi)  
+m_BW_bam_Eur <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_Eur)  
+m_BW_bam_Nort_Am <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_Nort_Am)  
+m_BW_bam_S_C_Am <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_S_C_Am)  
 
 #function to extract the plot information
 plot_m_BW_bam_swiss <- GAM_plot_function_continuous(m_BW_bam_swiss, 3) %>%
@@ -189,9 +189,9 @@ bevn_eco_in7 %>%
 
 ## Birthweight stratified by language region, adjusted for all covariates
 ```{r include=FALSE}
-m_BW_bam_German<- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_German)  
-m_BW_bam_French<- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_French)  
-m_BW_bam_Italian<- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7_Italian)  
+m_BW_bam_German<- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_German)  
+m_BW_bam_French<- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_French)  
+m_BW_bam_Italian<- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, data=bevn_eco_in7_Italian)  
 
 plot_m_BW_bam_German <- GAM_plot_function_continuous(m_BW_bam_German, 3) %>%
   mutate(language_region="German")

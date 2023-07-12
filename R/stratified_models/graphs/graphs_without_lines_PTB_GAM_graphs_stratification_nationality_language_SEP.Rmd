@@ -25,9 +25,9 @@ round(prop.table(table(bevn_eco_in7$mean_ssep2_cat1, bevn_eco_in7$PTB, useNA="al
 
 ## PTB % stratified by SSEP tertile, adjusted for all covariates
 ```{r include=FALSE}
-m_PTB_bam_L_SSEP1 <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_L_SSEP1)  
-m_PTB_bam_M_SSEP1 <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_M_SSEP1)  
-m_PTB_bam_H_SSEP1 <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_H_SSEP1)  
+m_PTB_bam_L_SSEP1 <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_L_SSEP1)  
+m_PTB_bam_M_SSEP1 <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_M_SSEP1)  
+m_PTB_bam_H_SSEP1 <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_H_SSEP1)  
 
 #function to extract the plot information
 plot_m_PTB_bam_L_SSEP1 <- GAM_plot_function_binary(m_PTB_bam_L_SSEP1, 3) %>%
@@ -81,9 +81,10 @@ ggplot_PTB_SEP <- ggplot(data=plot_PTB_SEP)+
                         limits = c("low", "medium", "high"),
                         values = c("solid", "dashed", "dotted")) +
     theme_bw()+
-  theme(axis.text.y=element_text(color="black",size=size_axis),
+  theme(axis.text.y=element_text(color="black",size=10),
         axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
         axis.title=element_text(size=size_axis_title),
+        axis.title.y=element_text(size=14), # Decrease y-axis title font size
         legend.text=element_text(size=size_legend),
         legend.title=element_text(size=size_legend_title),
         legend.position="bottom",
@@ -106,12 +107,12 @@ round(prop.table(table(bevn_eco_in7$mother_nationality_cat2, bevn_eco_in7$PTB, u
 ## PTB % stratified by maternal nationality, adjusted for all covariates
 
 ```{r include=FALSE}
-m_PTB_bam_swiss <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_Swiss)  
-m_PTB_bam_Afr <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_Afr)  
-m_PTB_bam_Asi <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_Asi)  
-m_PTB_bam_Eur <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_Eur)  
-m_PTB_bam_Nort_Am <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_Nort_Am)  
-m_PTB_bam_S_C_Am <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_S_C_Am)  
+m_PTB_bam_swiss <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_Swiss)  
+m_PTB_bam_Afr <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_Afr)  
+m_PTB_bam_Asi <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_Asi)  
+m_PTB_bam_Eur <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_Eur)  
+m_PTB_bam_Nort_Am <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_Nort_Am)  
+m_PTB_bam_S_C_Am <- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_S_C_Am)  
 
 plot_m_PTB_bam_swiss <- GAM_plot_function_binary(m_PTB_bam_swiss, 3) %>%
   mutate(nationality="Swiss")
@@ -180,9 +181,9 @@ round(prop.table(table(bevn_eco_in7$Language, bevn_eco_in7$PTB, useNA="always"),
 ## PTB % stratified by langage region, adjusted for all other covariates
 
 ```{r include=FALSE}
-m_PTB_bam_German<- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_German) 
-m_PTB_bam_French<- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_French)  
-m_PTB_bam_Italian<- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_Italian)  
+m_PTB_bam_German<- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_German) 
+m_PTB_bam_French<- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_French)  
+m_PTB_bam_Italian<- bam(PTB ~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) +s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + mother_nationality_cat2  + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_Italian)  
  
 plot_m_PTB_bam_German <- GAM_plot_function_binary(m_PTB_bam_German, 3) %>%
   mutate(language_region="German")
@@ -243,8 +244,8 @@ round(prop.table(table(bevn_eco_in7$mat_age_cat3, bevn_eco_in7$PTB, useNA="alway
 ## PTB % stratified by maternal age, adjusted for all other covariates
 
 ```{r include=FALSE}
-m_PTB_bam_below32 <- bam(PTB~ s(BW) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_below32) 
-m_PTB_bam_above32 <- bam(PTB~ s(BW) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7_above_32)  
+m_PTB_bam_below32 <- bam(PTB~ s(BW) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_below32) 
+m_PTB_bam_above32 <- bam(PTB~ s(BW) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7_above_32)  
  
 plot_m_PTB_bam_below32<- GAM_plot_function_binary(m_PTB_bam_below32, 2) %>%
   mutate(maternal_age="< 32 years old")
