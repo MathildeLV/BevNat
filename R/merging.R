@@ -1,4 +1,6 @@
 ##{merging the ecological var files}
+#gem: get altitude, Grossregion, commune, SSEP, Urban , Language region variables...
+#anth: height, bmi...per sex
 # anth$MSRegion <- as.numeric(anth$MSRegion)
   gem <- gem %>%
   mutate(MS_Reg = as.numeric(MS_Reg))
@@ -227,3 +229,12 @@ bevn_eco%>%
 
 tab <- bevn_eco %>%
   filter(mean_ssep!=mean_ssep2) 
+
+## Add Swiss population per year
+pop <- pop %>%
+  rename(Ereignisjahr=birthyear) %>%
+  mutate(Ereignisjahr=as.numeric(Ereignisjahr)) %>%
+  mutate(population=as.numeric(population))
+
+bevn_eco <- bevn_eco %>%
+  full_join(pop)
