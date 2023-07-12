@@ -2,6 +2,7 @@
 bevn_eco <- bevn_eco %>%
   dplyr::rename(birthyear=Ereignisjahr) %>%
   dplyr::rename(birthmonth=Ereignismonat) %>%
+  mutate(birthmonth=as.numeric(birthmonth)) %>%
   dplyr::rename(mat_age=Mutter..Alter.in.erfüllten.Jahren) %>%
   dplyr::rename(pat_age=Vater..Alter.in.erfüllten.Jahren) %>%
   dplyr::rename(sex=Kind..Geschlecht) %>%
@@ -208,8 +209,15 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
   bevn_eco$singleton_or_multiple <- cut(bevn_eco$nb_of_babies, breaks=c(0,1,6), include.lowest = TRUE, labels=c("singleton", "multiple"))
   table(bevn_eco$singleton_or_multiple)
   
+
+## Categorizing altitude between <1500 and >= 1500
+  bevn_eco <- bevn_eco %>%
+    mutate(mean_Alt_categ= as.factor(case_when(mean_Alt_mean2>1500 | mean_Alt_mean2==1500 ~"1",
+                                     mean_Alt_mean2<1500 ~"0")
+           ))
+  round(prop.table(table(bevn_eco$mean_Alt_categ, useNA="always"))*100,2)
   
-  
+
 # NEW VARIABLES
   ## Age difference between parents
   bevn_eco$parent_age_diff <- (bevn_eco$pat_age)-(bevn_eco$mat_age)
@@ -425,3 +433,14 @@ bevn_eco$country_of_birth_cat3 <- as.factor(ifelse(bevn_eco$country_of_birth == 
     bevn_eco$mean_ssep2_cat3 <- relevel (bevn_eco$mean_ssep2_cat3, ref = "medium SSEP")
     table(bevn_eco$mean_ssep2_cat3, useNA="always")
     round(prop.table(table(bevn_eco$mean_ssep2_cat3, useNA="always"))*100,2)
+    
+
+    bevn_ecotest <- bevn_eco %>%
+      select(-one_of('X', 'Statistikjahr', 'Anzahl.Knaben', 'Anzahl.Mädchen', 'Kind..Rang.in.der.aktuellen.Ehe', 'Mutter..Stellung.im.Beruf',
+                     'Mutter..Beruf', 'Vater.Ernährer..Stellung.im.Beruf', 'Vater.Ernährer..Beruf',
+                     'Flag..Geschlecht.des.Kindes', 'Flag..Art.der.Geburt', 'Flag..Rang.des.Kindes.in.der.aktuellen.Ehe', 'Flag..Zivilstand.der.Mutter',
+                     'Vater..Alter.in.erreichten.Jahren', 'Mutter..Alter.in.erreichten.Jahren', 'lebend.geboren.oder.nicht',
+                     'CONS_height', 'CONS_BMI', 'CONS_N', 'CONS_PercExcess', 'SHS_F_height', 'SHS_F_N', 'SHS_F_BMI', 'SHS_F_PercExcess',
+                     'SHS_M_height', 'SHS_M_N', 'SHS_M_BMI', 'SHS_M_PercExcess',
+                     'Perc_Change_Inhabitants', 'People_per_sqm', 'Perc_Foreigners', 'Av_Size_Household', 'Perc_Area_Agricult',
+                     'Social_Assistance_Rate', 'Permille_Crime_Rate'))
