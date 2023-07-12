@@ -11,7 +11,9 @@ table(bevn_eco_in0$country_of_birth_cat1)
 
 dim(bevn_eco)-dim(bevn_eco_in0)
 dim(bevn_eco_in0)
+(dim(bevn_eco)-dim(bevn_eco_in0))/dim(bevn_eco)
 #removal of 130980 entries. new nb entries: 1 294 777
+# in 9.19%
 
 #GA missing
   table(bevn_eco$GA_weeks, useNA = "always")
@@ -21,14 +23,16 @@ dim(bevn_eco_in0)
   dim(bevn_eco_in0)-dim(bevn_eco_in1)
   dim(bevn_eco_in1)
   table(bevn_eco_in1$GA_weeks, useNA = "always")
+  (dim(bevn_eco_in0)-dim(bevn_eco_in1))/dim(bevn_eco_in0)
   
-#removal of 14518 entries. new nb of entries: 1 280 230     
-
+  #removal of 14518 entries. new nb of entries: 1 280 230     
+  #exclusion of 1.12%
   
 #Place of residence of the mother: exclude mothers domiciled abroad / resident_status
-+  round(prop.table(table(bevn_eco$resident_status, useNA="always"))*100,2)
+  round(prop.table(table(bevn_eco$resident_status, useNA="always"))*100,2)
   #we will exclude 158 409 (status resident=9 domiciled abroad) + status= 2 (non permanent resident, 8 786) + status=4 (1 014, short stay) and 2 NA
   #total excluded 168 211       
+ table(bevn_eco_in1$resident_status, useNA="always")
   
    bevn_eco_in2 <- bevn_eco_in1 %>%
     filter(resident_status==1)
@@ -36,8 +40,9 @@ dim(bevn_eco_in0)
    
    dim(bevn_eco_in1)-dim(bevn_eco_in2)
    dim(bevn_eco_in2)
-   #Exclusion of 40 088  additional entries. New nb entries: 1 240 142 
-   
+   (dim(bevn_eco_in1)-dim(bevn_eco_in2))/dim(bevn_eco_in1)
+   #Exclusion of 40 088  additional entries, incl. 1 NA. New nb entries: 1 240 142 
+   #exclusion of 3.13%
    
 # Singletons only
    table(bevn_eco$singleton_or_multiple, useNA = "always")
@@ -50,7 +55,8 @@ dim(bevn_eco_in0)
    
    dim(bevn_eco_in2)-dim(bevn_eco_in3)
    dim(bevn_eco_in3)
-   #Exclusion of 44 127 additional entries. New nb entries: 1 196 015
+   (dim(bevn_eco_in2)-dim(bevn_eco_in3))/dim(bevn_eco_in2)
+   #Exclusion of 44 127 additional entries (=3.56%). New nb entries: 1 196 015
    
 
 # Exclude entries with BW<500 OR GA<22 weeks, exclude missing
@@ -68,16 +74,30 @@ dim(bevn_eco_in0)
      filter(GA_weeks >22 | BW > 500) %>%
      filter(!is.na(BW)) 
    
+   
+   test <- bevn_eco_in3 %>%
+   filter(!is.na(BW)) 
+   dim(test)
+   dim(bevn_eco_in3)-dim(test)
+   # 238 missing BW
+   
+   test2 <- test %>%
+     filter(GA_weeks >22 | BW > 500)
+     dim(test2)
+   dim(test)-dim(test2)
+   # 682 GA >22 or BW>500 
+   
+   
    dim(bevn_eco_in3)-dim(bevn_eco_in4)
    dim(bevn_eco_in4)
-   #Exclusion of 920 additional entries. New nb entries: 1 195 095       
+   (dim(bevn_eco_in3)-dim(bevn_eco_in4))/dim(bevn_eco_in3)
+   
+   #Exclusion of 920 additional entries (0.01%). New nb entries: 1 195 095       
 
-   #TO DISCUSS: exclusion of BW <100g or BW >7.5kg. arbitrary but okay
-   bevn_eco_in4 <- bevn_eco_in4 %>%
-     filter(BW > 100 & BW < 7500) 
    
 # BL between 20 and 65cm only, exclude missing 
    table(bevn_eco$BL_cat, useNA="always")
+   table(bevn_eco_in4$BL_cat, useNA="always")
    # We will exclude 131216  NAs and 204 BL<20cm, and no BL>60cm
    
    #check if missing BL are for births outside of Switz
@@ -92,7 +112,22 @@ dim(bevn_eco_in0)
    
    dim(bevn_eco_in4)-dim(bevn_eco_in5)
    dim(bevn_eco_in5)
-   #Exclusion of 197 additional entries. New nb entries: 1 194 898                 
+   (dim(bevn_eco_in4)-dim(bevn_eco_in5))/dim(bevn_eco_in4)
+   #Exclusion of 197 additional entries: 142 NA and 55 outside range (<0.01%). New nb entries: 1 194 898                 
+   
+   
+#TO DISCUSS: exclusion of BW <100g or BW >7.5kg. arbitrary
+   bevn_eco_in6 <- bevn_eco_in5 %>%
+     filter(BW > 100 & BW < 7500) 
+
+   dim(bevn_eco_in5)-dim(bevn_eco_in6)
+   dim(bevn_eco_in6)
+   (dim(bevn_eco_in5)-dim(bevn_eco_in6))/dim(bevn_eco_in5)
+    #Exclusion of 12 additional entries outside range. New nb entries: 1 194 886                   
+
+   bevn_eco_in5 <- bevn_eco_in5 %>%
+     filter(BW > 100 & BW < 7500) 
+   
    
 # Maternal age: exclude missing and exclude age > 50 (to discuss w/ Kaspar)
    table(bevn_eco$mat_age, useNA="always")
@@ -103,7 +138,8 @@ dim(bevn_eco_in0)
    
    dim(bevn_eco_in5)-dim(bevn_eco_in6)
    dim(bevn_eco_in6)
-   #Exclusion of 124 additional entries and no missing NA. New nb of entries: 1 194 774     
+   (dim(bevn_eco_in5)-dim(bevn_eco_in6))/dim(bevn_eco_in5)
+   #Exclusion of 124 additional entries and no missing NA (<0.01%). New nb of entries: 1 194 774     
    
 # Live births only
    table(bevn_eco$stillbirth, useNA="always")
@@ -113,11 +149,12 @@ dim(bevn_eco_in0)
      filter(stillbirth==0)
    table(bevn_eco_in7$stillbirth, useNA="always")
    
-  dim(bevn_eco_in6)-dim(bevn_eco_in7)
-   dim(bevn_eco_in7)
-  #Exclusion of 4501  additional entries. New nb entries: 1190273     
+    dim(bevn_eco_in6)-dim(bevn_eco_in7)
+    dim(bevn_eco_in7)
+    (dim(bevn_eco_in6)-dim(bevn_eco_in7))/dim(bevn_eco_in6)
    
-   
+  #Exclusion of 4498  additional entries (0,038%) New nb entries: 1190273     
+
 ## Dataset to zoom in 2008-2010 (for the 2009 eco crisis)  
    #stillbirth outcome
    bevn_eco_in6_2008_10 <- bevn_eco_in6 %>%
@@ -317,14 +354,14 @@ dim(bevn_eco_in0)
      filter(birthyear>"2014")
    table(bevn_eco_in6_15_21$birthyear, useNA = "always") 
    
-# Dataset 6 and 7 only with COVID-19 exposure, 2015-21
-   bevn_eco_in7_COVID_exp_during_pregnancy <- bevn_eco_in7_15_21 %>%
-     filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
-   table(bevn_eco_in7_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
-   bevn_eco_in6_COVID_exp_during_pregnancy <- bevn_eco_in6_15_21 %>%
-     filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
-   table(bevn_eco_in6_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
-   
+# # Dataset 6 and 7 only with COVID-19 exposure, 2015-21
+#    bevn_eco_in7_COVID_exp_during_pregnancy <- bevn_eco_in7_15_21 %>%
+#      filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
+#    table(bevn_eco_in7_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
+#    bevn_eco_in6_COVID_exp_during_pregnancy <- bevn_eco_in6_15_21 %>%
+#      filter(COVID_first_trimester=="1" | COVID_second_trimester=="1" | COVID_third_trimester =="1")
+#    table(bevn_eco_in6_COVID_exp_during_pregnancy$COVID_two_trimesters, useNA = "always")
+#    
 # Dataset 6 and 7 with Basel-stadt only
    bevn_eco_in6_Basel <- bevn_eco_in6 %>%
      filter(com==2701 | com==2702 | com==2703)
@@ -387,4 +424,17 @@ dim(bevn_eco_in0)
    bevn_eco_in6_males <- bevn_eco_in6 %>%
      filter(sex==1)
    
+   ## Canton of Berne 2011-2021 (for Vivienne Paper)
+   bevn_eco_in7_Berne <- bevn_eco_in7 %>%
+   filter(grepl('BE', Medstat)) %>%
+     filter(birthyear>2010)
    
+   
+   
+   ## for birthrate: births from permanent residents only
+   bevn_eco_in_br <- bevn_eco %>%
+     filter(resident_status==1)
+   table(bevn_eco_in_br$resident_status)
+   
+   dim(bevn_eco)-dim(bevn_eco_in_br)
+   dim(bevn_eco_in_br)
