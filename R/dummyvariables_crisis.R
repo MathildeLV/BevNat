@@ -112,69 +112,93 @@ table(bevn_eco$birthmonth, bevn_eco$birthyear, bevn_eco$GR)
 
 ########################################## COVID-19 ###############################################################
 # Delivery date during COVID19
-  ## Delivery date during Wave 1 
+  ## Delivery date during either wave (detail: wave 1: 03 and 04/2020, wave 2: 10/2020 to 02/2021, wave 3: 11 and 12/2021)
 bevn_eco <- bevn_eco %>%
-  dplyr::mutate(COVID_first_wave=ifelse((birthyear==2020 & (birthmonth==3 | birthmonth==4))
+  dplyr::mutate(COVID=ifelse(((birthyear==2020 & (birthmonth==3 | birthmonth==4))| # first wave
+                                (birthyear==2020 & (birthmonth==10 | birthmonth==11 | birthmonth ==12)) # second wave
+                                 | (birthyear==2021 & (birthmonth==01 |birthmonth==02|# second wave
+                                                         birthmonth==11 | birthmonth==12))
+                                 ) # third wave
                           , '1',
                           0),
-                COVID_first_wave=as.factor(COVID_first_wave))
-table(bevn_eco$birthmonth, bevn_eco$birthyear, bevn_eco$COVID_first_wave)
-  ## Delivery date during Wave 2
-bevn_eco <- bevn_eco %>%
-  dplyr::mutate(COVID_second_wave=ifelse((birthyear==2020 & (birthmonth==10 | birthmonth==11 | birthmonth ==12)) 
-                               , '1',
-                               0),
-                COVID_second_wave=as.factor(COVID_second_wave))
-table(bevn_eco$birthmonth, bevn_eco$birthyear, bevn_eco$COVID_second_wave)
-
+                COVID=as.factor(COVID))
+table(bevn_eco$birthmonth, bevn_eco$birthyear, bevn_eco$COVID)
+  
 # Exposure during one of the pregnancy trimesters
-  ## Exposure during first trimester (wave 1 or wave 2, independently)
+  ## Exposure during first trimester (independently of each of the three waves)
   bevn_eco <- bevn_eco %>%
-  dplyr::mutate(COVID_first_trimester=ifelse((month_1=="2020-03-01" | month_1=="2020-04-01" |month_1=="2020-10-01" | month_1=="2020-11-01" | month_1=="2020-12-01" | 
-                                              month_2=="2020-03-01" |month_2=="2020-04-01" | month_2=="2020-10-01" | month_2=="2020-11-01" | month_2=="2020-12-01" | 
-                                              month_3=="2020-03-01" |month_3=="2020-04-01" | month_3=="2020-10-01" | month_3=="2020-11-01" | month_3=="2020-12-01") 
+  dplyr::mutate(COVID_first_trimester=ifelse((month_1=="2020-03-01" | month_1=="2020-04-01" | # 1st wave
+                                              month_1=="2020-10-01" | month_1=="2020-11-01" | month_1=="2020-12-01" |  month_1=="2021-01-01" | month_1=="2021-02-01" | # 2nd wave
+                                              month_1=="2021-11-01" | month_1=="2021-12-01" | # 3rd wave 
+                                              month_2=="2020-03-01" | month_2=="2020-04-01" | # 1st wave
+                                              month_2=="2020-10-01" | month_2=="2020-11-01" | month_2=="2020-12-01" |  month_2=="2021-01-01" | month_2=="2021-02-01" | # 2nd wave
+                                              month_2=="2021-11-01" | month_2=="2021-12-01" | # 3rd wave 
+                                              month_3=="2020-03-01" | month_3=="2020-04-01" | # 1st wave
+                                              month_3=="2020-10-01" | month_3=="2020-11-01" | month_3=="2020-12-01" |  month_3=="2021-01-01" | month_3=="2021-02-01" | # 2nd wave
+                                              month_3=="2021-11-01" | month_3=="2021-12-01" # 3rd wave 
+                                              )
                                          , '1',
                                          0),
                 COVID_first_trimester=as.factor(COVID_first_trimester)) %>%
   dplyr::mutate(COVID_first_trimester= replace(COVID_first_trimester,
                                                   (is.na(COVID_first_trimester)), 0))
   
-  ## Exposure during second trimester (Wave 1 or wave 2, independently)
+  ## Exposure during second trimester (independently of each of the three waves)
   bevn_eco <- bevn_eco %>%
-  dplyr::mutate(COVID_second_trimester=ifelse((month_4=="2020-03-01" | month_4=="2020-04-01" |month_4=="2020-10-01" | month_1=="2020-11-01" | month_1=="2020-12-01" | 
-                                                month_5=="2020-03-01" |month_5=="2020-04-01" | month_5=="2020-10-01" | month_2=="2020-11-01" | month_2=="2020-12-01" | 
-                                                month_6=="2020-03-01" |month_6=="2020-04-01" | month_6=="2020-10-01" | month_3=="2020-11-01" | month_3=="2020-12-01")
-                                               , '1',
-                                              0),
+  dplyr::mutate(COVID_second_trimester=ifelse((month_4=="2020-03-01" | month_4=="2020-04-01" | # 1st wave
+                                                month_4=="2020-10-01" | month_4=="2020-11-01" | month_4=="2020-12-01" |  month_4=="2021-01-01" | month_4=="2021-02-01" | # 2nd wave
+                                                month_4=="2021-11-01" | month_4=="2021-12-01" | # 3rd wave 
+                                                month_5=="2020-03-01" | month_5=="2020-04-01" | # 1st wave
+                                                month_5=="2020-10-01" | month_5=="2020-11-01" | month_5=="2020-12-01" |  month_5=="2021-01-01" | month_5=="2021-02-01" | # 2nd wave
+                                                month_5=="2021-11-01" | month_5=="2021-12-01" | # 3rd wave 
+                                                month_6=="2020-03-01" | month_6=="2020-04-01" | # 1st wave
+                                                month_6=="2020-10-01" | month_6=="2020-11-01" | month_6=="2020-12-01" |  month_6=="2021-01-01" | month_6=="2021-02-01" | # 2nd wave
+                                                month_6=="2021-11-01" | month_6=="2021-12-01" # 3rd wave 
+                                                )
+                                          , '1',
+                                         0),
                 COVID_second_trimester=as.factor(COVID_second_trimester)) %>%
-      dplyr::mutate(COVID_second_trimester= replace(COVID_second_trimester,
-                                                    (is.na(COVID_second_trimester)), 0))
+    dplyr::mutate(COVID_second_trimester= replace(COVID_second_trimester,
+                                                  (is.na(COVID_second_trimester)), 0))
     
-  ## Exposure during third trimester ((wave 1 or wave 2, independently) - up to delivery
+  ## Exposure during third trimester (independently of each of the three waves) - up to delivery month 7 to 11
   bevn_eco <- bevn_eco %>%
-  dplyr::mutate(COVID_third_trimester=ifelse((month_7=="2020-03-01" |month_7=="2020-04-01" | month_7=="2020-10-01" | month_7=="2020-11-01" | month_7=="2020-12-01" | 
-                                              month_8=="2020-03-01" |month_8=="2020-04-01" | month_8=="2020-10-01" | month_8=="2020-11-01" | month_8=="2020-12-01" | 
-                                              month_9=="2020-03-01" |month_9=="2020-04-01" | month_9=="2020-10-01" | month_9=="2020-11-01" | month_9=="2020-12-01" |
-                                              month_10=="2020-03-01"|month_10=="2020-04-01"| month_10=="2020-10-01"| month_10=="2020-11-01"| month_10=="2020-12-01" |
-                                              month_11=="2020-03-01"|month_11=="2020-04-01"| month_11=="2020-10-01"| month_11=="2020-11-01"| month_11=="2020-12-01"
-                                              ) 
-                                             , '1',
-                                             0),
+  dplyr::mutate(COVID_third_trimester=ifelse((month_7=="2020-03-01" | month_7=="2020-04-01" | # 1st wave
+                                                month_7=="2020-10-01" | month_7=="2020-11-01" | month_7=="2020-12-01" |  month_7=="2021-01-01" | month_7=="2021-02-01" | # 2nd wave
+                                                month_7=="2021-11-01" | month_7=="2021-12-01" | # 3rd wave 
+                                                month_8=="2020-03-01" | month_8=="2020-04-01" | # 1st wave
+                                                month_8=="2020-10-01" | month_8=="2020-11-01" | month_8=="2020-12-01" |  month_8=="2021-01-01" | month_8=="2021-02-01" | # 2nd wave
+                                                month_8=="2021-11-01" | month_8=="2021-12-01" | # 3rd wave 
+                                                month_9=="2020-03-01" | month_9=="2020-04-01" | # 1st wave
+                                                month_9=="2020-10-01" | month_9=="2020-11-01" | month_9=="2020-12-01" |  month_9=="2021-01-01" | month_9=="2021-02-01" | # 2nd wave
+                                                month_9=="2021-11-01" | month_9=="2021-12-01" | # 3rd wave 
+                                                month_10=="2020-03-01" | month_10=="2020-04-01" | # 1st wave
+                                                month_10=="2020-10-01" | month_10=="2020-11-01" | month_10=="2020-12-01" |  month_10=="2021-01-01" | month_10=="2021-02-01" | # 2nd wave
+                                                month_10=="2021-11-01" | month_10=="2021-12-01" | # 3rd wave 
+                                                month_11=="2020-03-01" | month_11=="2020-04-01" | # 1st wave
+                                                month_11=="2020-10-01" | month_11=="2020-11-01" | month_11=="2020-12-01" |  month_11=="2021-01-01" | month_11=="2021-02-01" | # 2nd wave
+                                                month_11=="2021-11-01" | month_11=="2021-12-01" # 3rd wave 
+                                                )
+                                              , '1',
+                                              0),
                 COVID_third_trimester=as.factor(COVID_third_trimester)) %>%
     dplyr::mutate(COVID_third_trimester= replace(COVID_third_trimester,
                                                   (is.na(COVID_third_trimester)), 0))
 
   table(bevn_eco$COVID_first_trimester, useNA = "always")
+  round(prop.table(table(bevn_eco$COVID_first_trimester, useNA="always"))*100,2)
   table(bevn_eco$COVID_second_trimester, useNA = "always")
+  round(prop.table(table(bevn_eco$COVID_second_trimester, useNA="always"))*100,2)
   table(bevn_eco$COVID_third_trimester, useNA = "always")
-
-# Exposure during two pregnancy trimesters (Remark: it can only be trimesters 1 and 3, because waves 1 and 2 are separate by 6 months)
-  bevn_eco <- bevn_eco %>%
-    dplyr::mutate(COVID_two_trimesters=ifelse((COVID_first_trimester== "1" & COVID_third_trimester=="1") 
-    , '1',
-    0),
-    COVID_two_trimesters=as.factor(COVID_two_trimesters))
-  table(bevn_eco$COVID_two_trimesters, useNA = "always")
+  round(prop.table(table(bevn_eco$COVID_third_trimester, useNA="always"))*100,2)
+  
+# # Exposure during two pregnancy trimesters (Remark: it can only be trimesters 1 and 3, because waves 1 and 2 are separate by 6 months)
+#   bevn_eco <- bevn_eco %>%
+#     dplyr::mutate(COVID_two_trimesters=ifelse((COVID_first_trimester== "1" & COVID_third_trimester=="1") 
+#     , '1',
+#     0),
+#     COVID_two_trimesters=as.factor(COVID_two_trimesters))
+#   table(bevn_eco$COVID_two_trimesters, useNA = "always")
   
   # ## Exposure during one trimester, any (first, second, or third, but not two trimesters of exposre) 
   # bevn_eco <- bevn_eco %>%
