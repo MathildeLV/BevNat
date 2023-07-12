@@ -1,4 +1,4 @@
-#.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.2.2/library"))
+ .libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.2.3/library"))
 
 #packages
 
@@ -14,6 +14,7 @@ library(tableone)
 library(DT)
 library(data.table)
 library(gt)
+library(ftExtra) # to add parameters for gt tables
 library(glue)
 library(ggeffects)
 library(rmdformats)
@@ -23,13 +24,13 @@ library(network)
 library(RDS)
 library(quantreg)
 library(scales)
-#library packages
 library(ggpubr)
 library(egg)
 library(gridExtra)
 library(patchwork)
-
-
+library(webshot2) #to take screenshots of gt tables and save them as images
+library(effects)
+ 
 library(conflicted)
 conflict_prefer("filter", "dplyr")
 conflict_prefer("rename", "dplyr")
@@ -49,6 +50,7 @@ bevn_2021 <- read.csv2(here("data", "NAISS21.csv"))
 #ecological variables data
 anth <- read.csv2(here("data", "Anthropo.csv"))
 gem <- read.csv2(here("data", "Gemeinde.csv"))
+pop <- read.csv2(here("data", "swiss_population_per_year.csv"),  fileEncoding = 'UTF-8-BOM')
 
 
 #loading R codes
