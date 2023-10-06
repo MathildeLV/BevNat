@@ -52,9 +52,20 @@ GAM_plot_function_binarybis <- function(model, var_nr) {
   my.ci <- data.frame(cbind(OR, lci, uci, d))
   }
 
-
 # Function to calculate the mode of a variable
 getmode <- function(v) {
   uniqv <- na.omit(unique(v))
   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+# normalizing the values in m to the range [0, 1] using min-max scaling.
+normalit<-function(m){
+  (m - min(m))/(max(m)-min(m))
+}
+
+# Count columns based on date condition for each row
+# (I use it for counting the number of pregnancy months during which the mother
+# was exposed to crisis - eco.crisis and the flu pandemic)
+count_columns_by_date <- function(row, start_date, end_date) {
+  sum(row >= start_date & row <= end_date, na.rm = TRUE)
 }
