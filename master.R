@@ -1,7 +1,7 @@
- .libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.2.3/library"))
+.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.3.1/library"))
 
 #packages
-
+library(dplyr)
 library(here)
 library(mgcv)
 library(tidyverse)
@@ -14,6 +14,7 @@ library(tableone)
 library(DT)
 library(data.table)
 library(gt)
+library(askpass)
 library(ftExtra) # to add parameters for gt tables
 library(glue)
 library(ggeffects)
@@ -21,8 +22,9 @@ library(rmdformats)
 library(oddsratio)
 library(nnet)
 library(network)
-library(RDS)
-library(quantreg)
+ library(lpSolveAPI)
+ library(RDS)
+# library(quantreg)
 library(scales)
 library(ggpubr)
 library(egg)
@@ -30,8 +32,10 @@ library(gridExtra)
 library(patchwork)
 library(webshot2) #to take screenshots of gt tables and save them as images
 library(effects)
- 
+library(broom) 
 library(conflicted)
+library(usdm) # for VIF multicollinearity factor
+ 
 conflict_prefer("filter", "dplyr")
 conflict_prefer("rename", "dplyr")
 conflict_prefer("select", "dplyr")
@@ -47,18 +51,22 @@ conflict_prefer("ggarrange", "egg")
 
 bevn <- read.csv2(here("data", "bevn2007.csv"), sep = ",")
 bevn_2021 <- read.csv2(here("data", "NAISS21.csv"))
+bevn_2022 <- read.csv2(here("data", "NAISS22.2.csv"),  fileEncoding = 'UTF-8-BOM')
 #ecological variables data
 anth <- read.csv2(here("data", "Anthropo.csv"))
 gem <- read.csv2(here("data", "Gemeinde.csv"))
 pop <- read.csv2(here("data", "swiss_population_per_year.csv"),  fileEncoding = 'UTF-8-BOM')
+# covid hospitalization numbers per week
+data.covid.org <- read.csv2(here("data", "COVID19Hosp_geoRegion_w.csv"))
 
 
 #loading R codes
-source("R/merging.R")
-source("R/data_preparation.R") #to run separately
-source("R/dummyvariables_crisis.R")
-source("R/Inclusions.R")
 source("R/functions.R")
+source("R/merging.R") #to run separately
+source("R/data_preparation.R") #to run separately
+source("R/covid_monthly_exposure_hospitalisations.R")  # create variable for exposure to COVID (sum of hospitalisation cases during pregnancy)
+source("R/dummyvariables_crisis.R") #variables for exposure to heatwave, great recession, and 2009 flu pandemic
+source("R/Inclusions_fast.R")
 
 #graph parameters
 lwdline <- 1.2
