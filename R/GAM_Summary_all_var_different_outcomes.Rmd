@@ -92,10 +92,10 @@ In the models the variable "birth_Y\_M_num" is used to account for time: it is n
 We chose this model based on lower AIC and also lower k value for maternal age, which seems more appropriate when looking at the graph.
 
 ```{r}
-m_BW_bam5_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7) 
+m_BW_bam5_2 <- bam(BW ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, data=bevn_eco_in7) 
   summary(m_BW_bam5_2)
   gam.check(m_BW_bam5_2) 
-  #plot(m_BW_bam5_2,  select=1, shift = coef(m_BW_bam5_2)[1], shade = TRUE, shade.col = "lightblue") #ga
+  # plot(m_BW_bam5_2,  select=1, shift = coef(m_BW_bam5_2)[1], shade = TRUE, shade.col = "lightblue") #ga
 
 # extracting the plot information
 plot_m_BW_GA <- GAM_plot_function_continuous(m_BW_bam5_2, 1) # GA
@@ -191,7 +191,9 @@ plot_BW_time <- ggplot(data=plot_data_BW)+
         axis.title=element_text(size=size_axis_title),
         legend.text=element_text(size=size_legend),
         legend.title=element_text(size=size_legend_title),
-        legend.position="bottom") +
+        legend.position="bottom",
+         legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
 theme(axis.title.x = axis.title.x.position)
 plot_BW_time
 ```
@@ -283,10 +285,10 @@ $d=\frac{beta}{\sqrt{n}*se}$
   beta <- coef(m_BW_bam5_2)
   Vb <- vcov(m_BW_bam5_2, unconditional = TRUE)
   se <- sqrt(diag(Vb))
-  n <- 1099328
+  n <- 1184860
   d <- (abs(beta)/(sqrt(n)*se))
   my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
-  tab_BW_full <- round(head(my.ci,18), 2)
+  tab_BW_full <- round(head(my.ci,17), 2)
 ```
 
 ```{r}
@@ -297,40 +299,72 @@ tab_BW_full['Variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ",
                               " ", " ",
                               "Civil status (ref: married)",
                               "Heatwave (ref: 0)", "Great Recession (ref: 0)",
-                              "COVID first wave (ref: 0)", 
-                              "COVID second wave (ref: 0)")
+                              "COVID (ref: 0)")
 
     tab_BW_full['Category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
-                            "Southern/Central America", "Single", " ", " "," ", " ")
+                            "Southern/Central America", "Single", "1", "1","1")
     tab_BW_full<-tab_BW_full[, c('Variable', "Category", "beta", "lci","uci", "d")]
 
+    
 BW_full_gt <- tab_BW_full %>%
   gt()%>%
-  tab_header(title="Birthweight GAM") %>%
+  tab_header(title=md(gt::html("**Table 4.A : Association between birthweight and <br> neonatal, maternal and ecological factors from a GAM (model 1)**")),
+               subtitle = "categorical variables") %>%
   tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) %>%
   tab_style(
     style = list(
           cell_fill(color = "#E0E0E0")
         ),
-        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17 )))%>%
+        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17)))%>%
     tab_style(
     style = list(
      cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(5, 7, 8, 14,16,18)))
+        locations = cells_body(rows=c(5, 7, 8, 14,16))) %>%
+   tab_options(table.width = pct(35), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12) %>%
+  tab_source_note(source_note = "n=1,184,840")
 BW_full_gt
 
-BW_estimates_whole_model_gt <- BW_full_gt%>%
+BW_estimates_whole_model_gt <- BW_full_gt %>%
   gtsave(here("output/tables_paper", "BW_estimates_whole_model_gt.html"))
-
-BW_estimates_whole_model_gt <- BW_full_gt%>%
+BW_estimates_whole_model_gt <- BW_full_gt %>%
   gtsave(here("output/tables_paper", "BW_estimates_whole_model_gt.docx"))
+
+# same table with bold for "significant" results
+# BW_full_gt_bold <- tab_BW_full %>%
+#   gt()%>%
+#   tab_header(title="Birthweight GAM") %>%
+#   tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) %>%
+#   tab_style(
+#     style = list(
+#           cell_fill(color = "#E0E0E0")
+#         ),
+#         locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17)))%>%
+#     tab_style(
+#     style = list(
+#      cell_fill(color = "#F2F0F0")),
+#         locations = cells_body(rows=c(5, 7, 8, 14,16))) %>%
+#     tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#       ),
+#     locations = cells_body(rows=c(2:14), columns=c(3:5)
+#     )) 
+# BW_full_gt_bold
+# 
+# BW_estimates_whole_model_gt_bold <- BW_full_gt_bold %>%
+#   gtsave(here("output/tables_paper", "BW_estimates_whole_model_gt_bold.html"))
+# BW_estimates_whole_model_gt_bold <- BW_full_gt_bold %>%
+#   gtsave(here("output/tables_paper", "BW_estimates_whole_model_gt_bold.docx"))
 ```
 
 ## Table summarizing smooth term pvalues of the BW model
 ```{r}
  pvalues_smooth_BW_model = summary(m_BW_bam5_2)
-  pvalues_smooth_BW_model <- pvalues_smooth_BW_model$s.table[,4]
+ pvalues_smooth_BW_model <- pvalues_smooth_BW_model$s.table[,4]
   pvalues_smooth_BW_model <- format(pvalues_smooth_BW_model, scientific=FALSE)
 
   pvalues_smooth_BW_model_df <- data.frame(pvalues_smooth_BW_model) %>%
@@ -351,8 +385,14 @@ BW_estimates_whole_model_gt <- BW_full_gt%>%
   
   BW_full_smooth_pvalues_gt <- pvalues_smooth_BW_model_df %>%
     select(-one_of('pvalue')) %>%
+    rename("p-value"="pvalue1") %>%
     gt()%>% 
-    tab_header(title="Birthweight GAM, smooth variables") 
+    tab_header(title=md(gt::html("**Table 4.B : Birthweight GAM (model 1)**")), 
+              subtitle = "smooth variables") %>%
+  tab_options(table.width = pct(15), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12) 
   BW_full_smooth_pvalues_gt
 
   BW_full_smooth_pvalues_gt_save <- BW_full_smooth_pvalues_gt%>%
@@ -361,12 +401,262 @@ BW_estimates_whole_model_gt <- BW_full_gt%>%
     gtsave(here("output/tables_paper", "BW_full_smooth_pvalues_gt.docx"))
 ```
 
-# Stillbirth
+
+# Birthweight (not adjusted for gestational age)
+
+We chose this model based on lower AIC and also lower k value for maternal age, which seems more appropriate when looking at the graph.
+
+```{r}
+#without GA
+m_BW_bam5_3 <- bam(BW ~ s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, data=bevn_eco_in7) 
+  summary(m_BW_bam5_3)
+
+  gam.check(m_BW_bam5_3) 
+
+# extracting the plot information
+plot_m5_3_BW_mat_age <- GAM_plot_function_continuous(m_BW_bam5_3, 1) # mat age
+plot_m5_3_BW_time <- GAM_plot_function_continuous(m_BW_bam5_3, 2) # time
+plot_m5_3_BW_month <- GAM_plot_function_continuous(m_BW_bam5_3, 3) #seasonality
+plot_m5_3_BW_ssep <- GAM_plot_function_continuous(m_BW_bam5_3, 4) # ssep
+plot_m5_3_BW_altitude <- GAM_plot_function_continuous(m_BW_bam5_3, 5) # altitude
+```
+
+## Graph maternal age variable X BW (not adj for GA)
+
+```{r}
+plot_BW_mat_age_unadj_GA <- ggplot(data=plot_m5_3_BW_mat_age)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Maternal age (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3160,3380)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,60,by=5),expand = c(0, 0)) +
+  scale_y_continuous(breaks=seq(0,4000,by=50)) +
+theme(axis.title.x = axis.title.x.position)
+plot_BW_mat_age_unadj_GA
+```
+
+## Graph time X birthweight (not adj for GA)
+
+```{r}
+x_date <-   bevn_eco_in7 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_BW_5_3 <- plot_m5_3_BW_time %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+lim1 <- as.POSIXct(ymd("2007-01-01"))
+lim2 <- as.POSIXct(ymd("2021-12-01"))
+
+plot_BW_time_unadj_GA <- ggplot(data=plot_data_BW_5_3)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Timeline (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3200, 3450)) +
+  scale_colour_manual('BW',  #colour manual is for the line
+                      # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("#9557DC"))+
+  scale_fill_manual('BW',                        # fill is for CI
+                    # labels=c("fully adjusted","95% CI","95% CI"),  
+                    values =c("#9557DC"))+
+   scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)), #to force labelling from 2007 on the x axis
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+         legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
+theme(axis.title.x = axis.title.x.position)
+plot_BW_time_unadj_GA
+```
+
+## Graph seasonality X birthweight (not adj for GA)
+
+```{r}
+plot_BW_month_unadj_GA <- ggplot(data=plot_m5_3_BW_month)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Month")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3160,3380)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(1,12,by=1),expand = c(0, 0)) +
+  scale_y_continuous(breaks=seq(0,4000,by=50)) +
+theme(axis.title.x = axis.title.x.position)
+plot_BW_month_unadj_GA
+```
+
+## Graph SSEP X birthweight (not adj for GA)
+
+```{r}
+plot_BW_ssep_unadj_GA <- ggplot(data=plot_m5_3_BW_ssep)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("SSEP")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3160,3380)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,100,by=5),expand = c(0, 0)) +
+  scale_y_continuous(breaks=seq(0,4000,by=50)) +
+theme(axis.title.x = axis.title.x.position)
+plot_BW_ssep_unadj_GA
+```
+
+## Graph altitude X birthweight (not adj for GA)
+
+```{r}
+plot_BW_altitude_unadj_GA <- ggplot(data=plot_m5_3_BW_altitude)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Altitude (MASL)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3160,3380)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,2000,by=200),expand = c(0, 0)) +
+  scale_y_continuous(breaks=seq(0,4000,by=50)) +
+theme(axis.title.x = axis.title.x.position)
+plot_BW_altitude_unadj_GA
+```
+
+## Table summarizing the birthweight outcome model (not adj for GA)
+
+```{r}
+  beta <- coef(m_BW_bam5_3)
+  Vb <- vcov(m_BW_bam5_3, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 1184860
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  tab_BW_5_3_full <- round(head(my.ci,17), 2)
+```
+
+```{r}
+tab_BW_5_3_full['Variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ", 
+                              "Sex (ref: male)", "Urban (ref: rural)",
+                              "Language region (ref: German)", " ", 
+                              "Maternal nationality (ref: Swiss)", " ", " ",
+                              " ", " ",
+                              "Civil status (ref: married)",
+                              "Heatwave (ref: 0)", "Great Recession (ref: 0)",
+                              "COVID (ref: 0)")
+
+    tab_BW_5_3_full['Category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
+                            "Africa", "Asia", "Europe", "Northern America",
+                            "Southern/Central America", "Single", "1", "1","1")
+    tab_BW_5_3_full<-tab_BW_5_3_full[, c('Variable', "Category", "beta", "lci","uci", "d")]
+
+    
+BW_5_3_full_gt <- tab_BW_5_3_full %>%
+  gt()%>%
+  tab_header(title=md(gt::html("**Table 4.A : Association between birthweight and <br> neonatal, maternal and ecological factors from a GAM (model 1)**")),
+               subtitle = "categorical variables") %>%
+  tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) %>%
+  tab_style(
+    style = list(
+          cell_fill(color = "#E0E0E0")
+        ),
+        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17)))%>%
+    tab_style(
+    style = list(
+     cell_fill(color = "#F2F0F0")),
+        locations = cells_body(rows=c(5, 7, 8, 14,16))) %>%
+   tab_options(table.width = pct(35), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12) %>%
+  tab_source_note(source_note = "n=1,184,860.")
+BW_5_3_full_gt
+
+BW_estimates_whole_model_gt_unadj_for_GA <- BW_5_3_full_gt %>%
+  gtsave(here("output/tables_paper", "BW_estimates_whole_model_gtBW_estimates_whole_model_gt_unadj_for_GA.html"))
+BW_estimates_whole_model_gt_unadj_for_GA <- BW_5_3_full_gt %>%
+  gtsave(here("output/tables_paper", "BW_estimates_whole_model_gtBW_estimates_whole_model_gt_unadj_for_GA.docx"))
+```
+
+## Table summarizing smooth term pvalues of the BW model (not adj for GA)
+```{r}
+ pvalues_smooth_BW_model_unadj_GA = summary(m_BW_bam5_3)
+ pvalues_smooth_BW_model_unadj_GA <- pvalues_smooth_BW_model_unadj_GA$s.table[,4]
+  pvalues_smooth_BW_model_unadj_GA <- format(pvalues_smooth_BW_model_unadj_GA, scientific=FALSE)
+
+  pvalues_smooth_BW_model_df_unadj_GA <- data.frame(pvalues_smooth_BW_model_unadj_GA) %>%
+  dplyr::mutate(Variable=c("Maternal age", "Time", "Seasonality", "SSEP", "Altitude")) %>%
+    rename(c(pvalue=(pvalues_smooth_BW_model_unadj_GA)))%>%
+    mutate(pvalue=as.numeric(pvalue)) %>%
+    mutate(pvalue1=pvalue) 
+  
+  pvalues_smooth_BW_model_df_unadj_GA$pvalue <-  format(round(pvalues_smooth_BW_model_df_unadj_GA$pvalue, digits=3), nsmall=2)
+  
+  pvalues_smooth_BW_model_df_unadj_GA <- pvalues_smooth_BW_model_df_unadj_GA %>%
+    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.00001",
+                             (pvalue1<0.0001)~ "<0.0001",
+                             (pvalue1<0.001)~ "<0.001")) 
+  
+  pvalues_smooth_BW_model_df_unadj_GA$pvalue1 <- (ifelse(is.na(pvalues_smooth_BW_model_df_unadj_GA$pvalue1), pvalues_smooth_BW_model_df_unadj_GA$pvalue,                                                 pvalues_smooth_BW_model_df_unadj_GA$pvalue1))
+  
+  BW_full_smooth_pvalues_gt_unadj_GA <- pvalues_smooth_BW_model_df_unadj_GA %>%
+    select(-one_of('pvalue')) %>%
+    rename("p-value"="pvalue1") %>%
+    gt()%>% 
+    tab_header(title=md(gt::html("**Table 4.B : Birthweight GAM (model 1)**")), 
+              subtitle = "smooth variables") %>%
+  tab_options(table.width = pct(15), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12) 
+  BW_full_smooth_pvalues_gt_unadj_GA
+
+  BW_full_smooth_pvalues_gt_save_unadj_GA <- BW_full_smooth_pvalues_gt_unadj_GA%>%
+  gtsave(here("output/tables_paper", "BW_full_smooth_pvalues_gt_unadj_GA.html"))
+  BW_full_smooth_pvalues_gt_save_unadj_GA <- BW_full_smooth_pvalues_gt_unadj_GA%>%
+    gtsave(here("output/tables_paper", "BW_full_smooth_pvalues_gt_unadj_GA.docx"))
+```
+
+
+# Stillbirth - whole model
 
 ```{r echo=FALSE}
-m_SB_bam2 <- bam(stillbirth~s(GA_weeks)+ s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2)+ s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in6)
+m_SB_bam2 <- bam(stillbirth~s(GA_weeks)+ s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2)+ s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in6)
   summary(m_SB_bam2)
-  
+  gam.check(m_SB_bam2)
+
+
   #function to extract the plot information
 plot_m_SB_bam2_GA <- GAM_plot_function_binary(m_SB_bam2, 1)
 plot_m_SB_bam2_mat_age <- GAM_plot_function_binary(m_SB_bam2, 2)
@@ -376,7 +666,7 @@ plot_m_SB_bam2_SSEP <- GAM_plot_function_binary(m_SB_bam2, 5)
 plot_m_SB_bam2_alt <- GAM_plot_function_binary(m_SB_bam2, 6)
 
   k.check(m_SB_bam2) 
-  concurvity(m_SB_bam2)
+  concurvity(m_SB_bam2, full = TRUE)
 ```
 
 ## Graph gestational age X Stillbirth
@@ -529,7 +819,7 @@ plot_SB_altitude
   uci <- exp(beta+1.96*se)
   d <- abs(beta)/1.81
   my.ci <- data.frame(cbind(OR, lci, uci, d))
-  tab_SB_full <-  round(head(my.ci, 15), 2)
+  tab_SB_full <-  round(head(my.ci, 14), 2)
 ```
 
 ```{r}
@@ -541,34 +831,64 @@ tab_SB_full['Variable'] <- c("Intercept", "Sex (ref: male)",
                                       " ", " ",
                                       "Civil status (ref: married)",
                                       "Heatwave (ref: 0)", "Great Recession (ref: 0)",
-                                      "COVID first wave (ref: 0)", 
-                                      "COVID second wave (ref: 0)")
+                                      "COVID (ref: 0)")
 
     tab_SB_full['Category'] <- c(" ", "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
-                            "Southern and Central America", "Single", " ", " "," ", " ")
+                            "Southern and Central America", "Single", "1", "1","1")
     tab_SB_full<-tab_SB_full[, c('Variable', "Category", "OR", "lci","uci", "d")]
 
 SB_full_gt <- tab_SB_full %>%
   gt()%>%
-  tab_header(title="Stillbirth GAM") %>%
+  tab_header(title=md(gt::html("**Table 6.A : Association between the risk of stillbirth and <br> neonatal, maternal and ecological factors from a GAM (model 3)**")),
+               subtitle = "categorical variables") %>%
   tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
   tab_style(
     style = list(
           cell_fill(color = "#E0E0E0")
         ),
-        locations = cells_body(rows=c(2, 4, 5, 11, 13, 15)))%>%
+        locations = cells_body(rows=c(2, 4, 5, 11, 13)))%>%
     tab_style(
     style = list(
      cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(3, 6, 7, 8, 9, 10, 12, 14)))
+        locations = cells_body(rows=c(3, 6, 7, 8, 9, 10, 12, 14))) %>%
+  tab_options(table.width = pct(35), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12) %>%
+  tab_source_note(source_note = "n=1,189,309. Variance explained= 40.4%")
 SB_full_gt
 
 SB_estimates_whole_model_gt <- SB_full_gt%>%
   gtsave(here("output/tables_paper", "SB_estimates_whole_model_gt.html"))
-
 SB_estimates_whole_model_gt <- SB_full_gt%>%
   gtsave(here("output/tables_paper", "SB_estimates_whole_model_gt.docx"))
+
+# # same but bold for "significant" results
+# SB_full_gt_bold <- tab_SB_full %>%
+#   gt()%>%
+#   tab_header(title="Stillbirth GAM") %>%
+#   tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
+#   tab_style(
+#     style = list(
+#           cell_fill(color = "#E0E0E0")
+#         ),
+#         locations = cells_body(rows=c(2, 4, 5, 11, 13, 15)))%>%
+#     tab_style(
+#     style = list(
+#      cell_fill(color = "#F2F0F0")),
+#         locations = cells_body(rows=c(3, 6, 7, 8, 9, 10, 12, 14)))%>%
+#   tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#       ),
+#     locations = cells_body(rows=c(2, 4), columns=c(3:5)
+#     ))
+# SB_full_gt_bold
+# SB_estimates_whole_model_gt_bold <- SB_full_gt_bold%>%
+#   gtsave(here("output/tables_paper", "SB_estimates_whole_model_gt_bold.html"))
+# SB_estimates_whole_model_gt_bold <- SB_full_gt_bold%>%
+#   gtsave(here("output/tables_paper", "SB_estimates_whole_model_gt_bold.docx"))
 ```
 
 Time variable (birth_Y\_M_num) and mean ssep variable could have been put as linear terms, because the model including them as smoothed terms showed that the relationship between these and stillbirth was linear, but I chose to keep them as smooth variable to have models that look "more alike" between the different outcomes (birthweight, PTB).
@@ -576,7 +896,7 @@ Time variable (birth_Y\_M_num) and mean ssep variable could have been put as lin
 ## Table summarizing smooth term pvalues of the stillbirth model
 
 ```{r}
-pvalues_smooth_SB_model = summary(m_SB_bam2)
+  pvalues_smooth_SB_model = summary(m_SB_bam2)
   pvalues_smooth_SB_model <- pvalues_smooth_SB_model$s.table[,4]
   pvalues_smooth_SB_model <- format(pvalues_smooth_SB_model, scientific=FALSE)
 
@@ -598,8 +918,14 @@ pvalues_smooth_SB_model = summary(m_SB_bam2)
   
   SB_full_smooth_pvalues_gt <- pvalues_smooth_SB_model_df %>%
     select(-one_of('pvalue')) %>%
+   rename("p-value"="pvalue1") %>%
     gt()%>% 
-    tab_header(title="Stillbirth GAM, smooth variables") 
+     tab_header(title=md(gt::html("**Table 6.B : Stillbirth GAM (model 3)**")), 
+              subtitle = "smooth variables") %>%
+  tab_options(table.width = pct(15), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12)
   SB_full_smooth_pvalues_gt
   
   SB_full_smooth_pvalues_gt_save <- SB_full_smooth_pvalues_gt%>%
@@ -608,12 +934,494 @@ pvalues_smooth_SB_model = summary(m_SB_bam2)
     gtsave(here("output/tables_paper", "SB_full_smooth_pvalues_gt.docx"))
 ```
 
+
+
+# Stillbirth - simplified model
+
+```{r echo=FALSE}
+m_SB_bam2_simple <- bam(stillbirth~s(GA_weeks)+ s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2)+ s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat1 + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in6)
+  summary(m_SB_bam2_simple)
+  gam.check(m_SB_bam2_simple)
+  
+  #function to extract the plot information
+plot_m_SB_bam2_GA_simple <- GAM_plot_function_binary(m_SB_bam2_simple, 1)
+plot_m_SB_bam2_mat_age_simple <- GAM_plot_function_binary(m_SB_bam2_simple, 2)
+plot_m_SB_bam2_time_simple <- GAM_plot_function_binary(m_SB_bam2_simple, 3)
+plot_m_SB_bam2_month_simple <- GAM_plot_function_binary(m_SB_bam2_simple, 4)
+plot_m_SB_bam2_SSEP_simple <- GAM_plot_function_binary(m_SB_bam2_simple, 5)
+plot_m_SB_bam2_alt_simple <- GAM_plot_function_binary(m_SB_bam2_simple, 6)
+
+  k.check(m_SB_bam2_simple) 
+  concurvity(m_SB_bam2_simple, full = TRUE)
+```
+
+## Graph gestational age X Stillbirth
+
+```{r}
+plot_SB_GA_simple <- ggplot(data=plot_m_SB_bam2_GA_simple)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Gestational age (weeks)")+
+  ylab("Stillbirth probability")+
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom")+
+  scale_x_continuous(breaks=seq(0,45,by=5),expand = c(0, 0)) +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_GA_simple
+```
+
+## Graph maternal age X Stillbirth
+
+```{r}
+plot_SB_mat_age_simple <- ggplot(data=plot_m_SB_bam2_mat_age_simple)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Maternal age (years)")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.0015)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom")+
+  scale_x_continuous(breaks=seq(0,60,by=5),expand = c(0, 0)) +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_mat_age_simple
+```
+
+## Graph time X Stillbirth
+
+```{r}
+x_date <-   bevn_eco_in6 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_SB_simple <- plot_m_SB_bam2_time_simple %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+plot_SB_time_simple <- ggplot(data=plot_data_SB_simple)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Timeline (years)")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.0015)) +
+   scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_time_simple
+```
+
+## Graph seasonality X Stillbirth
+
+```{r}
+plot_SB_month_simple <- ggplot(data=plot_m_SB_bam2_month_simple)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Month")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.0015)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom")+
+  scale_x_continuous(breaks=seq(1,12,by=1),expand = c(0, 0)) +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_month_simple
+```
+
+## Graph SSEP X Stillbirth
+
+```{r}
+plot_SB_SSEP_simple <- ggplot(data=plot_m_SB_bam2_SSEP_simple)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("SSEP")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.0015)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom")+
+  scale_x_continuous(breaks=seq(0,100,by=5),expand = c(0, 0)) +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_SSEP_simple
+```
+
+## Graph altitude X Stillbirth
+
+```{r}
+plot_SB_altitude_simple <- ggplot(data=plot_m_SB_bam2_alt_simple)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Altitude (MASL)")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.0015)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom")+
+  scale_x_continuous(breaks=seq(0,2000,by=200),expand = c(0, 0)) +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_altitude_simple
+```
+
+## Table summarizing the stillbirth outcome model
+
+```{r echo=FALSE}
+  OR <- exp(coef(m_SB_bam2_simple))
+  beta <- coef(m_SB_bam2_simple)
+  Vb <- vcov(m_SB_bam2_simple, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my.ci <- data.frame(cbind(OR, lci, uci, d))
+  tab_SB_simple <-  round(head(my.ci, 10), 2)
+```
+
+```{r}
+tab_SB_simple['Variable'] <- c("Intercept", "Sex (ref: male)", "Urban (ref: rural)",
+ "Language region (ref: German)", " ", 
+  "Maternal nationality (ref: Swiss)", 
+ "Civil status (ref: married)",
+   "Heatwave (ref: 0)", "Great Recession (ref: 0)","COVID (ref: 0)")
+
+    tab_SB_simple['Category'] <- c(" ", "Female", "Urban", "French", "Italian", "Not Swiss", "Single", "1", "1","1")
+    tab_SB_simple<-tab_SB_simple[, c('Variable', "Category", "OR", "lci","uci", "d")]
+
+SB_simple_gt <- tab_SB_simple %>%
+  gt()%>%
+  tab_header(title=md(gt::html("**Table 6.A : Association between the risk of stillbirth and <br> neonatal, maternal and ecological factors from a GAM (model 3)**")),
+            subtitle = "categorical variables") %>%
+  tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
+  tab_style(
+    style = list(
+          cell_fill(color = "#E0E0E0")
+        ),
+        locations = cells_body(rows=c(2, 4, 5,7, 9)))%>%
+    tab_style(
+    style = list(
+     cell_fill(color = "#F2F0F0")),
+        locations = cells_body(rows=c(3, 6, 8, 10))) %>%
+  tab_options(table.width = pct(35), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12) %>%
+  tab_source_note(source_note = "n=1,190,655")
+SB_simple_gt
+
+SB_estimates_simple_gt <- SB_simple_gt%>%
+  gtsave(here("output/tables_paper", "SB_estimates_simple_model_gt.html"))
+SB_estimates_simple_gt <- SB_simple_gt%>%
+  gtsave(here("output/tables_paper", "SB_estimates_simple_model_gt.docx"))
+```
+
+
+## Table summarizing smooth term pvalues of the stillbirth model
+
+```{r}
+  pvalues_smooth_SB_model_simple = summary(m_SB_bam2_simple)
+  pvalues_smooth_SB_model_simple <- pvalues_smooth_SB_model_simple$s.table[,4]
+  pvalues_smooth_SB_model_simple <- format(pvalues_smooth_SB_model_simple, scientific=FALSE)
+
+  pvalues_smooth_SB_model_df_simple <- data.frame(pvalues_smooth_SB_model_simple) %>%
+  dplyr::mutate(Variable=c("Gestational age", "Maternal age", "Time", "Seasonality", "SSEP", "Altitude")) %>%
+  rename(c(pvalue=(pvalues_smooth_SB_model_simple)))%>%
+  mutate(pvalue=as.numeric(pvalue)) %>%
+  mutate(pvalue1=pvalue) 
+  
+  pvalues_smooth_SB_model_df_simple$pvalue <-  format(round(pvalues_smooth_SB_model_df_simple$pvalue, digits=3), nsmall=2)
+
+  pvalues_smooth_SB_model_df_simple <- pvalues_smooth_SB_model_df_simple %>%
+    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.00001",
+                             (pvalue1<0.0001)~ "<0.0001",
+                             (pvalue1<0.001)~ "<0.001")) 
+  
+  pvalues_smooth_SB_model_df_simple$pvalue1 <- (ifelse(is.na(pvalues_smooth_SB_model_df_simple$pvalue1), pvalues_smooth_SB_model_df_simple$pvalue, 
+                                                 pvalues_smooth_SB_model_df_simple$pvalue1))
+  
+  SB_full_smooth_pvalues_gt_simple <- pvalues_smooth_SB_model_df_simple %>%
+    select(-one_of('pvalue')) %>%
+   rename("p-value"="pvalue1") %>%
+    gt()%>% 
+     tab_header(title=md(gt::html("**Table 6.B : Stillbirth GAM (model 3)**")), 
+              subtitle = "smooth variables") %>%
+  tab_options(table.width = pct(15), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12)
+  SB_full_smooth_pvalues_gt_simple
+  
+  SB_full_smooth_pvalues_gt_save_simple <- SB_full_smooth_pvalues_gt_simple%>%
+  gtsave(here("output/tables_paper", "SB_full_smooth_pvalues_gt_simple.html"))
+  SB_full_smooth_pvalues_gt_save_simple <- SB_full_smooth_pvalues_gt_simple%>%
+    gtsave(here("output/tables_paper", "SB_full_smooth_pvalues_gt_simple.docx"))
+```
+
+# Stillbirth- simple model, without adjusting for GA
+
+```{r}
+m_SB_bam2_simple_unadj_GA <- bam(stillbirth~ s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2)+ s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat1 + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in6)
+
+plot_m_SB_bam2_mat_age_simple_unadj_GA <- GAM_plot_function_binary(m_SB_bam2_simple_unadj_GA, 1)
+plot_m_SB_bam2_time_simpl_unadj_GA <- GAM_plot_function_binary(m_SB_bam2_simple_unadj_GA, 2)
+plot_m_SB_bam2_month_simple_unadj_GA <- GAM_plot_function_binary(m_SB_bam2_simple_unadj_GA, 3)
+plot_m_SB_bam2_SSEP_simple_unadj_GA <- GAM_plot_function_binary(m_SB_bam2_simple_unadj_GA, 4)
+plot_m_SB_bam2_alt_simple_unadj_GA <- GAM_plot_function_binary(m_SB_bam2_simple_unadj_GA, 5)
+
+  k.check(m_SB_bam2_simple_unadj_GA) 
+  concurvity(m_SB_bam2_simple_unadj_GA, full = TRUE)
+```
+
+
+## Graph maternal age X Stillbirth
+
+```{r}
+plot_SB_mat_age_simple_unadj_GA <- ggplot(data=plot_m_SB_bam2_mat_age_simple_unadj_GA)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Maternal age (years)")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.008)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom")+
+  scale_x_continuous(breaks=seq(0,60,by=5),expand = c(0, 0)) +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_mat_age_simple_unadj_GA
+```
+
+## Graph time X Stillbirth
+
+```{r}
+x_date <-   bevn_eco_in6 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_SB_simple_unadj_GA <- plot_m_SB_bam2_time_simpl_unadj_GA %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+plot_SB_time_simple_unadj_GA <- ggplot(data=plot_data_SB_simple_unadj_GA)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Timeline (years)")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.008)) +
+   scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_time_simple_unadj_GA
+```
+
+## Graph seasonality X Stillbirth
+
+```{r}
+plot_SB_month_simple_unadj_GA <- ggplot(data=plot_m_SB_bam2_month_simple_unadj_GA)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Month")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.008)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom")+
+  scale_x_continuous(breaks=seq(1,12,by=1),expand = c(0, 0)) +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_month_simple_unadj_GA
+```
+
+## Graph SSEP X Stillbirth
+
+```{r}
+plot_SB_SSEP_simple_unadj_GA <- ggplot(data=plot_m_SB_bam2_SSEP_simple_unadj_GA)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("SSEP")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.008)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom")+
+  scale_x_continuous(breaks=seq(0,100,by=5),expand = c(0, 0)) +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_SSEP_simple_unadj_GA
+```
+
+## Graph altitude X Stillbirth
+
+```{r}
+plot_SB_altitude_simple_unadj_GA <- ggplot(data=plot_m_SB_bam2_alt_simple_unadj_GA)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Altitude (MASL)")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.008)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom")+
+  scale_x_continuous(breaks=seq(0,2000,by=200),expand = c(0, 0)) +
+theme(axis.title.x = axis.title.x.position)
+plot_SB_altitude_simple_unadj_GA
+```
+
+## Table summarizing the stillbirth outcome model
+
+```{r echo=FALSE}
+  OR <- exp(coef(m_SB_bam2_simple_unadj_GA))
+  beta <- coef(m_SB_bam2_simple_unadj_GA)
+  Vb <- vcov(m_SB_bam2_simple_unadj_GA, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my.ci <- data.frame(cbind(OR, lci, uci, d))
+  tab_SB_simple_unadj_GA <-  round(head(my.ci, 10), 2)
+```
+
+```{r}
+tab_SB_simple_unadj_GA['Variable'] <- c("Intercept", "Sex (ref: male)", "Urban (ref: rural)",
+ "Language region (ref: German)", " ", 
+  "Maternal nationality (ref: Swiss)", 
+ "Civil status (ref: married)",
+   "Heatwave (ref: 0)", "Great Recession (ref: 0)","COVID (ref: 0)")
+
+    tab_SB_simple_unadj_GA['Category'] <- c(" ", "Female", "Urban", "French", "Italian", "Not Swiss", "Single", "1", "1","1")
+    tab_SB_simple_unadj_GA<-tab_SB_simple_unadj_GA[, c('Variable', "Category", "OR", "lci","uci", "d")]
+
+SB_simple_gt_unadj_GA <- tab_SB_simple_unadj_GA %>%
+  gt()%>%
+  tab_header(title=md(gt::html("**Table 6.A : Association between the risk of stillbirth and <br> neonatal, maternal and ecological factors from a GAM (model 3)**")),
+            subtitle = "categorical variables") %>%
+  tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
+  tab_style(
+    style = list(
+          cell_fill(color = "#E0E0E0")
+        ),
+        locations = cells_body(rows=c(2, 4, 5,7, 9)))%>%
+    tab_style(
+    style = list(
+     cell_fill(color = "#F2F0F0")),
+        locations = cells_body(rows=c(3, 6, 8, 10))) %>%
+  tab_options(table.width = pct(35), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12) %>%
+  tab_source_note(source_note = "n=1,190,655")
+SB_simple_gt_unadj_GA
+
+SB_estimates_simple_unadj_GA_gt <- SB_simple_gt_unadj_GA%>%
+  gtsave(here("output/tables_paper", "SB_estimates_simple_model_gt_unadj_GA.html"))
+SB_estimates_simple_unadj_GA_gt <- SB_simple_gt_unadj_GA%>%
+  gtsave(here("output/tables_paper", "SB_estimates_simple_model_gt_unadj_GA.docx"))
+```
+
+
+## Table summarizing smooth term pvalues of the stillbirth model
+
+```{r}
+  pvalues_smooth_SB_model_simple_unadj_GA = summary(m_SB_bam2_simple_unadj_GA)
+  pvalues_smooth_SB_model_simple_unadj_GA <- pvalues_smooth_SB_model_simple_unadj_GA$s.table[,4]
+  pvalues_smooth_SB_model_simple_unadj_GA <- format(pvalues_smooth_SB_model_simple_unadj_GA, scientific=FALSE)
+
+  pvalues_smooth_SB_model_df_simple_unadj_GA <- data.frame(pvalues_smooth_SB_model_simple_unadj_GA) %>%
+  dplyr::mutate(Variable=c("Maternal age", "Time", "Seasonality", "SSEP", "Altitude")) %>%
+  rename(c(pvalue=(pvalues_smooth_SB_model_simple_unadj_GA)))%>%
+  mutate(pvalue=as.numeric(pvalue)) %>%
+  mutate(pvalue1=pvalue) 
+  
+  pvalues_smooth_SB_model_df_simple_unadj_GA$pvalue <-  format(round(pvalues_smooth_SB_model_df_simple_unadj_GA$pvalue, digits=3), nsmall=2)
+
+  pvalues_smooth_SB_model_df_simple_unadj_GA <- pvalues_smooth_SB_model_df_simple_unadj_GA %>%
+    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.00001",
+                             (pvalue1<0.0001)~ "<0.0001",
+                             (pvalue1<0.001)~ "<0.001")) 
+  
+  pvalues_smooth_SB_model_df_simple_unadj_GA$pvalue1 <- (ifelse(is.na(pvalues_smooth_SB_model_df_simple_unadj_GA$pvalue1), pvalues_smooth_SB_model_df_simple_unadj_GA$pvalue, 
+                                                 pvalues_smooth_SB_model_df_simple_unadj_GA$pvalue1))
+  
+  SB_full_smooth_pvalues_gt_simple_unadj_GA <- pvalues_smooth_SB_model_df_simple_unadj_GA %>%
+    select(-one_of('pvalue')) %>%
+   rename("p-value"="pvalue1") %>%
+    gt()%>% 
+     tab_header(title=md(gt::html("**Table 6.B : Stillbirth GAM (model 3)**")), 
+              subtitle = "smooth variables") %>%
+  tab_options(table.width = pct(15), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12)
+  SB_full_smooth_pvalues_gt_simple_unadj_GA
+  
+  SB_full_smooth_pvalues_gt_save_simple_unadj_GA <- SB_full_smooth_pvalues_gt_simple_unadj_GA%>%
+  gtsave(here("output/tables_paper", "SB_full_smooth_pvalues_gt_simple_unadj_GA.html"))
+  SB_full_smooth_pvalues_gt_save_simple_unadj_GA <- SB_full_smooth_pvalues_gt_simple_unadj_GA%>%
+    gtsave(here("output/tables_paper", "SB_full_smooth_pvalues_gt_simple_unadj_GA.docx"))
+```
+
+
+
 # Preterm birth
 
 ```{r echo=FALSE}
-m_PTB_bam <- bam(PTB~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7) 
+m_PTB_bam <- bam(PTB~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, family=binomial(link="logit"), data=bevn_eco_in7) 
   summary(m_PTB_bam)
-    #plot(m_PTB_bam, trans = plogis, select=2, shift = coef(m_PTB_bam)[1], shade = TRUE, shade.col = "lightblue") #BW
+  
+   #plot(m_PTB_bam, trans = plogis, select=2, shift = coef(m_PTB_bam)[1], shade = TRUE, shade.col = "lightblue") #BW
  # extracting the plot information
 plot_m_PTB_bam_BW <- GAM_plot_function_binary(m_PTB_bam, 1)
 plot_m_PTB_bam_mat_age <- GAM_plot_function_binary(m_PTB_bam, 2)
@@ -643,7 +1451,6 @@ plot_PTB_BW <- ggplot(data=plot_m_PTB_bam_BW)+
         legend.position="bottom") +
   scale_x_continuous(breaks=seq(200,7500,by=1000),expand = c(0, 0))  +
   theme(axis.title.x = axis.title.x.position)
-
 plot_PTB_BW
 ```
 
@@ -701,7 +1508,6 @@ plot_PTB <- ggplot(data=plot_data_PTB)+
         legend.title=element_text(size=size_legend_title),
         legend.position="bottom") +
 theme(axis.title.x = axis.title.x.position)
-
 plot_PTB
 ```
 
@@ -771,15 +1577,15 @@ plot_PTB_altitude
 ## Table summarizing the preterm birth outcome model
 
 ```{r}
-  OR <- exp(coef(m_PTB_bam))
-  beta <- coef(m_PTB_bam)
-  Vb <- vcov(m_PTB_bam, unconditional = TRUE)
+  OR <- exp(coef(m_PTB_bam2))
+  beta <- coef(m_PTB_bam2)
+  Vb <- vcov(m_PTB_bam2, unconditional = TRUE)
   se <- sqrt(diag(Vb))
   lci <- exp(beta-1.96*se)
   uci <- exp(beta+1.96*se)
   d <- abs(beta)/1.81
   my.ci <- data.frame(cbind(OR, lci, uci, d))
-  tab_PTB_full <- round(head(my.ci, 18), 2)
+  tab_PTB_full <- round(head(my.ci, 17), 2)
 ```
 
 ```{r}
@@ -790,41 +1596,71 @@ tab_PTB_full['Variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ",
                               " ", " ",
                               "Civil status (ref: married)",
                               "Heatwave (ref: 0)", "Great Recession (ref: 0)",
-                              "COVID first wave (ref: 0)", 
-                              "COVID second wave (ref: 0)")
+                              "COVID (ref: 0)")
 
     tab_PTB_full['Category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
-                            "Southern/Central America", "Single", " ", " "," ", " ")
+                            "Southern/Central America", "Single", "1", "1","1")
     tab_PTB_full<-tab_PTB_full[, c('Variable', "Category", "OR", "lci","uci", "d")]
 
 PTB_full_gt <- tab_PTB_full %>%
   gt()%>%
-  tab_header(title="Preterm birth GAM") %>%
+  tab_header(title=md(gt::html("**Table 5.A : Association between the risk of preterm birth and <br> neonatal, maternal and ecological factors from a GAM (model 2)**")),
+               subtitle = "categorical variables") %>%
   tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
   tab_style(
     style = list(
           cell_fill(color = "#E0E0E0")
         ),
-        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17 )))%>%
+        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17)))%>%
     tab_style(
     style = list(
      cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(5, 7, 8, 14,16,18)))
+        locations = cells_body(rows=c(5, 7, 8, 14,16))) %>%
+   tab_options(table.width = pct(35), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12) %>%
+  tab_source_note(source_note = "n=1,184,860. Variance explained= 43.7%")
 PTB_full_gt
 
 PTB_estimates_whole_model_gt <- PTB_full_gt%>%
   gtsave(here("output/tables_paper", "PTB_estimates_whole_model_gt.html"))
-
-
 PTB_estimates_whole_model_gt <- PTB_full_gt%>%
   gtsave(here("output/tables_paper", "PTB_estimates_whole_model_gt.docx"))
+
+# # same table with bold for the "significant" results
+#   PTB_full_gt_bold <- tab_PTB_full %>%
+#   gt()%>%
+#   tab_header(title="Preterm birth GAM") %>%
+#   tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
+#   tab_style(
+#     style = list(
+#           cell_fill(color = "#E0E0E0")
+#         ),
+#         locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17 )))%>%
+#     tab_style(
+#     style = list(
+#      cell_fill(color = "#F2F0F0")),
+#         locations = cells_body(rows=c(5, 7, 8, 14,16,18))) %>%
+#     tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#       ),
+#     locations = cells_body(rows=c(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13), columns=c(3:5)
+#     ))
+# PTB_full_gt_bold
+# 
+# PTB_estimates_whole_model_gt_bold <- PTB_full_gt_bold%>%
+#   gtsave(here("output/tables_paper", "PTB_estimates_whole_model_gt_bold.html"))
+# PTB_estimates_whole_model_gt <- PTB_full_gt%>%
+#   gtsave(here("output/tables_paper", "PTB_estimates_whole_model_gt_bold.docx"))
 ```
 
-## Table summarizing smooth term pvalues of the stillbirth model
+## Table summarizing smooth term pvalues of the PTB model
 
 ```{r}
-pvalues_smooth_PTB_model = summary(m_PTB_bam)
+  pvalues_smooth_PTB_model = summary(m_PTB_bam)
   pvalues_smooth_PTB_model <- pvalues_smooth_PTB_model$s.table[,4]
   pvalues_smooth_PTB_model <- format(pvalues_smooth_PTB_model, scientific=FALSE)
   
@@ -841,13 +1677,19 @@ pvalues_smooth_PTB_model = summary(m_PTB_bam)
                              (pvalue1<0.0001)~ "<0.0001",
                              (pvalue1<0.001)~ "<0.001")) 
   
-  pvalues_smooth_PTB_model_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_PTB_model_df$pvalue1), pvalues_smooth_PTB_model_df$pvalue, 
+  pvalues_smooth_PTB_model_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_PTB_model_df$pvalue1),                                                            pvalues_smooth_PTB_model_df$pvalue,  
                                                  pvalues_smooth_PTB_model_df$pvalue1))
   
   PTB_full_smooth_pvalues_gt <- pvalues_smooth_PTB_model_df %>%
     select(-one_of('pvalue')) %>%
-    gt()%>% 
-    tab_header(title="Preterm birth GAM, smooth variables") 
+      rename("p-value"="pvalue1") %>%
+      gt()%>% 
+  tab_header(title=md(gt::html("**Table 5.B : Preterm birth GAM (model 2)**")), 
+              subtitle = "smooth variables") %>%
+  tab_options(table.width = pct(15), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12)
   PTB_full_smooth_pvalues_gt
   
   PTB_full_smooth_pvalues_gt_save <- PTB_full_smooth_pvalues_gt%>%
@@ -856,10 +1698,275 @@ pvalues_smooth_PTB_model = summary(m_PTB_bam)
     gtsave(here("output/tables_paper", "PTB_full_smooth_pvalues_gt.docx"))
 ```
 
+# Preterm birth (without adjusting for birthweight)
+
+```{r echo=FALSE}
+    m_PTB_bam2 <- bam(PTB~  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+  parity_cat + sex +Urban3 + Language + mother_nationality_cat2 +civil_status3 + HW + GR +COVID, family="binomial", data=bevn_eco_in7) 
+   summary(m_PTB_bam2)
+  
+    #plot(m_PTB_bam, trans = plogis, select=2, shift = coef(m_PTB_bam)[1], shade = TRUE, shade.col = "lightblue") #BW
+ # extracting the plot information
+plot_m_PTB_bam2_mat_age <- GAM_plot_function_binary(m_PTB_bam2, 1)
+plot_m_PTB_bam2_time <- GAM_plot_function_binary(m_PTB_bam2, 2) 
+plot_m_PTB_bam2_month <- GAM_plot_function_binary(m_PTB_bam2, 3)
+plot_m_PTB_bam2_sep <- GAM_plot_function_binary(m_PTB_bam2, 4)
+plot_m_PTB_bam2_altitude <- GAM_plot_function_binary(m_PTB_bam2, 5) 
+  
+  k.check(m_PTB_bam2) 
+  concurvity(m_PTB_bam2)
+```
+
+## Graph maternal age X preterm birth
+
+```{r}
+plot_PTB_mat_age2 <- ggplot(data=plot_m_PTB_bam2_mat_age)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Maternal age (years)")+
+  ylab("Preterm birth probability")+
+  theme_bw()+
+  coord_cartesian(ylim=c(0.05,0.14)) +
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,60,by=5),expand = c(0, 0)) +
+  theme(axis.title.x = axis.title.x.position)
+plot_PTB_mat_age2
+```
+
+## Graph time variable X preterm birth
+
+```{r}
+x_date <-   bevn_eco_in7 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_PTB2 <- plot_m_PTB_bam2_time %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+lim1 <- as.POSIXct(ymd("2007-01-01"))
+lim2 <- as.POSIXct(ymd("2021-12-01"))
+
+plot_PTB2 <- ggplot(data=plot_data_PTB2)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Timeline (years)")+
+  ylab("Preterm birth probability")+
+  coord_cartesian(ylim=c(0.025,0.1)) +
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+theme(axis.title.x = axis.title.x.position)
+plot_PTB2
+```
+
+## Graph seasonality X preterm birth
+
+```{r}
+plot_PTB_seasonality2 <- ggplot(data=plot_m_PTB_bam2_month)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Month")+
+  ylab("Preterm birth probability")+
+  theme_bw()+
+  coord_cartesian(ylim=c(0.05,0.14)) +
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(1,12,by=1),expand = c(0, 0)) +
+  theme(axis.title.x = axis.title.x.position)
+plot_PTB_seasonality2
+```
+
+## Graph SSEP X preterm birth
+
+```{r}
+plot_PTB_SSEP2 <- ggplot(data=plot_m_PTB_bam2_sep)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("SSEP")+
+  ylab("Preterm birth probability")+
+  theme_bw()+
+  coord_cartesian(ylim=c(0.05,0.14)) +
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,100,by=5),expand = c(0, 0)) +
+  theme(axis.title.x = axis.title.x.position)
+plot_PTB_SSEP2
+```
+
+## Graph altitude X preterm birth
+
+```{r}
+plot_PTB_altitude2 <- ggplot(data=plot_m_PTB_bam2_altitude)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Altitude (MASL)")+
+  ylab("Preterm birth probability")+
+  theme_bw()+
+  coord_cartesian(ylim=c(0.05,0.14)) +
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,2000,by=200),expand = c(0, 0)) +
+  theme(axis.title.x = axis.title.x.position)
+plot_PTB_altitude2
+```
+
+## Table summarizing the preterm birth outcome model
+
+```{r}
+  OR <- exp(coef(m_PTB_bam2))
+  beta <- coef(m_PTB_bam2)
+  Vb <- vcov(m_PTB_bam2, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my.ci <- data.frame(cbind(OR, lci, uci, d))
+  tab_PTB_full2 <- round(head(my.ci, 17), 2)
+```
+
+```{r}
+tab_PTB_full2['Variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ", 
+                              "Sex (ref: male)", "Urban (ref: rural)",
+                              "Language region (ref: German)", " ", 
+                              "Maternal nationality (ref: Swiss)", " ", " ",
+                              " ", " ",
+                              "Civil status (ref: married)",
+                              "Heatwave (ref: 0)", "Great Recession (ref: 0)",
+                              "COVID (ref: 0)")
+
+    tab_PTB_full2['Category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
+                            "Africa", "Asia", "Europe", "Northern America",
+                            "Southern/Central America", "Single", "1", "1","1")
+    tab_PTB_full2<-tab_PTB_full2[, c('Variable', "Category", "OR", "lci","uci", "d")]
+
+PTB_full2_gt <- tab_PTB_full2 %>%
+  gt()%>%
+  tab_header(title=md(gt::html("**Table 5.A : Association between the risk of preterm birth and <br> neonatal, maternal and ecological factors from a GAM (model 2)**")),
+               subtitle = "categorical variables") %>%
+  tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
+  tab_style(
+    style = list(
+          cell_fill(color = "#E0E0E0")
+        ),
+        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17)))%>%
+    tab_style(
+    style = list(
+     cell_fill(color = "#F2F0F0")),
+        locations = cells_body(rows=c(5, 7, 8, 14,16))) %>%
+   tab_options(table.width = pct(35), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12) %>%
+  tab_source_note(source_note = "n=1,184,840")
+PTB_full2_gt
+
+PTB_estimates_whole_model2_gt <- PTB_full2_gt%>%
+  gtsave(here("output/tables_paper", "PTB_estimates_unadjusted_for_BW.html"))
+PTB_estimates_whole_model2_gt <- PTB_full2_gt%>%
+  gtsave(here("output/tables_paper", "PTB_estimates_unadjusted_for_BW.docx"))
+
+# # same table with bold for the "significant" results
+#   PTB_full_gt_bold <- tab_PTB_full %>%
+#   gt()%>%
+#   tab_header(title="Preterm birth GAM") %>%
+#   tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
+#   tab_style(
+#     style = list(
+#           cell_fill(color = "#E0E0E0")
+#         ),
+#         locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17 )))%>%
+#     tab_style(
+#     style = list(
+#      cell_fill(color = "#F2F0F0")),
+#         locations = cells_body(rows=c(5, 7, 8, 14,16,18))) %>%
+#     tab_style(
+#     style = list(
+#       cell_text(weight = "bold")
+#       ),
+#     locations = cells_body(rows=c(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13), columns=c(3:5)
+#     ))
+# PTB_full_gt_bold
+# 
+# PTB_estimates_whole_model_gt_bold <- PTB_full_gt_bold%>%
+#   gtsave(here("output/tables_paper", "PTB_estimates_whole_model_gt_bold.html"))
+# PTB_estimates_whole_model_gt <- PTB_full_gt%>%
+#   gtsave(here("output/tables_paper", "PTB_estimates_whole_model_gt_bold.docx"))
+```
+
+## Table summarizing smooth term pvalues of the PTB model
+
+```{r}
+  pvalues_smooth_PTB_model2 = summary(m_PTB_bam2)
+  pvalues_smooth_PTB_model2 <- pvalues_smooth_PTB_model2$s.table[,4]
+  pvalues_smooth_PTB_model2 <- format(pvalues_smooth_PTB_model2, scientific=FALSE)
+  
+  pvalues_smooth_PTB_model_df2 <- data.frame(pvalues_smooth_PTB_model2) %>%
+    dplyr::mutate(Variable=c("Maternal age", "Time", "Seasonality", "SSEP", "Altitude")) %>%
+    rename(c(pvalue=(pvalues_smooth_PTB_model2)))%>%
+    mutate(pvalue=as.numeric(pvalue)) %>%
+    mutate(pvalue1=pvalue) 
+  
+  pvalues_smooth_PTB_model_df2$pvalue <-  format(round(pvalues_smooth_PTB_model_df2$pvalue, digits=3), nsmall=2)
+  
+  pvalues_smooth_PTB_model_df2 <- pvalues_smooth_PTB_model_df2 %>%
+    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.00001",
+                             (pvalue1<0.0001)~ "<0.0001",
+                             (pvalue1<0.001)~ "<0.001")) 
+  
+  pvalues_smooth_PTB_model_df2$pvalue1 <- (ifelse(is.na(pvalues_smooth_PTB_model_df2$pvalue1),                                                            pvalues_smooth_PTB_model_df2$pvalue,  
+                                                 pvalues_smooth_PTB_model_df2$pvalue1))
+  
+  PTB_full_smooth_pvalues_gt2 <- pvalues_smooth_PTB_model_df2 %>%
+    select(-one_of('pvalue')) %>%
+      rename("p-value"="pvalue1") %>%
+      gt()%>% 
+  tab_header(title=md(gt::html("**Table 5.B : Preterm birth GAM (model 2)**")), 
+              subtitle = "smooth variables") %>%
+  tab_options(table.width = pct(15), data_row.padding = px(1),   table.font.size = 12,
+              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
+              heading.title.font.size = 14, heading.subtitle.font.size = 14,
+              source_notes.font.size = 12)
+  PTB_full_smooth_pvalues_gt2
+  
+  PTB_full_smooth_pvalues_gt_save <- PTB_full_smooth_pvalues_gt2%>%
+    gtsave(here("output/tables_paper", "PTB_full_smooth_pvalues_gt_not_adj_for_BW.html")) 
+  PTB_full_smooth_pvalues_gt_save <- PTB_full_smooth_pvalues_gt2%>%
+    gtsave(here("output/tables_paper", "PTB_full_smooth_pvalues_gt_not_adj_for_BW.docx"))
+```
+
+
+
+
 # Very PTB (<32 weeks of GA)
 
 ```{r echo=FALSE}
-m_VPTB_bam <- bam(VPTB~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7) 
+m_VPTB_bam <- bam(VPTB~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7) 
   summary(m_VPTB_bam)
 plot_m_VPTB_bam_BW <- GAM_plot_function_binary(m_VPTB_bam, 1)
 plot_m_VPTB_bam_mat_age <- GAM_plot_function_binary(m_VPTB_bam, 2)
@@ -920,7 +2027,7 @@ plot_VPTB
   uci <- exp(beta+1.96*se)
   d <- abs(beta)/1.81
   my.ci <- data.frame(cbind(OR, lci, uci, d))
-  tab_VPTB_full <- round(head(my.ci, 18), 2)
+  tab_VPTB_full <- round(head(my.ci, 17), 2)
 ```
 
 ```{r}
@@ -931,12 +2038,11 @@ tab_VPTB_full['variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ",
                               " ", " ",
                               "Civil status (ref: married)",
                               "Heatwave (ref: 0)", "Great Recession (ref: 0)",
-                              "COVID first wave (ref: 0)", 
-                              "COVID second wave (ref: 0)")
+                              "COVID (ref: 0)")
 
     tab_VPTB_full['category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
-                            "Southern/Central America", "Single", " ", " "," ", " ")
+                            "Southern/Central America", "Single", "1", "1","1")
     tab_VPTB_full<-tab_VPTB_full[, c('variable', "category", "OR", "lci","uci", "d")]
 
 VPTB_full_gt <- tab_VPTB_full %>%
@@ -947,11 +2053,11 @@ VPTB_full_gt <- tab_VPTB_full %>%
     style = list(
           cell_fill(color = "#E0E0E0")
         ),
-        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17 )))%>%
+        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17)))%>%
     tab_style(
     style = list(
      cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(5, 7, 8, 14,16,18)))
+        locations = cells_body(rows=c(5, 7, 8, 14,16)))
 VPTB_full_gt
 
 VPTB_estimates_whole_model_gt <- VPTB_full_gt%>%
@@ -961,7 +2067,7 @@ VPTB_estimates_whole_model_gt <- VPTB_full_gt%>%
 # Early PTB (32-34 weeks of GA)
 
 ```{r echo=FALSE}
-m_EPTB_bam <- bam(EPTB~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, family="binomial", data=bevn_eco_in7) 
+m_EPTB_bam <- bam(EPTB~ s(BW) + s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, family="binomial", data=bevn_eco_in7) 
   summary(m_EPTB_bam)
 plot_m_EPTB_bam_BW <- GAM_plot_function_binary(m_EPTB_bam, 1)
 plot_m_EPTB_bam_mat_age <- GAM_plot_function_binary(m_EPTB_bam, 2)
@@ -1015,7 +2121,7 @@ plot_EPTB
   uci <- exp(beta+1.96*se)
   d <- abs(beta)/1.81
   my.ci <- data.frame(cbind(OR, lci, uci, d))
-  tab_EPTB_full <- round(head(my.ci, 18), 2)
+  tab_EPTB_full <- round(head(my.ci, 17), 2)
 ```
 
 ```{r}
@@ -1026,12 +2132,11 @@ tab_EPTB_full['variable'] <- c("Intercept", "Parity (ref: 1)", " ", " ",
                               " ", " ",
                               "Civil status (ref: married)",
                               "Heatwave (ref: 0)", "Great Recession (ref: 0)",
-                              "COVID first wave (ref: 0)", 
-                              "COVID second wave (ref: 0)")
+                              "COVID")
 
     tab_EPTB_full['category'] <- c(" ", "2", "3", ">3", "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
-                            "Southern/Central America", "Single", " ", " "," ", " ")
+                            "Southern/Central America", "Single", "1", "1","1")
     tab_EPTB_full<-tab_EPTB_full[, c('variable', "category", "OR", "lci","uci", "d")]
 
 EPTB_full_gt <- tab_EPTB_full %>%
@@ -1042,11 +2147,11 @@ EPTB_full_gt <- tab_EPTB_full %>%
     style = list(
           cell_fill(color = "#E0E0E0")
         ),
-        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17 )))%>%
+        locations = cells_body(rows=c(2, 3, 4, 6, 9, 10, 11,12,13,15,17)))%>%
     tab_style(
     style = list(
      cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(5, 7, 8, 14,16,18)))
+        locations = cells_body(rows=c(5, 7, 8, 14,16)))
 EPTB_full_gt
 
 EPTB_estimates_whole_model_gt <- EPTB_full_gt%>%
@@ -1055,7 +2160,7 @@ EPTB_estimates_whole_model_gt <- EPTB_full_gt%>%
 
 
 ```{r}
-m_GA_bam <- bam(GA_weeks ~   s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7) 
+m_GA_bam <- bam(GA_weeks ~   s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID, data=bevn_eco_in7) 
 summary(m_GA_bam)
 plot_m_GA_bam <- GAM_plot_function_continuous(m_GA_bam, 3) #time
 
@@ -1066,10 +2171,6 @@ beta <- coef(m_GA_bam)
   d <- (abs(beta)/(sqrt(n)*se))
   my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
   tab_GA_full <- round(head(my.ci,18), 2)
-
-
-m_GA_bam <- bam(GA_weeks ~ s(GA_weeks) +  s(mat_age) + s(birth_Y_M_num) + s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW + GR + COVID_first_wave + COVID_second_wave, data=bevn_eco_in7) 
-
 ```
 
 
