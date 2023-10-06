@@ -17,26 +17,18 @@ knitr::opts_chunk$set(echo = TRUE)
 taba <- bevn_eco %>%
   group_by(birthyear) %>%
 summarise(n = n(),
-    mat_age_c = round(mean(mat_age, na.rm = T), digits = 2),        #mat age continuous
-    sd_mat_age_c = round(sd(mat_age, na.rm = T), digits = 2),          
+    mat_age_c = round(mean(mat_age, na.rm = T), digits = 1),        #mat age continuous
+    sd_mat_age_c = round(sd(mat_age, na.rm = T), digits = 1),          
     
-          #mat age category
-    count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,
-    count_mat_age_cat_20_25= sum(mat_age_cat=="(20,25]"), perc_mat_age_cat_20_25= 100*count_mat_age_cat_20_25/n,
-    count_mat_age_cat_25_30= sum(mat_age_cat=="(25,30]"), perc_mat_age_cat_25_30= 100*count_mat_age_cat_25_30/n,
-    count_mat_age_cat_30_35= sum(mat_age_cat=="(30,35]"), perc_mat_age_cat_30_35= 100*count_mat_age_cat_30_35/n,
-    count_mat_age_cat_35_40= sum(mat_age_cat=="(35,40]"), perc_mat_age_cat_35_40= 100*count_mat_age_cat_35_40/n,
-    count_mat_age_cat_40_70= sum(mat_age_cat=="(40,70]"),perc_mat_age_cat_40_70= 100*count_mat_age_cat_40_70/n,
-
     count_parity_1= sum(parity_cat=="(0,1]", na.rm = T),  perc_parity_1= 100*count_parity_1/n,     #parity
     count_parity_2= sum(parity_cat=="(1,2]", na.rm = T), perc_parity_2= 100*count_parity_2/n,
     count_parity_3= sum(parity_cat=="(2,3]", na.rm = T), perc_parity_3= 100*count_parity_3/n,
     count_parity_4= sum(parity_cat=="(3,20]", na.rm = T),  perc_parity_4= 100*count_parity_4/n,
     count_parity_NA = sum(is.na(parity_cat)), perc_parity_NA=100*count_parity_NA/n,
           
-        #moth nat cat 1
-    count_mat_nat_cat_1_1= sum(mother_nationality_cat1=="Switzerland", na.rm = T),     perc_mat_nat_cat_1_1=100*count_mat_nat_cat_1_1/n,  
-    count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
+    #     #moth nat cat 1
+    # count_mat_nat_cat_1_1= sum(mother_nationality_cat1=="Switzerland", na.rm = T),     perc_mat_nat_cat_1_1=100*count_mat_nat_cat_1_1/n,  
+    # count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
 
     #moth nat cat 2
     count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switzerland", na.rm = T), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
@@ -46,17 +38,27 @@ summarise(n = n(),
     count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America", na.rm = T), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
     #count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania", na.rm = T), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
     count_mat_nat_cat_2_NA= sum(is.na(mother_nationality_cat2)), perc_mat_nat_cat_2_NA=100*count_mat_nat_cat_2_NA/n,
-    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America ", na.rm = T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America", na.rm = T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
 
     count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
     count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
+    count_Urban_NA= sum(is.na(Urban3)), perc_Urban_NA=100*count_Urban_NA/n,
 
     count_lang_G=sum(Language=="German or Romansh", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
     count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
     count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
+    count_lang_NA= sum(is.na(Language)), perc_lang_NA=100*count_lang_NA/n,
 
-    mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 2),     #SSEP
-    sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 2)
+    count_civ_stat_M=sum(civil_status3=="Married", na.rm = T),
+    perc_civ_stat_M=100*count_civ_stat_M/n, # civil status
+    count_civ_stat_S=sum(civil_status3=="Single", na.rm = T),
+    perc_civ_stat_S=100*count_civ_stat_S/n, # civil status
+
+    mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 1),     #SSEP
+    sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 1),
+
+    mean_altitude=round(mean(mean_Alt_mean2, na.rm=T), digits=0),
+    sd_altitude=round(sd(mean_Alt_mean2, na.rm=T), digits =0)
           ) %>%     
   
   ungroup()
@@ -69,53 +71,54 @@ formatteda <- taba %>%
          
          "Mean SSEP"= stringr::str_glue("{mean_SSEP} ± {sd_SSEP}"),    #SSEP
          
-         "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age categ
-         "(20-25]" = round({perc_mat_age_cat_20_25}, digits=2),
-         "(25-30]" = round({perc_mat_age_cat_25_30}, digits=2),
-         "(30-35]" = round({perc_mat_age_cat_30_35}, digits=2),
-        "(35-40]" = round({perc_mat_age_cat_35_40}, digits=2),
-        "> 40" = round({perc_mat_age_cat_40_70}, digits=2),
+        "Mean altitude (MASL)"=stringr::str_glue("{mean_altitude} ± {sd_altitude}"), # Altitude
         
-        "1" = round({perc_parity_1}, digits=2), #parity
-        "2" = round({perc_parity_2}, digits=2),
-        "3" = round({perc_parity_3}, digits=2),
-        ">3" = round({perc_parity_4}, digits=2),
-        "missing" = round({perc_parity_NA}, digits=2),
+        "1" = round({perc_parity_1}, digits=1), #parity
+        "2" = round({perc_parity_2}, digits=1),
+        "3" = round({perc_parity_3}, digits=1),
+        ">3" = round({perc_parity_4}, digits=1),
+        "missing" = round({perc_parity_NA}, digits=1),
 
-        "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=2),  #mat nationality cat 2
-        "Africa" = round({perc_mat_nat_cat_2_Af}, digits=2),
-        "Asia" = round({perc_mat_nat_cat_2_As}, digits=2),
-        "Europe" = round({perc_mat_nat_cat_2_E}, digits=2),
-        "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=2),
-        "Missing or Oceania" = round({perc_mat_nat_cat_2_NA}, digits=2),
+        "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=1),  #mat nationality cat 2
+        "Africa" = round({perc_mat_nat_cat_2_Af}, digits=1),
+        "Asia" = round({perc_mat_nat_cat_2_As}, digits=1),
+        "Europe" = round({perc_mat_nat_cat_2_E}, digits=1),
+        "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=1),
+        "Missing or Oceania" = round({perc_mat_nat_cat_2_NA}, digits=1),
         #"Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
-        "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
+        "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=1),
 
-        "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
-        "Urban" = round({perc_Urban3_1}, digits=2),
+        "Rural" = round({perc_Urban3_0}, digits=1),  #Urban3
+        "Urban" = round({perc_Urban3_1}, digits=1),
+        "missing Urban" = round({perc_Urban_NA}, digits=1),
+
+        "German or Romansh"= round({perc_lang_G}, digits=1), #Language region
+        "French"= round({perc_lang_F}, digits=1),
+        "Italian"= round({perc_lang_I}, digits=1),
+        "missing lang" = round({perc_lang_NA}, digits=1),
+
+        "Married"= round({perc_civ_stat_M}, digits=1), # Civil status
+        "Single"= round({perc_civ_stat_S}, digits=1)
         
-        "German or Romansh"= round({perc_lang_G}, digits=2), #Language region
-        "French"= round({perc_lang_F}, digits=2),
-        "Italian"= round({perc_lang_I}, digits=2),
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Missing or Oceania", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
+  select(birthyear, "1", "2", "3", ">3", "missing", "Rural", "Urban", "missing Urban", "German or Romansh", "French", "Italian", "missing lang", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Missing or Oceania", "Married", "Single", "Maternal age (years)", "Mean SSEP", "Mean altitude (MASL)", n)
 formatteda
 
 
 mat_in_gt <- formatteda%>%
   gt()%>%
   tab_header(title="maternal characteristics") %>%
-  tab_spanner(label = "Maternal age category (years)", columns  = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
-  tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3", "missing")) %>%
+  tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3","missing")) %>%
   tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Missing or Oceania") ) %>%
-  tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
-  tab_spanner(label= "Language region", columns =c("German or Romansh", "French", "Italian"))
+  tab_spanner(label= "Urbanicity", columns =c("Rural","Urban","missing Urban")) %>%
+  tab_spanner(label= "Civil status", columns =c("Married","Single")) %>%
+  tab_spanner(label= "Language region", columns =c("German or Romansh", "French", "Italian","missing lang"))
 
 mat_in_gt
-
-mat_in_gt %>%
-  gtsave(here("output/tables", "maternal_characteristics_in.html"))
+# 
+# mat_in_gt %>%
+#   gtsave(here("output/tables_paper", "maternal_characteristics_in.html"))
 ```
 
 
@@ -125,25 +128,14 @@ mat_in_gt %>%
 tabb <- bevn_eco_in7 %>%
   group_by(birthyear) %>%
 summarise(n = n(),
-    mat_age_c = round(mean(mat_age, na.rm = T), digits = 2),        #mat age continuous
-    sd_mat_age_c = round(sd(mat_age, na.rm = T), digits = 2),  
-          #mat age category
-    count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,
-    count_mat_age_cat_20_25= sum(mat_age_cat=="(20,25]"), perc_mat_age_cat_20_25= 100*count_mat_age_cat_20_25/n,
-    count_mat_age_cat_25_30= sum(mat_age_cat=="(25,30]"), perc_mat_age_cat_25_30= 100*count_mat_age_cat_25_30/n,
-    count_mat_age_cat_30_35= sum(mat_age_cat=="(30,35]"), perc_mat_age_cat_30_35= 100*count_mat_age_cat_30_35/n,
-    count_mat_age_cat_35_40= sum(mat_age_cat=="(35,40]"), perc_mat_age_cat_35_40= 100*count_mat_age_cat_35_40/n,
-    count_mat_age_cat_40_70= sum(mat_age_cat=="(40,70]"),perc_mat_age_cat_40_70= 100*count_mat_age_cat_40_70/n,
+    mat_age_c = round(mean(mat_age, na.rm = T), digits = 1),        #mat age continuous
+    sd_mat_age_c = round(sd(mat_age, na.rm = T), digits = 1),  
 
     count_parity_1= sum(parity_cat=="(0,1]", na.rm = T),  perc_parity_1= 100*count_parity_1/n,     #parity
     count_parity_2= sum(parity_cat=="(1,2]", na.rm = T), perc_parity_2= 100*count_parity_2/n,
     count_parity_3= sum(parity_cat=="(2,3]", na.rm = T), perc_parity_3= 100*count_parity_3/n,
     count_parity_4= sum(parity_cat=="(3,20]", na.rm = T),  perc_parity_4= 100*count_parity_4/n,
     count_parity_NA = sum(is.na(parity_cat)), perc_parity_NA=100*count_parity_NA/n,
-
-        #moth nat cat 1
-    #count_mat_nat_cat_1_1= sum(mother_nationality_cat1=="Switzerland", na.rm = T),     perc_mat_nat_cat_1_1=100*count_mat_nat_cat_1_1/n,  
-    #count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
 
     #moth nat cat 2
     count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switzerland", na.rm = T), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
@@ -153,19 +145,26 @@ summarise(n = n(),
     count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America", na.rm = T), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
     #count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania", na.rm = T), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
     count_mat_nat_cat_2_NA= sum(is.na(mother_nationality_cat2)), perc_mat_nat_cat_2_NA=100*count_mat_nat_cat_2_NA/n,
-    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America ", na.rm = T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America", na.rm = T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
 
     count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
     count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
+    count_Urban_NA= sum(is.na(Urban3)), perc_Urban_NA=100*count_Urban_NA/n,
 
     count_lang_G=sum(Language=="German or Romansh", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
     count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
     count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
+    count_lang_NA= sum(is.na(Language)), perc_lang_NA=100*count_lang_NA/n,
 
-    mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 2),     #SSEP
-    sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 2)
+    count_civ_stat_M=sum(civil_status3=="Married", na.rm = T), perc_civ_stat_M=100*count_civ_stat_M/n, # civil status
+    count_civ_stat_S=sum(civil_status3=="Single", na.rm = T), perc_civ_stat_S=100*count_civ_stat_S/n, # civil status
+    
+    mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 1),     #SSEP
+    sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 1),
+    
+    mean_altitude=round(mean(mean_Alt_mean2, na.rm=T), digits=0),
+    sd_altitude=round(sd(mean_Alt_mean2, na.rm=T), digits =0)
           ) %>%     
-  
   ungroup()
   tabb
   
@@ -174,53 +173,56 @@ formattedb <- tabb %>%
   mutate(n=n,
          "Maternal age (years)"= stringr::str_glue("{mat_age_c} ± {sd_mat_age_c}"),    #mat age continuous
          "Mean SSEP"= stringr::str_glue("{mean_SSEP} ± {sd_SSEP}"),    #SSEP
+         "Mean altitude (MASL)"=stringr::str_glue("{mean_altitude} ± {sd_altitude}"), # Altitude
 
-         "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age
-         "(20-25]" = round({perc_mat_age_cat_20_25}, digits=2),
-         "(25-30]" = round({perc_mat_age_cat_25_30}, digits=2),
-         "(30-35]" = round({perc_mat_age_cat_30_35}, digits=2),
-        "(35-40]" = round({perc_mat_age_cat_35_40}, digits=2),
-        "> 40" = round({perc_mat_age_cat_40_70}, digits=2),
+        "1" = round({perc_parity_1}, digits=1), #parity
+        "2" = round({perc_parity_2}, digits=1),
+        "3" = round({perc_parity_3}, digits=1),
+        ">3" = round({perc_parity_4}, digits=1),
+        "missing" = round({perc_parity_NA}, digits=1),
         
-        "1" = round({perc_parity_1}, digits=2), #parity
-        "2" = round({perc_parity_2}, digits=2),
-        "3" = round({perc_parity_3}, digits=2),
-        ">3" = round({perc_parity_4}, digits=2),
-        "missing" = round({perc_parity_NA}, digits=2),
-        
-        "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=2),  #mat nationality cat 2
-        "Africa" = round({perc_mat_nat_cat_2_Af}, digits=2),
-        "Asia" = round({perc_mat_nat_cat_2_As}, digits=2),
-        "Europe" = round({perc_mat_nat_cat_2_E}, digits=2),
-        "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=2),
-        "Missing or Oceania" = round({perc_mat_nat_cat_2_NA}, digits=2),
+        "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=1),  #mat nationality cat 2
+        "Africa" = round({perc_mat_nat_cat_2_Af}, digits=1),
+        "Asia" = round({perc_mat_nat_cat_2_As}, digits=1),
+        "Europe" = round({perc_mat_nat_cat_2_E}, digits=1),
+        "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=1),
+        "Missing or Oceania" = round({perc_mat_nat_cat_2_NA}, digits=1),
         #"Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
-        "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
+        "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=1),
 
-        "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
-        "Urban" = round({perc_Urban3_1}, digits=2),
+        "Rural" = round({perc_Urban3_0}, digits=1),  #Urban3
+        "Urban" = round({perc_Urban3_1}, digits=1),
+        "missing Urban" = round({perc_Urban_NA}, digits=1),
         
-        "German or Romansh"= round({perc_lang_G}, digits=2), #Language region
-        "French"= round({perc_lang_F}, digits=2),
-        "Italian"= round({perc_lang_I}, digits=2),
+        "German or Romansh"= round({perc_lang_G}, digits=1), #Language region
+        "French"= round({perc_lang_F}, digits=1),
+        "Italian"= round({perc_lang_I}, digits=1),
+        "missing lang" = round({perc_lang_NA}, digits=1),
+
+        "Married"= round({perc_civ_stat_M}, digits=1), # Civil status
+        "Single"= round({perc_civ_stat_S}, digits=1)
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Missing or Oceania", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
+  select(birthyear, "1", "2", "3", ">3", "missing",
+         "Rural", "Urban", "missing Urban",
+         "German or Romansh", "French", "Italian", "missing lang",
+         "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Missing or Oceania",
+         "Married", "Single", "Maternal age (years)", "Mean SSEP", "Mean altitude (MASL)", n)
 formattedb
 
 mat_in7_gt <- formattedb%>%
   gt()%>%
   tab_header(title="maternal characteristics") %>%
-  tab_spanner(label = "Maternal age category (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
   tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3", "missing")) %>%
   tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Missing or Oceania") ) %>%
-  tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
-  tab_spanner(label= "Language region", columns =c("German or Romansh","French", "Italian"))
+  tab_spanner(label= "Urbanicity", columns =c("Rural","Urban", "missing Urban")) %>%
+  tab_spanner(label= "Civil status", columns =c("Married","Single")) %>%
+  tab_spanner(label= "Language region", columns =c("German or Romansh", "French", "Italian", "missing lang"))
 
 mat_in7_gt
 
-mat_in7_gt %>%
-  gtsave(here("output/tables", "maternal_characteristics_in7.html")) 
+# mat_in7_gt %>%
+#   gtsave(here("output/tables", "maternal_characteristics_in7.html")) 
 ```
 
 
@@ -230,25 +232,14 @@ mat_in7_gt %>%
 tabc <- bevn_eco_in6 %>%
   group_by(birthyear) %>%
 summarise(n = n(),
-    mat_age_c = round(mean(mat_age, na.rm = T), digits = 2),        #mat age continuous
-    sd_mat_age_c = round(sd(mat_age, na.rm = T), digits = 2),  
+    mat_age_c = round(mean(mat_age, na.rm = T), digits = 1),        #mat age continuous
+    sd_mat_age_c = round(sd(mat_age, na.rm = T), digits = 1),  
     
-    count_mat_age_cat_10_20= sum(mat_age_cat=="(10,20]"), perc_mat_age_cat_10_20= 100*count_mat_age_cat_10_20/n,     #mat age category
-    count_mat_age_cat_20_25= sum(mat_age_cat=="(20,25]"), perc_mat_age_cat_20_25= 100*count_mat_age_cat_20_25/n,
-    count_mat_age_cat_25_30= sum(mat_age_cat=="(25,30]"), perc_mat_age_cat_25_30= 100*count_mat_age_cat_25_30/n,
-    count_mat_age_cat_30_35= sum(mat_age_cat=="(30,35]"), perc_mat_age_cat_30_35= 100*count_mat_age_cat_30_35/n,
-    count_mat_age_cat_35_40= sum(mat_age_cat=="(35,40]"), perc_mat_age_cat_35_40= 100*count_mat_age_cat_35_40/n,
-    count_mat_age_cat_40_70= sum(mat_age_cat=="(40,70]"),perc_mat_age_cat_40_70= 100*count_mat_age_cat_40_70/n,
-
-    count_parity_1= sum(parity_cat=="(0,1]", na.rm = T),  perc_parity_1= 100*count_parity_1/n,     #parity
+   count_parity_1= sum(parity_cat=="(0,1]", na.rm = T),  perc_parity_1= 100*count_parity_1/n,     #parity
     count_parity_2= sum(parity_cat=="(1,2]", na.rm = T), perc_parity_2= 100*count_parity_2/n,
     count_parity_3= sum(parity_cat=="(2,3]", na.rm = T), perc_parity_3= 100*count_parity_3/n,
     count_parity_4= sum(parity_cat=="(3,20]", na.rm = T),  perc_parity_4= 100*count_parity_4/n,
     count_parity_NA = sum(is.na(parity_cat)),  perc_parity_NA=100*count_parity_NA/n,
-          
-        #moth nat cat 1
-    #count_mat_nat_cat_1_1= sum(mother_nationality_cat1=="Switzerland", na.rm = T),     perc_mat_nat_cat_1_1=100*count_mat_nat_cat_1_1/n,  
-    #count_mat_nat_cat_1_2= sum(mother_nationality_cat1=="Outside Switzerland", na.rm = T), perc_mat_nat_cat_1_2=100*count_mat_nat_cat_1_2/n,
 
     #moth nat cat 2
     count_mat_nat_cat_2_S= sum(mother_nationality_cat2=="Switzerland", na.rm=T), perc_mat_nat_cat_2_S=100*count_mat_nat_cat_2_S/n,
@@ -256,20 +247,27 @@ summarise(n = n(),
     count_mat_nat_cat_2_As= sum(mother_nationality_cat2=="Asia", na.rm=T), perc_mat_nat_cat_2_As=100*count_mat_nat_cat_2_As/n,
     count_mat_nat_cat_2_E= sum(mother_nationality_cat2=="Europe", na.rm=T), perc_mat_nat_cat_2_E=100*count_mat_nat_cat_2_E/n,
     count_mat_nat_cat_2_NAm= sum(mother_nationality_cat2=="Northern America", na.rm=T), perc_mat_nat_cat_2_NAm=100*count_mat_nat_cat_2_NAm/n,
-    #count_mat_nat_cat_2_O= sum(mother_nationality_cat2=="Oceania", na.rm=T), perc_mat_nat_cat_2_O=100*count_mat_nat_cat_2_O/n,
     count_mat_nat_cat_2_NA= sum(mother_nationality_cat2=="Missing or Oceania"), perc_mat_nat_cat_2_NA=100*count_mat_nat_cat_2_NA/n,
-    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America ", na.rm=T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
+    count_mat_nat_cat_2_SCA= sum(mother_nationality_cat2=="Southern and Central America", na.rm=T), perc_mat_nat_cat_2_SCA=100*count_mat_nat_cat_2_SCA/n,
     count_mat_nat_cat_2_NA= sum(is.na(mother_nationality_cat2)), perc_mat_nat_cat_2_NA=100*count_mat_nat_cat_2_NA/n,
 
     count_Urban3_0= sum(Urban3=="0", na.rm = T), perc_Urban3_0= 100*count_Urban3_0/n, #Urban3 categ
     count_Urban3_1= sum(Urban3=="1", na.rm = T), perc_Urban3_1= 100*count_Urban3_1/n,
-
+    count_Urban_NA= sum(is.na(Urban3)), perc_Urban_NA=100*count_Urban_NA/n,
+   
     count_lang_G=sum(Language=="German or Romansh", na.rm = T), perc_lang_G=100*count_lang_G/n,  #Language region
     count_lang_F=sum(Language=="French", na.rm = T), perc_lang_F=100*count_lang_F/n,
     count_lang_I=sum(Language=="Italian", na.rm = T), perc_lang_I=100*count_lang_I/n,
+    count_lang_NA= sum(is.na(Language)), perc_lang_NA=100*count_lang_NA/n,
 
-    mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 2),     #SSEP
-    sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 2)
+    count_civ_stat_M=sum(civil_status3=="Married", na.rm = T), perc_civ_stat_M=100*count_civ_stat_M/n, # civil status
+    count_civ_stat_S=sum(civil_status3=="Single", na.rm = T), perc_civ_stat_S=100*count_civ_stat_S/n,
+
+    mean_SSEP = round(mean(mean_ssep2, na.rm = T), digits = 1),     #SSEP
+    sd_SSEP = round(sd(mean_ssep2, na.rm = T), digits = 1),
+    
+    mean_altitude=round(mean(mean_Alt_mean2, na.rm=T), digits=0),  # altitude
+    sd_altitude=round(sd(mean_Alt_mean2, na.rm=T), digits =0)
           ) %>%     
   
   ungroup()
@@ -280,53 +278,54 @@ formattedc <- tabc %>%
   mutate(n=n,
         "Maternal age (years)"= stringr::str_glue("{mat_age_c} ± {sd_mat_age_c}"),    #mat age continuous
          "Mean SSEP"= stringr::str_glue("{mean_SSEP} ± {sd_SSEP}"),    #SSEP
+          "Mean altitude (MASL)"=stringr::str_glue("{mean_altitude} ± {sd_altitude}"), # Altitude
 
-         "(10-20]" = round({perc_mat_age_cat_10_20}, digits=2),   #mat age
-         "(20-25]" = round({perc_mat_age_cat_20_25}, digits=2),
-         "(25-30]" = round({perc_mat_age_cat_25_30}, digits=2),
-         "(30-35]" = round({perc_mat_age_cat_30_35}, digits=2),
-        "(35-40]" = round({perc_mat_age_cat_35_40}, digits=2),
-        "> 40" = round({perc_mat_age_cat_40_70}, digits=2),
-        
-        "1" = round({perc_parity_1}, digits=2), #parity
-        "2" = round({perc_parity_2}, digits=2),
-        "3" = round({perc_parity_3}, digits=2),
-        ">3" = round({perc_parity_4}, digits=2),
-        "missing" = round({perc_parity_NA}, digits=2),
+        "1" = round({perc_parity_1}, digits=1), #parity
+        "2" = round({perc_parity_2}, digits=1),
+        "3" = round({perc_parity_3}, digits=1),
+        ">3" = round({perc_parity_4}, digits=1),
+        "missing" = round({perc_parity_NA}, digits=1),
 
-        "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=2),  #mat nationality cat 2
-        "Africa" = round({perc_mat_nat_cat_2_Af}, digits=2),
-        "Asia" = round({perc_mat_nat_cat_2_As}, digits=2),
-        "Europe" = round({perc_mat_nat_cat_2_E}, digits=2),
-        "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=2),
-        #"Oceania" = round({perc_mat_nat_cat_2_O}, digits=2),
-        "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=2),
-        "Missing or Oceania" = round({perc_mat_nat_cat_2_NA}, digits=2),
+        "Switzerland" = round({perc_mat_nat_cat_2_S}, digits=1),  #mat nationality cat 2
+        "Africa" = round({perc_mat_nat_cat_2_Af}, digits=1),
+        "Asia" = round({perc_mat_nat_cat_2_As}, digits=1),
+        "Europe" = round({perc_mat_nat_cat_2_E}, digits=1),
+        "Northern America" = round({perc_mat_nat_cat_2_NAm}, digits=1),
+        "Southern and Central America" = round({perc_mat_nat_cat_2_SCA}, digits=1),
+        "Missing or Oceania" = round({perc_mat_nat_cat_2_NA}, digits=1),
 
-        "Rural" = round({perc_Urban3_0}, digits=2),  #Urban3
-        "Urban" = round({perc_Urban3_1}, digits=2),
-        
-        "German or Romansh"= round({perc_lang_G}, digits=2), #Language region
-        "French"= round({perc_lang_F}, digits=2),
-        "Italian"= round({perc_lang_I}, digits=2),
-         ) %>%
+        "Rural" = round({perc_Urban3_0}, digits=1),  #Urban3
+        "Urban" = round({perc_Urban3_1}, digits=1),
+        "missing Urban" = round({perc_Urban_NA}, digits=1),
+
+        "German or Romansh"= round({perc_lang_G}, digits=1), #Language region
+        "French"= round({perc_lang_F}, digits=1),
+        "Italian"= round({perc_lang_I}, digits=1),
+        "missing lang" = round({perc_lang_NA}, digits=1),
+
+        "Married"= round({perc_civ_stat_M}, digits=1), # Civil status
+        "Single"= round({perc_civ_stat_S}, digits=1)
+        ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Maternal age (years)", "(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40",  "1", "2", "3", ">3", "missing", "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Missing or Oceania", "Rural", "Urban", "German or Romansh", "French", "Italian", "Mean SSEP")
+  select(birthyear, "1", "2", "3", ">3", "missing",
+         "Rural", "Urban", "missing Urban",
+         "German or Romansh", "French", "Italian", "missing lang",
+         "Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Missing or Oceania",
+         "Married", "Single", "Maternal age (years)", "Mean SSEP", "Mean altitude (MASL)", n)
 formattedc
 
 mat_in6_gt <- formattedc%>%
   gt()%>%
   tab_header(title="maternal characteristics") %>%
-  tab_spanner(label = "Maternal age category (years)", columns = c("(10-20]", "(20-25]", "(25-30]", "(30-35]", "(35-40]", "> 40"))  %>%
   tab_spanner (label = "Parity", columns = c("1", "2", "3", ">3", "missing")) %>%
   tab_spanner(label = "Nationality 2", columns =c("Switzerland", "Africa", "Asia", "Europe", "Northern America", "Southern and Central America", "Missing or Oceania") ) %>%
-  tab_spanner(label= "Urbanicity", columns =c("Rural","Urban")) %>%
-  tab_spanner(label= "Language region", columns =c("German or Romansh","French", "Italian"))
+  tab_spanner(label= "Urbanicity", columns =c("Rural","Urban", "missing Urban")) %>%
+  tab_spanner(label= "Civil status", columns =c("Married","Single")) %>%
+  tab_spanner(label= "Language region", columns =c("German or Romansh", "French", "Italian", "missing lang"))
 
 mat_in6_gt
-
-mat_in6_gt %>%
-  gtsave(here("output/tables", "maternal_characteristics_in6.html"))
+# mat_in6_gt %>%
+#   gtsave(here("output/tables", "maternal_characteristics_in6.html"))
 ```
 
 
@@ -339,28 +338,31 @@ mat_in6_gt %>%
 ```{r}
 tab0 <- bevn_eco %>%
   group_by(birthyear) %>%
-summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthweight
-            sd_birthweight = round(sd(BW, na.rm = T), digits = 2),
+summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 0),   #birthweight
+          sd_birthweight = round(sd(BW, na.rm = T), digits = 0),
 
-           mean_GA_weeks= round(mean(GA_weeks, na.rm=T), digits=2),   #gestational age weeks
-            sd_GA_weeks= round(sd(GA_weeks, na.rm=T), digits=2),
-            n = n(),
-            count_females = sum(sex == "2"),   percent_females = 100*count_females/n,       #sex
-            count_males = sum(sex == "1"),     percent_males = 100*count_males/n,
+          mean_GA_weeks= round(mean(GA_weeks, na.rm=T), digits=1),   #gestational age weeks
+          sd_GA_weeks= round(sd(GA_weeks, na.rm=T), digits=1),
+          n = n(),
+          count_females = sum(sex == "2"),  percent_females = 100*count_females/n,       #sex
+          count_males = sum(sex == "1"), percent_males = 100*count_males/n,
           
-           count_SB_1 = sum(stillbirth=="1", na.rm=T), percent_SB_1=100*count_SB_1/n, #stillbirth
+          count_SB_1 = sum(stillbirth=="1", na.rm=T), percent_SB_1=100*count_SB_1/n, #stillbirth
           
-           count_PTB_1 = sum(PTB=="1", na.rm=T), percent_PTB_1=100*count_PTB_1/n, #preterm birth
+          count_PTB_1 = sum(PTB=="1", na.rm=T), percent_PTB_1=100*count_PTB_1/n, #preterm birth
            
-           count_LBW_1 = sum(LBW=="1", na.rm=T), percent_LBW_1=100*count_LBW_1/n,     #lowbirthweight    
+          count_LBW_1 = sum(LBW=="1", na.rm=T), percent_LBW_1=100*count_LBW_1/n,     #lowbirthweight    
           
-          count_macro_1 = sum(macro_norm=="1", na.rm=T), percent_macro_1=100*count_macro_1/n,  
+          count_macro_1 = sum(macro_norm=="1", na.rm=T), percent_macro_1=100*count_macro_1/n,
+          macro_95th= round(quantile(BW, probs = 0.95, na.rm=TRUE),digits=2), # 95th perc macro
+          sd_macro_95th=round(sd(BW, na.rm = T), digits = 2),
           )%>%
   ungroup()
   tab0
 
 formatted0 <- tab0 %>%
   mutate("Birthweight (g)"= stringr::str_glue("{mean_birthweight} ± {sd_birthweight}"),    #birthweight
+          "Birthweight (g) 0.95 perc. ± sd"= stringr::str_glue("{macro_95th} ± {sd_macro_95th}"),    #macro 95th
          n=n,
          "Gestational Age (weeks)"= stringr::str_glue("{mean_GA_weeks} ± {sd_GA_weeks}"),      #GA_weeks
 
@@ -373,10 +375,10 @@ formatted0 <- tab0 %>%
         
         Low_birth_weight =round({percent_LBW_1}, digits=2),
         
-        Macrosomia=round({percent_macro_1}, digits=2)
+        # Macrosomia=round({percent_macro_1}, digits=2)
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, Stillbirth, Preterm_birth, Low_birth_weight, Macrosomia)
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, Stillbirth, Preterm_birth, Low_birth_weight)
 formatted0
 
 neonat_in_gt <- formatted0%>%
@@ -384,20 +386,20 @@ neonat_in_gt <- formatted0%>%
   tab_header(title="Neonatal characteristics at inclusion") %>%
   tab_spanner(label = "Sex", columns = c(female, male))  
 neonat_in_gt
-
-neonat_in_gt %>%
-  gtsave(here("output/tables", "neonatal_characteristics_in.html"))
+# 
+# neonat_in_gt %>%
+#   gtsave(here("output/tables", "neonatal_characteristics_in.html"))
 ```
 
 ## Birthweight as an outcome: Bevn_eco_in7
 ```{r}
 tab1 <- bevn_eco_in7 %>%
   group_by(birthyear) %>%
-summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthweight
-            sd_birthweight = round(sd(BW, na.rm = T), digits = 2),
+summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 0),   #birthweight
+            sd_birthweight = round(sd(BW, na.rm = T), digits = 0),
 
-           mean_GA_weeks= round(mean(GA_weeks, na.rm=T), digits=2),   #gestational age weeks
-            sd_GA_weeks= round(sd(GA_weeks, na.rm=T), digits=2),
+            mean_GA_weeks= round(mean(GA_weeks, na.rm=T), digits=1),   #gestational age weeks
+            sd_GA_weeks= round(sd(GA_weeks, na.rm=T), digits=1),
             n = n(),
             count_females = sum(sex == "2"),   percent_females = 100*count_females/n,       #sex
             count_males = sum(sex == "1"),     percent_males = 100*count_males/n,
@@ -406,7 +408,10 @@ summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthwei
            
            count_LBW_1 = sum(LBW=="1", na.rm=T), percent_LBW_1=100*count_LBW_1/n,     #lowbirthweight    
           
-          count_macro_1 = sum(macro_norm=="1", na.rm=T), percent_macro_1=100*count_macro_1/n,  
+          count_macro_1 = sum(macro_norm=="1", na.rm=T), percent_macro_1=100*count_macro_1/n,
+          macro_95th= round(quantile(BW, probs = 0.95, na.rm=TRUE),digits=2), # 95th perc macro
+          sd_macro_95th=round(sd(BW, na.rm = T), digits = 2),
+
           )%>%
   ungroup()
   tab1
@@ -414,21 +419,19 @@ summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthwei
   
 formatted1 <- tab1 %>%
   mutate("Birthweight (g)"= stringr::str_glue("{mean_birthweight} ± {sd_birthweight}"),    #birthweight
+          "Birthweight (g) 0.95 perc. ± sd"= stringr::str_glue("{macro_95th} ± {sd_macro_95th}"),    #macro 95th
          n=n,
          "Gestational Age (weeks)"= stringr::str_glue("{mean_GA_weeks} ± {sd_GA_weeks}"),      #GA_weeks
 
         female =round({percent_females}, digits=2),
         male = round({percent_males}, digits=2),
-        
         Preterm_birth=round({percent_PTB_1}, digits=2),
-        
         Low_birth_weight =round({percent_LBW_1}, digits=2),
-        
-        Macrosomia=round({percent_macro_1}, digits=2)
+        # Macrosomia=round({percent_macro_1}, digits=2)
         
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, Preterm_birth, Low_birth_weight, Macrosomia)
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, Preterm_birth, Low_birth_weight)
 formatted1
 
 neonat_in7_gt <- formatted1%>%
@@ -437,19 +440,19 @@ neonat_in7_gt <- formatted1%>%
   tab_spanner(label = "Sex", columns = c(female, male))
 neonat_in7_gt
 
-neonat_in7_gt %>%
-  gtsave(here("output/tables", "neonatal_characteristics_in7.html"))
+# neonat_in7_gt %>%
+#   gtsave(here("output/tables", "neonatal_characteristics_in7.html"))
 ```
 
 ## Stillbirth as an outcome: Bevn_eco_in6
 ```{r}
 tab2 <- bevn_eco_in6 %>%
   group_by(birthyear) %>%
-summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthweight
-            sd_birthweight = round(sd(BW, na.rm = T), digits = 2),
+summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 0),   #birthweight
+            sd_birthweight = round(sd(BW, na.rm = T), digits = 0),
 
-           mean_GA_weeks= round(mean(GA_weeks, na.rm=T), digits=2),   #gestational age weeks
-            sd_GA_weeks= round(sd(GA_weeks, na.rm=T), digits=2),
+           mean_GA_weeks= round(mean(GA_weeks, na.rm=T), digits=1),   #gestational age weeks
+            sd_GA_weeks= round(sd(GA_weeks, na.rm=T), digits=1),
             n = n(),
             count_females = sum(sex == "2"),   percent_females = 100*count_females/n,       #sex
             count_males = sum(sex == "1"),     percent_males = 100*count_males/n,
@@ -460,7 +463,9 @@ summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthwei
            
            count_LBW_1 = sum(LBW=="1", na.rm=T), percent_LBW_1=100*count_LBW_1/n,     #lowbirthweight    
           
-          count_macro_1 = sum(macro_norm=="1", na.rm=T), percent_macro_1=100*count_macro_1/n,  
+          count_macro_1 = sum(macro_norm=="1", na.rm=T), percent_macro_1=100*count_macro_1/n,
+          macro_95th= round(quantile(BW, probs = 0.95, na.rm=TRUE),digits=2), # 95th perc macro
+          sd_macro_95th=round(sd(BW, na.rm = T), digits = 2),
           )%>%
   ungroup()
   tab2
@@ -468,6 +473,7 @@ summarise(mean_birthweight = round(mean(BW, na.rm = T), digits = 2),   #birthwei
   
 formatted2 <- tab2 %>%
   mutate("Birthweight (g)"= stringr::str_glue("{mean_birthweight} ± {sd_birthweight}"),    #birthweight
+          "Birthweight (g) 0.95 perc. ± sd"= stringr::str_glue("{macro_95th} ± {sd_macro_95th}"),    #macro 95th
          n=n,
          "Gestational Age (weeks)"= stringr::str_glue("{mean_GA_weeks} ± {sd_GA_weeks}"),      #GA_weeks
 
@@ -480,10 +486,10 @@ formatted2 <- tab2 %>%
         
         Low_birth_weight =round({percent_LBW_1}, digits=2),
         
-        Macrosomia=round({percent_macro_1}, digits=2)
+        # Macrosomia=round({percent_macro_1}, digits=2)
          ) %>%
   tidyr::complete(birthyear) %>%
-  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, Stillbirth, Preterm_birth, Low_birth_weight, Macrosomia)
+  select(birthyear, n, "Birthweight (g)", "Gestational Age (weeks)", female, male, Stillbirth, Preterm_birth, Low_birth_weight)
 formatted2
 
 neonat_in6_gt <- formatted2%>%
@@ -492,6 +498,248 @@ neonat_in6_gt <- formatted2%>%
   tab_spanner(label = "Sex", columns = c(female, male)) 
 neonat_in6_gt
 
-neonat_in6_gt %>%
-  gtsave(here("output/tables", "neonatal_characteristics_in6.html"))
+# neonat_in6_gt %>%
+#   gtsave(here("output/tables", "neonatal_characteristics_in6.html"))
+```
+
+# Maternal characteristics: women exposed to each crisis
+## Delivery during crisis, or delivery in each semester
+
+### Initial population : bevn_eco
+
+```{r}
+# tab_cr_eco <- bevn_eco %>%
+#   group_by(birthyear) %>%
+# summarise(n = n(),
+#     count_HW= sum(HW==1, na.rm = T),  perc_HW= round((100*count_HW/n), digits=1),     # during delivery: heatwave 
+#     count_GR= sum(GR==1, na.rm = T), perc_GR= round((100*count_GR/n), digits=1),     # Great Recession
+#     count_COVID= sum(COVID==1, na.rm = T), perc_COVID= round((100*count_COVID/n), digits=1), # COVID 
+# 
+#     count_HW_trim1= sum(HW_first_trimester==1, na.rm = T),  perc_HW_first_trimester= round((100*count_HW_trim1/n), digits=1),     # 1st trimester exposure: heatwave 
+#     count_GR_trim1= sum(GR_first_trimester==1, na.rm = T), perc_GR_first_trimester= round((100*count_GR_trim1/n), digits=1),     # Great Recession
+#     count_COVID_trim1= sum(COVID_first_trimester==1, na.rm = T), perc_COVID_first_trimester= round((100*count_COVID_trim1/n), digits=1), # COVID 
+#     
+#      count_HW_trim2= sum(HW_second_trimester==1, na.rm = T),  perc_HW_second_trimester= round((100*count_HW_trim2/n), digits=1),     # 1st trimester exposure: heatwave 
+#     count_GR_trim2= sum(GR_second_trimester==1, na.rm = T), perc_GR_second_trimester= round((100*count_GR_trim2/n), digits=1),     # Great Recession
+#     count_COVID_trim2= sum(COVID_second_trimester==1, na.rm = T), perc_COVID_second_trimester= round((100*count_COVID_trim2/n), digits=1), # COVID 
+#     
+#      count_HW_trim3= sum(HW_third_trimester==1, na.rm = T),  perc_HW_third_trimester= round((100*count_HW_trim3/n), digits=1),     # 1st trimester exposure: heatwave 
+#     count_GR_trim3= sum(GR_third_trimester==1, na.rm = T), perc_GR_third_trimester= round((100*count_GR_trim3/n), digits=1),     # Great Recession
+#     count_COVID_trim3= sum(COVID_third_trimester==1, na.rm = T), perc_COVID_third_trimester= round((100*count_COVID_trim3/n), digits=1)
+#           ) %>%     
+#   ungroup()
+#   tab_cr_eco
+#   
+# formattedcr_eco <- tab_cr_eco %>%
+#   mutate(n=n,
+#                "Heatwave"= stringr::str_glue("{count_HW} ({perc_HW})"),
+#                "Great Recession"= stringr::str_glue("{count_GR} ({perc_GR})"),      
+#                "COVID-19"= stringr::str_glue("{count_COVID} ({perc_COVID})"),      
+# 
+#               "Heatwave (trim 1)"= stringr::str_glue("{count_HW_trim1} ({perc_HW_first_trimester})"),
+#                "Great Recession (trim 1)"= stringr::str_glue("{count_GR_trim1} ({perc_GR_first_trimester})"),   
+#                "COVID-19 (trim 1)"= stringr::str_glue("{count_COVID_trim1} ({perc_COVID_first_trimester})"),
+#          
+#                "Heatwave (trim 2)"= stringr::str_glue("{count_HW_trim2} ({perc_HW_second_trimester})"),
+#                "Great Recession (trim 2)"= stringr::str_glue("{count_GR_trim2} ({perc_GR_second_trimester})"),  
+#                "COVID-19 (trim 2)"= stringr::str_glue("{count_COVID_trim2} ({perc_COVID_second_trimester})"),
+#          
+#               "Heatwave (trim 3)"= stringr::str_glue("{count_HW_trim3} ({perc_HW_third_trimester})"),
+#                "Great Recession (trim 3)"= stringr::str_glue("{count_GR_trim3} ({perc_GR_third_trimester})"),  
+#                "COVID-19 (trim 3)"= stringr::str_glue("{count_COVID_trim3} ({perc_COVID_third_trimester})")
+#          ) %>%
+#   tidyr::complete(birthyear) %>%
+#   select(birthyear, "Heatwave", "Great Recession", "COVID-19",
+#          "Heatwave (trim 1)", "Great Recession (trim 1)", "COVID-19 (trim 1)",
+#          "Heatwave (trim 2)", "Great Recession (trim 2)", "COVID-19 (trim 2)", 
+#          "Heatwave (trim 3)", "Great Recession (trim 3)", "COVID-19 (trim 3)", n)
+# formattedcr_eco
+# 
+# mat_in_gt_cr <- formattedcr_eco%>%
+#   gt()%>%
+#   tab_header(title="maternal characteristics") %>%
+#   tab_spanner (label = "Exposure to a crisis during delivery", columns = c("Heatwave", "Great Recession", "COVID-19")) %>%
+#   tab_spanner(label = "Exposure during the first trimester", columns =c("Heatwave (trim 1)", "Great Recession (trim 1)", "COVID-19 (trim 1)") ) %>%
+#   tab_spanner(label= "Exposure during the second trimester", columns =c("Heatwave (trim 2)", "Great Recession (trim 2)", "COVID-19 (trim 2)")) %>%
+#   tab_spanner(label= "Exposure during the third trimester", columns =c("Heatwave (trim 3)", "Great Recession (trim 3)", "COVID-19 (trim 3)"))
+# mat_in_gt_cr
+```
+
+### Initial population : bevn_eco
+
+Not grouped by year
+
+```{r}
+tab_cr_eco_b <- bevn_eco %>%
+summarise(n = n(),
+    count_HW= sum(HW==1, na.rm = T),  perc_HW= format(round((100*count_HW/n), digits=1), nsmall=1),     # during delivery: heatwave 
+    count_GR= sum(GR==1, na.rm = T), perc_GR= format(round((100*count_GR/n), digits=1), nsmall=1),     # Great Recession
+    count_COVID= sum(COVID==1, na.rm = T), perc_COVID= format(round((100*count_COVID/n), digits=1), nsmall=1), # COVID 
+
+    count_HW_trim1= sum(HW_first_trimester==1, na.rm = T),  perc_HW_first_trimester= format(round((100*count_HW_trim1/n), digits=1), nsmall=1),     
+    count_GR_trim1= sum(GR_first_trimester==1, na.rm = T), perc_GR_first_trimester= format(round((100*count_GR_trim1/n), digits=1), nsmall=1),   
+    count_COVID_trim1= sum(COVID_first_trimester==1, na.rm = T), perc_COVID_first_trimester= format(round((100*count_COVID_trim1/n), digits=1), nsmall=1), # COVID 
+    
+     count_HW_trim2= sum(HW_second_trimester==1, na.rm = T),  perc_HW_second_trimester= format(round((100*count_HW_trim2/n), digits=1), nsmall=1),
+    count_GR_trim2= sum(GR_second_trimester==1, na.rm = T), perc_GR_second_trimester= format(round((100*count_GR_trim2/n), digits=1), nsmall=1),     
+    count_COVID_trim2= sum(COVID_second_trimester==1, na.rm = T), perc_COVID_second_trimester= format(round((100*count_COVID_trim2/n), digits=1), nsmall=1), 
+    
+     count_HW_trim3= sum(HW_third_trimester==1, na.rm = T),  perc_HW_third_trimester= format(round((100*count_HW_trim3/n), digits=1), nsmall=1),    
+    count_GR_trim3= sum(GR_third_trimester==1, na.rm = T), perc_GR_third_trimester= format(round((100*count_GR_trim3/n), digits=1), nsmall=1),     
+    count_COVID_trim3= sum(COVID_third_trimester==1, na.rm = T), perc_COVID_third_trimester= format(round((100*count_COVID_trim3/n), digits=1), nsmall=1)
+          )
+tab_cr_eco_b
+
+
+formattedcr_eco_b <- tab_cr_eco_b %>%
+  mutate(n=n,
+               "Heatwave"= stringr::str_glue("{count_HW} ({perc_HW})"),
+               "Great Recession"= stringr::str_glue("{count_GR} ({perc_GR})"),      
+               "COVID-19"= stringr::str_glue("{count_COVID} ({perc_COVID})"),      
+
+              "Heatwave (trim 1)"= stringr::str_glue("{count_HW_trim1} ({perc_HW_first_trimester})"),
+               "Great Recession (trim 1)"= stringr::str_glue("{count_GR_trim1} ({perc_GR_first_trimester})"),   
+               "COVID-19 (trim 1)"= stringr::str_glue("{count_COVID_trim1} ({perc_COVID_first_trimester})"),
+         
+               "Heatwave (trim 2)"= stringr::str_glue("{count_HW_trim2} ({perc_HW_second_trimester})"),
+               "Great Recession (trim 2)"= stringr::str_glue("{count_GR_trim2} ({perc_GR_second_trimester})"),  
+               "COVID-19 (trim 2)"= stringr::str_glue("{count_COVID_trim2} ({perc_COVID_second_trimester})"),
+         
+              "Heatwave (trim 3)"= stringr::str_glue("{count_HW_trim3} ({perc_HW_third_trimester})"),
+               "Great Recession (trim 3)"= stringr::str_glue("{count_GR_trim3} ({perc_GR_third_trimester})"),  
+               "COVID-19 (trim 3)"= stringr::str_glue("{count_COVID_trim3} ({perc_COVID_third_trimester})")
+         ) %>%
+  select("Heatwave", "Great Recession", "COVID-19",
+         "Heatwave (trim 1)", "Great Recession (trim 1)", "COVID-19 (trim 1)",
+         "Heatwave (trim 2)", "Great Recession (trim 2)", "COVID-19 (trim 2)", 
+         "Heatwave (trim 3)", "Great Recession (trim 3)", "COVID-19 (trim 3)")
+formattedcr_eco_b
+```
+
+### Birthweight as an outcome : bevn_eco_in7
+
+Not grouped by year
+
+```{r}
+tab_cr_eco_b_in7 <- bevn_eco_in7 %>%
+summarise(n = n(),
+    count_HW= sum(HW==1, na.rm = T),  perc_HW= format(round((100*count_HW/n), digits=1), nsmall=1),     # during delivery: heatwave 
+    count_GR= sum(GR==1, na.rm = T), perc_GR= format(round((100*count_GR/n), digits=1), nsmall=1),     # Great Recession
+    count_COVID= sum(COVID==1, na.rm = T), perc_COVID= format(round((100*count_COVID/n), digits=1), nsmall=1), # COVID
+
+    count_HW_trim1= sum(HW_first_trimester==1, na.rm = T),  perc_HW_first_trimester= format(round((100*count_HW_trim1/n), digits=1), nsmall=1),     # 1st trimester exposure: heatwave 
+    count_GR_trim1= sum(GR_first_trimester==1, na.rm = T), perc_GR_first_trimester= format(round((100*count_GR_trim1/n), digits=1), nsmall=1),     # Great Recession
+    count_COVID_trim1= sum(COVID_first_trimester==1, na.rm = T), perc_COVID_first_trimester= format(round((100*count_COVID_trim1/n), digits=1), nsmall=1), # COVID 
+    
+     count_HW_trim2= sum(HW_second_trimester==1, na.rm = T),  perc_HW_second_trimester= format(round((100*count_HW_trim2/n), digits=1), nsmall=1),
+    count_GR_trim2= sum(GR_second_trimester==1, na.rm = T), perc_GR_second_trimester= format(round((100*count_GR_trim2/n), digits=1), nsmall=1),     
+    count_COVID_trim2= sum(COVID_second_trimester==1, na.rm = T), perc_COVID_second_trimester= format(round((100*count_COVID_trim2/n), digits=1), nsmall=1), 
+    
+     count_HW_trim3= sum(HW_third_trimester==1, na.rm = T),  perc_HW_third_trimester= format(round((100*count_HW_trim3/n), digits=1), nsmall=1),    
+    count_GR_trim3= sum(GR_third_trimester==1, na.rm = T), perc_GR_third_trimester= format(round((100*count_GR_trim3/n), digits=1), nsmall=1),    
+    count_COVID_trim3= sum(COVID_third_trimester==1, na.rm = T), perc_COVID_third_trimester= format(round((100*count_COVID_trim3/n), digits=1), nsmall=1)
+          )
+tab_cr_eco_b_in7
+
+
+formattedcr_eco_b_in7 <- tab_cr_eco_b_in7 %>%
+  mutate(n=n,
+               "Heatwave"= stringr::str_glue("{count_HW} ({perc_HW})"),
+               "Great Recession"= stringr::str_glue("{count_GR} ({perc_GR})"),      
+               "COVID-19"= stringr::str_glue("{count_COVID} ({perc_COVID})"),      
+
+              "Heatwave (trim 1)"= stringr::str_glue("{count_HW_trim1} ({perc_HW_first_trimester})"),
+               "Great Recession (trim 1)"= stringr::str_glue("{count_GR_trim1} ({perc_GR_first_trimester})"),   
+               "COVID-19 (trim 1)"= stringr::str_glue("{count_COVID_trim1} ({perc_COVID_first_trimester})"),
+         
+               "Heatwave (trim 2)"= stringr::str_glue("{count_HW_trim2} ({perc_HW_second_trimester})"),
+               "Great Recession (trim 2)"= stringr::str_glue("{count_GR_trim2} ({perc_GR_second_trimester})"),  
+               "COVID-19 (trim 2)"= stringr::str_glue("{count_COVID_trim2} ({perc_COVID_second_trimester})"),
+         
+              "Heatwave (trim 3)"= stringr::str_glue("{count_HW_trim3} ({perc_HW_third_trimester})"),
+               "Great Recession (trim 3)"= stringr::str_glue("{count_GR_trim3} ({perc_GR_third_trimester})"),  
+               "COVID-19 (trim 3)"= stringr::str_glue("{count_COVID_trim3} ({perc_COVID_third_trimester})")
+         ) %>%
+  select("Heatwave", "Great Recession", "COVID-19",
+         "Heatwave (trim 1)", "Great Recession (trim 1)", "COVID-19 (trim 1)",
+         "Heatwave (trim 2)", "Great Recession (trim 2)", "COVID-19 (trim 2)", 
+         "Heatwave (trim 3)", "Great Recession (trim 3)", "COVID-19 (trim 3)")
+formattedcr_eco_b_in7
+```
+
+### Stillbirth as an outcome : bevn_eco_in6
+
+Not grouped by year
+
+```{r}
+tab_cr_eco_b_in6 <- bevn_eco_in6 %>%
+summarise(n = n(),
+    count_HW= sum(HW==1, na.rm = T),  perc_HW= format(round((100*count_HW/n), digits=1), nsmall=1),     # during delivery: heatwave 
+    count_GR= sum(GR==1, na.rm = T), perc_GR= format(round((100*count_GR/n), digits=1), nsmall=1),     # Great Recession
+    count_COVID= sum(COVID==1, na.rm = T), perc_COVID= format(round((100*count_COVID/n), digits=1), nsmall=1), # COVID
+    
+    count_HW_trim1= sum(HW_first_trimester==1, na.rm = T),  perc_HW_first_trimester= format(round((100*count_HW_trim1/n), digits=1), nsmall=1),    
+    count_GR_trim1= sum(GR_first_trimester==1, na.rm = T), perc_GR_first_trimester= format(round((100*count_GR_trim1/n), digits=1), nsmall=1),     
+    count_COVID_trim1= sum(COVID_first_trimester==1, na.rm = T), perc_COVID_first_trimester= format(round((100*count_COVID_trim1/n), digits=1), nsmall=1), 
+    
+     count_HW_trim2= sum(HW_second_trimester==1, na.rm = T),  perc_HW_second_trimester= format(round((100*count_HW_trim2/n), digits=1), nsmall=1),     
+    count_GR_trim2= sum(GR_second_trimester==1, na.rm = T), perc_GR_second_trimester= format(round((100*count_GR_trim2/n), digits=1), nsmall=1),    
+    count_COVID_trim2= sum(COVID_second_trimester==1, na.rm = T), perc_COVID_second_trimester= format(round((100*count_COVID_trim2/n), digits=1), nsmall=1), 
+    
+     count_HW_trim3= sum(HW_third_trimester==1, na.rm = T),  perc_HW_third_trimester= format(round((100*count_HW_trim3/n), digits=1), nsmall=1),    
+    count_GR_trim3= sum(GR_third_trimester==1, na.rm = T), perc_GR_third_trimester= format(round((100*count_GR_trim3/n), digits=1), nsmall=1),     
+    count_COVID_trim3= sum(COVID_third_trimester==1, na.rm = T), perc_COVID_third_trimester= format(round((100*count_COVID_trim3/n), digits=1), nsmall=1)
+          )
+tab_cr_eco_b_in6
+
+
+formattedcr_eco_b_in6 <- tab_cr_eco_b_in6 %>%
+  mutate(n=n,
+               "Heatwave"= stringr::str_glue("{count_HW} ({perc_HW})"),
+               "Great Recession"= stringr::str_glue("{count_GR} ({perc_GR})"),      
+               "COVID-19"= stringr::str_glue("{count_COVID} ({perc_COVID})"),      
+
+              "Heatwave (trim 1)"= stringr::str_glue("{count_HW_trim1} ({perc_HW_first_trimester})"),
+               "Great Recession (trim 1)"= stringr::str_glue("{count_GR_trim1} ({perc_GR_first_trimester})"),   
+               "COVID-19 (trim 1)"= stringr::str_glue("{count_COVID_trim1} ({perc_COVID_first_trimester})"),
+         
+               "Heatwave (trim 2)"= stringr::str_glue("{count_HW_trim2} ({perc_HW_second_trimester})"),
+               "Great Recession (trim 2)"= stringr::str_glue("{count_GR_trim2} ({perc_GR_second_trimester})"),  
+               "COVID-19 (trim 2)"= stringr::str_glue("{count_COVID_trim2} ({perc_COVID_second_trimester})"),
+         
+              "Heatwave (trim 3)"= stringr::str_glue("{count_HW_trim3} ({perc_HW_third_trimester})"),
+               "Great Recession (trim 3)"= stringr::str_glue("{count_GR_trim3} ({perc_GR_third_trimester})"),  
+               "COVID-19 (trim 3)"= stringr::str_glue("{count_COVID_trim3} ({perc_COVID_third_trimester})")
+         ) %>%
+  select("Heatwave", "Great Recession", "COVID-19",
+         "Heatwave (trim 1)", "Great Recession (trim 1)", "COVID-19 (trim 1)",
+         "Heatwave (trim 2)", "Great Recession (trim 2)", "COVID-19 (trim 2)", 
+         "Heatwave (trim 3)", "Great Recession (trim 3)", "COVID-19 (trim 3)")
+formattedcr_eco_b_in6
+```
+
+
+# Birth rate among permanent residents only
+
+```{r}
+tab_br <- bevn_eco_in_br %>%
+  group_by(birthyear) %>%
+summarise(n = n(),
+          birth_rate= round(((1000*n)/mean(population)), digits=2),
+          )%>%
+  ungroup()
+  tab_br
+
+formatted_br <- tab_br %>%
+  mutate(n=n,
+         "Birthrate (/1000 inhabitants)"= birth_rate,
+         ) %>%
+  tidyr::complete(birthyear) %>%
+  select(birthyear, n, "Birthrate (/1000 inhabitants)")
+formatted_br
+
+birthrate_gt <- formatted_br%>%
+  gt()%>%
+  tab_header(title="Birthrate among permanent residents") 
+birthrate_gt
 ```
