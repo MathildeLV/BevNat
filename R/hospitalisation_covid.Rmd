@@ -1,0 +1,42 @@
+---
+title: "Hospital cases Covid 19 bagdata"
+author: "Mathilde Le Vu"
+date: '2022-06-28'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+.libPaths(c("H:/Documents/R/win-library/4.1","C:/Program Files/R/R-4.1.2/library"))
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+```
+
+## R Markdown
+
+```{r opening data}
+hosp_cases <- read.csv(here("data/bag_covid19_data", "COVID19Hosp_geoRegion.csv"))
+str(hosp_cases$datum)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r entries per date}
+hosp_cases$datum <- as.Date(hosp_cases$datum, format = "%Y-%m-%d", useNA= "always")
+hosp_cases$entries <- as.numeric(hosp_cases$entries)
+hosp_cases$entries_letzter_stand <- as.numeric(hosp_cases$entries_letzter_stand)
+
+
+
+hosp_cases <- aggregate(x = hosp_cases[c("entries", "")],
+                     FUN = sum,
+                     by = list(Group.date = hosp_cases$datum))
+
+dat3 <- aggregate(x = hosp_cases[c("entries", "pop")],
+                     FUN = sum,
+                     by = list(Group.date = hosp_cases$datum))
+plot(dat3$Group.date, dat3$entries)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
