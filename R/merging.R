@@ -16,36 +16,46 @@ summary(anth$MS_Reg)
 eco <- anth %>%
   full_join(gem)
 
-
 # Merging bevn whole (2007-2020) and 2021
 bevn2007_21 <- bevn %>%
   full_join(bevn_2021)
 
+# renaming variable names of bevn_2022 like bevn_2021
+bevn_2022 <- bevn_2022 %>%
+  rename(Art.der.Geburt=Art.der.Geburt..einfach.mehrfach.) %>%
+  rename(Mutter.Zivilstand=Mutter..Zivilstand) %>%
+  rename(lebend.geboren.oder.nicht=Art.der.Geburt..Lebend..Totgeburt.) %>%
+  rename(Mutter..ständig.oder.nicht.ständiger.Wohnsitz=Mutter..ständiger.oder.nicht.ständiger.Wohnsitz)
+
+
+bevn2007_22 <- bevn2007_21 %>%
+  full_join(bevn_2022)
+
 # Merging bevn and eco file
 summary(eco$comm16)
-summary(bevn2007_21$Mutter..Wohngemeinde...Wohnstaat) ##1-6910 for commune if resident inside Switz <br> 8201-8703 if resident outside of Switz <br>
+summary(bevn2007_22$Mutter..Wohngemeinde...Wohnstaat) ##1-6910 for commune if resident inside Switz <br> 8201-8703 if resident outside of Switz <br>
 
-bevn2007_21$Mutter..Wohngemeinde...Wohnstaat <- as.numeric(bevn2007_21$Mutter..Wohngemeinde...Wohnstaat) 
-bevn2007_21 <-  rename(bevn2007_21, com=Mutter..Wohngemeinde...Wohnstaat) 
+bevn2007_22$Mutter..Wohngemeinde...Wohnstaat <- as.numeric(bevn2007_22$Mutter..Wohngemeinde...Wohnstaat) 
+bevn2007_22 <-  rename(bevn2007_22, com=Mutter..Wohngemeinde...Wohnstaat) 
 
 eco <-  rename(eco, com=comm16) 
 #like this commune variables are named the same (com) in both bevn and eco datasets.
 
-summary(bevn2007_21$com)
+summary(bevn2007_22$com)
 summary(eco$com)
 
 # to check Gemeindenummer
 
-bevn2007_21_test <- bevn2007_21 %>%
+bevn2007_22_test <- bevn2007_22 %>%
   full_join(eco)
 
-com_eco <- bevn2007_21_test %>%
+com_eco <- bevn2007_22_test %>%
   filter( is.na(Statistikjahr)) %>%
   dplyr::select(com)
 
 com_eco
 
-com_bevn <- bevn2007_21_test %>%
+com_bevn <- bevn2007_22_test %>%
   filter( is.na(MS_Reg)) %>%
   dplyr::select(com) %>%
   distinct(com) %>%
@@ -215,11 +225,11 @@ eco2 <- eco %>%
 eco2
 
 
-bevn2007_21 <- bevn2007_21 %>%
+bevn2007_22 <- bevn2007_22 %>%
   mutate(com =as.numeric(com))
 
 
-bevn_eco <- bevn2007_21 %>%
+bevn_eco <- bevn2007_22 %>%
   full_join(eco2) 
 
 
@@ -237,4 +247,5 @@ pop <- pop %>%
   mutate(population=as.numeric(population))
 
 bevn_eco <- bevn_eco %>%
-  full_join(pop)
+  full_join(pop) 
+
