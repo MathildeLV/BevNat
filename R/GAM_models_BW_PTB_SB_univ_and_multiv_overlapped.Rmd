@@ -1,0 +1,317 @@
+---
+title: "Untitled"
+author: "Graphs BW PTB SB univ and muliv overlapped"
+date: "2023-08-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# BW
+
+## univariate and multiv (NOT adj for gest age)
+
+```{r include=FALSE}
+m_BW_bam_univ <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7) 
+# model run in GAM_Summary_all_var_different_outcomes_sept2023.Rmd
+# m_BW3 <- bam(BW ~ s(mat_age) + s(birth_Y_M_num, k=7)+  s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+ parity_cat + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW +GR_relativ_by_pregn_month+covid_hosp_relativ_by_pregn_month, data=bevn_eco_in7)
+# extracting the plot information
+plot_m_BW_univ_time <- GAM_plot_function_continuous(m_BW_bam_univ, 1) %>%
+  mutate(model="unadjusted")# time
+plot_m_BW_muliv_time_not_adj_GA <- GAM_plot_function_continuous(m_BW3, 2) %>%
+  mutate(model="adjusted")# time 
+```
+
+
+```{r}
+x_date <-   bevn_eco_in7 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_BW_univ_multiv_not_adj_GA <- plot_m_BW_univ_time %>%
+  rbind(plot_m_BW_muliv_time_not_adj_GA) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+# graph parameters
+lim1 <- as.POSIXct(ymd("2007-01-01"))
+lim2 <- as.POSIXct(ymd("2021-12-01"))
+
+plot_BW_univ_multiv_unadj_GA <- ggplot(data=plot_data_BW_univ_multiv_not_adj_GA)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=model, linetype=model),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=model),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3200,3450)) +
+  scale_colour_manual('model',                                          
+                      limits=c("unadjusted","adjusted"),
+                      values =c("darkgrey", "black"))+
+  scale_fill_manual('model',                                                                 limits=c("unadjusted","adjusted"), 
+                    values =c("darkgrey", "black"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  scale_linetype_manual('model',
+                        limits = c("unadjusted", "adjusted"),
+                        values = c("dashed", "solid")) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
+        theme(axis.title.x = axis.title.x.position)
+plot_BW_univ_multiv_unadj_GA
+```
+
+ Univariate only
+```{r include=FALSE}
+m_BW_bam_univ <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7) 
+plot_m_BW_univ_time <- GAM_plot_function_continuous(m_BW_bam_univ, 1) %>%
+  mutate(model="unadjusted")
+```
+
+
+```{r}
+x_date <-   bevn_eco_in7 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_BW_univ_not_adj_GA <- plot_m_BW_univ_time %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+# graph parameters
+lim1 <- as.POSIXct(ymd("2007-01-01"))
+lim2 <- as.POSIXct(ymd("2022-12-01"))
+
+plot_BW_univ_unadj_GA <- ggplot(data=plot_data_BW_univ_not_adj_GA)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3200,3450)) +
+  scale_colour_manual(                      values ="black")+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
+        theme(axis.title.x = axis.title.x.position)
+plot_BW_univ_unadj_GA
+```
+
+# PTB
+## univariate and multiv (UNADJUSTED FOR BIRTHWEIGHT)
+
+```{r include=FALSE}
+m_PTB_bam_univ <- bam(PTB~ s(birth_Y_M_num, k=15), family="binomial", data=bevn_eco_in7) 
+ # m_PTB3_crises <- bam(PTB ~s(mat_age) + s(birth_Y_M_num, k=7)+ s(month, bs="cc") + s(mean_ssep2) + s(mean_Alt_mean2)+  parity_cat + sex +Urban3 + Language + mother_nationality_cat2 +civil_status3 + HW + GR_relativ_by_pregn_month + covid_hosp_relativ_by_pregn_month, family="binomial", data=bevn_eco_in7) 
+summary(m_PTB_bam2)
+# extracting the plot information
+m_PTB_bam_univ <- GAM_plot_function_binary(m_PTB_bam_univ, 1) %>%
+  mutate(model="unadjusted")# time
+plot_m_PTB_muliv_time <- GAM_plot_function_binary(m_PTB3_no_crises, 2) %>%
+  mutate(model="adjusted")# time 
+```
+
+
+```{r}
+x_date <-   bevn_eco_in7 %>% 
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_PTB_univ_multiv <- m_PTB_bam_univ %>%
+  rbind(plot_m_PTB_muliv_time) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+plot_PTB_univ_multiv_unadj_BW <- ggplot(data=plot_data_PTB_univ_multiv)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=model, linetype=model),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=model),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Preterm birth probability")+
+  coord_cartesian(ylim=c(0.025,0.1)) +
+  scale_colour_manual('model', limits=c("unadjusted","adjusted"),
+                      values =c("darkgrey", "black"))+
+  scale_fill_manual('model',                                                                 limits=c("unadjusted","adjusted"), 
+                    values =c("darkgrey", "black"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  scale_linetype_manual('model',
+                        limits = c("unadjusted", "adjusted"),
+                        values = c("dashed", "solid")) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
+        theme(axis.title.x = axis.title.x.position)
+plot_PTB_univ_multiv_unadj_BW
+```
+
+Univariate only
+```{r include=FALSE}
+m_PTB_bam_univ <- bam(PTB~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in7) 
+m_PTB_bam_univ <- GAM_plot_function_binary(m_PTB_bam_univ, 1)
+```
+
+```{r}
+x_date <-   bevn_eco_in7 %>% 
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_PTB_univ <- m_PTB_bam_univ %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+plot_PTB_univ_unadj_BW <- ggplot(data=plot_data_PTB_univ)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Preterm birth probability")+
+  coord_cartesian(ylim=c(0.03,0.07)) +
+ scale_colour_manual(values ="black")+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
+        theme(axis.title.x = axis.title.x.position)
+plot_PTB_univ_unadj_BW
+```
+# Stillbirth
+## Univariate and multiv
+### Not adjusting on gestational age
+
+```{r include=FALSE}
+m_SB_bam_univ <- bam(stillbirth~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6)
+# m_SB_crises <- bam(stillbirth~ s(mat_age) + s(birth_Y_M_num, k=7)+ s(month, bs="cc") + s(mean_ssep2)+ s(mean_Alt_mean2) + sex + Urban3 + Language + mother_nationality_cat1 + civil_status3 + HW + GR_relativ_by_pregn_month + covid_hosp_relativ_by_pregn_month, family="binomial", data=bevn_eco_in6)
+
+plot_m_SB_bam_univ <- GAM_plot_function_binary(m_SB_bam_univ, 1) %>%
+  mutate(model="unadjusted")
+plot_m_SB_muliv_time <- GAM_plot_function_binary(m_SB_crises, 2) %>%
+  mutate(model="adjusted") 
+```
+
+
+```{r}
+x_date <-   bevn_eco_in7 %>% 
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_SB_univ_multiv <- plot_m_SB_bam_univ %>%
+  rbind(plot_m_SB_muliv_time) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+plot_SB_univ_multiv <- ggplot(data=plot_data_SB_univ_multiv)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=model, linetype=model),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=model),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0005,0.0040)) +
+  scale_colour_manual('model', limits=c("unadjusted","adjusted"),
+                      values =c("darkgrey", "black"))+
+  scale_fill_manual('model',                                                                 limits=c("unadjusted","adjusted"), 
+                    values =c("darkgrey", "black"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  scale_linetype_manual('model',
+                        limits = c("unadjusted", "adjusted"),
+                        values = c("dashed", "solid")) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
+        theme(axis.title.x = axis.title.x.position)
+plot_SB_univ_multiv
+```
+
+
+univariate only
+```{r include=FALSE}
+m_SB_bam_univ <- bam(stillbirth~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in6)
+plot_m_SB_bam_univ <- GAM_plot_function_binary(m_SB_bam_univ, 1)
+```
+
+
+```{r}
+x_date <-   bevn_eco_in6 %>% 
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_SB_univ <- plot_m_SB_bam_univ %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+plot_SB_univ <- ggplot(data=plot_data_SB_univ)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Stillbirth probability")+
+  coord_cartesian(ylim=c(0.0035,0.0040)) +
+  scale_colour_manual(values ="black")+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
+        theme(axis.title.x = axis.title.x.position)
+plot_SB_univ
+```
