@@ -1,0 +1,213 @@
+---
+title: "Crises exposure variables, through time and association with birth outcomes"
+author: "Mathilde Le Vu"
+date: "2023-10-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Plot for crises exposure through time
+## Not adjusted for GA duration
+```{r}
+# Create a data frame for the legend
+legend_data <- data.frame(
+  x = as.Date("2015-07-01"),  # X-coordinate for the dummy point
+  label = "Heatwave"  # Label for the dummy point
+)
+
+all_crises_distribution <- bevn_eco_in6 %>%
+  ggplot(aes(x = as.Date(birth_Y_M_1stday))) +
+  geom_point(aes(y = ifelse(GR_relativ_total != 0, GR_relativ_total, NA), color = "Great Recession"), size = 1.5) +  # Adjust the size parameter
+  geom_point(aes(y = ifelse(flu_relativ_total != 0, flu_relativ_total, NA), color = "Flu"), size = 1.5) +  # Adjust the size parameter
+  geom_point(aes(y = ifelse(covid_hosp_relativ_total != 0, covid_hosp_relativ_total, NA), color = "COVID-19"), size = 1.5) +  # Adjust the size parameter
+  scale_color_manual(values = c("COVID-19" = "darkorchid1",
+                                "Flu" = "lightpink3",
+                                "Great Recession" = "darkmagenta",
+                                "Heatwave" = "black")) +  # Add "Heatwave" to color scale
+  labs(color = "Legend") +
+  ylab("relative crisis exposure") +
+  xlab("birthdate") +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "1 year")  # Specify breaks
+  ) +
+  geom_vline(xintercept = as.Date(c("2015-07-01", "2018-08-01")), color = "black", size=1) +  # Add vertical lines
+  geom_segment(data = legend_data, aes(x = x, xend = x, y = 0, yend = 0.5, color = label), linetype = "dashed") +  # Add dummy segment for "Heatwave" to the legend
+  scale_shape_manual(values = c(NA, NA, NA, NA)) +  # Remove shape for the dummy segment
+  NULL
+
+all_crises_distribution
+```
+
+## Adjusted for GA duration (/mn of pregnancy months)
+```{r}
+# Create a data frame for the legend
+legend_data <- data.frame(
+  x = as.Date("2015-07-01"),  # X-coordinate for the dummy point
+  label = "Heatwave"  # Label for the dummy point
+)
+
+all_crises_distribution <- bevn_eco_in6 %>%
+  ggplot(aes(x = as.Date(birth_Y_M_1stday))) +
+  geom_point(aes(y = ifelse(GR_relativ_by_pregn_month != 0, GR_relativ_by_pregn_month, NA), color = "Great Recession"), size = 1.1) +  # Adjust the size parameter
+  geom_point(aes(y = ifelse(flu_relativ_by_pregn_month != 0, flu_relativ_by_pregn_month, NA), color = "Flu"), size = 1.1) +  # Adjust the size parameter
+  geom_point(aes(y = ifelse(covid_hosp_relativ_by_pregn_month != 0, covid_hosp_relativ_by_pregn_month, NA), color = "COVID-19"), size = 1.1) +  # Adjust the size parameter
+  scale_color_manual(values = c("COVID-19" = "darkorchid1",
+                                "Flu" = "lightpink3",
+                                "Great Recession" = "darkmagenta",
+                                "Heatwave" = "black")) +  # Add "Heatwave" to color scale
+  labs(color = "Legend") +
+  ylab("relative crisis exposure") +
+  xlab("birthdate") +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "1 year")  # Specify breaks
+  ) +
+  geom_vline(xintercept = as.Date(c("2015-07-01", "2018-08-01")), color = "black", size=0.6) +  # Add vertical lines
+  geom_segment(data = legend_data, aes(x = x, xend = x, y = 0, yend = 0.5, color = label), linetype = "dashed") +  # Add dummy segment for "Heatwave" to the legend
+  scale_shape_manual(values = c(NA, NA, NA, NA)) +  # Remove shape for the dummy segment
+  NULL
+all_crises_distribution
+
+# Save the plot as a PDF with smaller dots
+ggsave("crises_exposures.pdf", plot = all_crises_distribution, path = here("output/figures_paper"), device = "pdf", width = 10, height = 5)
+```
+
+
+# Simple tables for all crises variables
+## GR
+```{r}
+table(bevn_eco_in6$GR_relativ_total, useNA = "always")
+table(bevn_eco_in6$GR_relativ_by_pregn_month, useNA = "always")
+table(bevn_eco_in6$GR_first_trimester_continuous, useNA = "always")
+table(bevn_eco_in6$GR_first_trimester_relativ, useNA = "always")
+table(bevn_eco_in6$GR_last_trimester_continuous, useNA = "always")
+table(bevn_eco_in6$GR_last_trimester_relativ, useNA = "always")
+```
+
+## Flu
+```{r}
+table(bevn_eco_in6$flu_relativ_total, useNA = "always")
+table(bevn_eco_in6$flu_relativ_by_pregn_month, useNA = "always")
+table(bevn_eco_in6$flu_first_trimester_continuous, useNA = "always")
+table(bevn_eco_in6$flu_first_trimester_relativ, useNA = "always")
+table(bevn_eco_in6$flu_last_trimester_continuous, useNA = "always")
+table(bevn_eco_in6$flu_last_trimester_relativ, useNA = "always")
+```
+
+## COVID
+```{r}
+table(bevn_eco_in6$covid_hosp_relativ_by_pregn_month, useNA = "always")
+table(bevn_eco_in6$covid_hosp_relativ_total, useNA = "always")
+table(bevn_eco_in6$covid_hosp_last_trim, useNA = "always")
+table(bevn_eco_in6$covid_hosp_1st_trim, useNA = "always")
+table(bevn_eco_in6$covid_hosp_1st_trim_relativ, useNA = "always")
+table(bevn_eco_in6$covid_hosp_last_trim_relativ, useNA = "always")
+```
+
+## Heatwave
+```{r}
+table(bevn_eco_in6$HW, useNA = "always")
+table(bevn_eco_in6$HW_first_trimester, useNA = "always")
+table(bevn_eco_in6$HW_last_trimester, useNA = "always")
+table(bevn_eco_in6$HW_trim_of_exposure, useNA = "always")
+```
+
+# Crises exposure and birth outcomes
+## Great recession
+### First trimester exposure
+```{r}
+# Preterm birth
+table(bevn_eco_in6$GR_first_trimester_relativ, bevn_eco_in6$PTB, useNA="always")
+round(prop.table(table(bevn_eco_in6$GR_first_trimester_relativ, bevn_eco_in6$PTB, useNA="always"), margin=1)*100,3)
+# Stillbirth
+table(bevn_eco_in6$GR_first_trimester_relativ, bevn_eco_in6$stillbirth, useNA="always")
+round(prop.table(table(bevn_eco_in6$GR_first_trimester_relativ, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+#LBW
+table(bevn_eco_in6$GR_first_trimester_relativ, bevn_eco_in6$LBW, useNA="always")
+round(prop.table(table(bevn_eco_in6$GR_first_trimester_relativ, bevn_eco_in6$LBW, useNA="always"), margin=1)*100,2)
+```
+
+### Last trimester exposure
+```{r}
+# Preterm birth
+table(bevn_eco_in6$GR_last_trimester_relativ, bevn_eco_in6$PTB, useNA="always")
+round(prop.table(table(bevn_eco_in6$GR_last_trimester_relativ, bevn_eco_in6$PTB, useNA="always"), margin=1)*100,3)
+# Stillbirth
+table(bevn_eco_in6$GR_last_trimester_relativ, bevn_eco_in6$stillbirth, useNA="always")
+round(prop.table(table(bevn_eco_in6$GR_last_trimester_relativ, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+#LBW
+table(bevn_eco_in6$GR_last_trimester_relativ, bevn_eco_in6$LBW, useNA="always")
+round(prop.table(table(bevn_eco_in6$GR_last_trimester_relativ, bevn_eco_in6$LBW, useNA="always"), margin=1)*100,2)
+```
+
+## Flu
+### First trimester exposure
+```{r}
+# Preterm birth
+table(bevn_eco_in6$flu_first_trimester_relativ, bevn_eco_in6$PTB, useNA="always")
+round(prop.table(table(bevn_eco_in6$flu_first_trimester_relativ, bevn_eco_in6$PTB, useNA="always"), margin=1)*100,3)
+# Stillbirth
+table(bevn_eco_in6$flu_first_trimester_relativ, bevn_eco_in6$stillbirth, useNA="always")
+round(prop.table(table(bevn_eco_in6$flu_first_trimester_relativ, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+# LBW
+table(bevn_eco_in6$flu_first_trimester_relativ, bevn_eco_in6$LBW, useNA="always")
+round(prop.table(table(bevn_eco_in6$flu_first_trimester_relativ, bevn_eco_in6$LBW, useNA="always"), margin=1)*100,2)
+```
+### Last trimester exposure
+```{r}
+# Preterm birth
+table(bevn_eco_in6$flu_last_trimester_relativ, bevn_eco_in6$PTB, useNA="always")
+round(prop.table(table(bevn_eco_in6$flu_last_trimester_relativ, bevn_eco_in6$PTB, useNA="always"), margin=1)*100,3)
+# Stillbirth
+table(bevn_eco_in6$flu_last_trimester_relativ, bevn_eco_in6$stillbirth, useNA="always")
+round(prop.table(table(bevn_eco_in6$flu_last_trimester_relativ, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+# LBW
+table(bevn_eco_in6$flu_last_trimester_relativ, bevn_eco_in6$LBW, useNA="always")
+round(prop.table(table(bevn_eco_in6$flu_last_trimester_relativ, bevn_eco_in6$LBW, useNA="always"), margin=1)*100,2)
+```
+
+## HW
+### Exposure at any month of pregnancy
+```{r}
+# Preterm birth
+table(bevn_eco_in6$HW, bevn_eco_in6$PTB, useNA="always")
+round(prop.table(table(bevn_eco_in6$HW, bevn_eco_in6$PTB, useNA="always"), margin=1)*100,3)
+# Stillbirth
+table(bevn_eco_in6$HW, bevn_eco_in6$stillbirth, useNA="always")
+round(prop.table(table(bevn_eco_in6$HW, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+# LBW
+table(bevn_eco_in6$HW, bevn_eco_in6$LBW, useNA="always")
+round(prop.table(table(bevn_eco_in6$HW, bevn_eco_in6$LBW, useNA="always"), margin=1)*100,2)
+```
+### First trimester exposure
+```{r}
+# Preterm birth
+table(bevn_eco_in6$HW_first_trimester, bevn_eco_in6$PTB, useNA="always")
+round(prop.table(table(bevn_eco_in6$HW_first_trimester, bevn_eco_in6$PTB, useNA="always"), margin=1)*100,3)
+# Stillbirth
+table(bevn_eco_in6$HW_first_trimester, bevn_eco_in6$stillbirth, useNA="always")
+round(prop.table(table(bevn_eco_in6$HW_first_trimester, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+# LBW
+table(bevn_eco_in6$HW_first_trimester, bevn_eco_in6$LBW, useNA="always")
+round(prop.table(table(bevn_eco_in6$HW_first_trimester, bevn_eco_in6$LBW, useNA="always"), margin=1)*100,2)
+```
+
+### Last trimester exposure
+```{r}
+# Preterm birth
+table(bevn_eco_in6$HW_last_trimester, bevn_eco_in6$PTB, useNA="always")
+round(prop.table(table(bevn_eco_in6$HW_last_trimester, bevn_eco_in6$PTB, useNA="always"), margin=1)*100,3)
+# Stillbirth
+table(bevn_eco_in6$HW_last_trimester, bevn_eco_in6$stillbirth, useNA="always")
+round(prop.table(table(bevn_eco_in6$HW_last_trimester, bevn_eco_in6$stillbirth, useNA="always"), margin=1)*100,2)
+# LBW
+table(bevn_eco_in6$HW_last_trimester, bevn_eco_in6$LBW, useNA="always")
+round(prop.table(table(bevn_eco_in6$HW_last_trimester, bevn_eco_in6$LBW, useNA="always"), margin=1)*100,2)
+```
+
+
+For covid too complicated because high variation
