@@ -42,10 +42,10 @@ bevn_eco$GR_number_pregn_months <- apply(
   bevn_eco[, columns_to_count], 1, count_columns_by_date,
   start_date = condition_start_date, end_date = condition_end_date)
 
-# Influenza 2009: Wochen 17 (2009) bis 8 (2010)
+# Influenza 2009: Week 43 (2009) to 1 (2010)
 # ie 20-04-2009 - 22-02-2010
-condition_start_date <- as.Date("2009-04-01")
-condition_end_date <- as.Date("2010-02-01")
+condition_start_date <- as.Date("2009-10-01")
+condition_end_date <- as.Date("2010-01-01")
 
 # Apply the function to count columns based on the specified conditions for each row
 bevn_eco$flu_number_pregn_months <- apply(
@@ -81,12 +81,6 @@ table(bevn_eco$GR_by_pregnancy_months_cat2, useNA = "always")
 table(bevn_eco$flu_by_pregnancy_months, useNA = "always")
 table(bevn_eco$flu_by_pregnancy_months_cat2, useNA = "always")
 table(bevn_eco$covid_hosp_by_pregn_month, useNA = "always")
-
-# Join bevn_eco df with the variables for each crisis exposure 
-# flu_number_pregn_months, GR_number_pregn_months
-# bevn_eco <- bevn_eco %>%
-#    left_join(GA_weeks_present) %>%
-#    mutate()
 
 
 #Checking
@@ -480,57 +474,57 @@ table(bevn_eco$GR_last_trimester_continuous,useNA = "always")
   # Exposure during one of the pregnancy trimesters
   ## Exposure during first trimester
   bevn_eco <- bevn_eco %>%
-    mutate(flu_first_trimester = ifelse(month_1 >= as.Date("2009-04-01") & month_1 <= as.Date("2010-02-01") |
-                                  (month_2 >= as.Date("2009-04-01") & month_2 <= as.Date("2010-02-01")) |
-                                  (month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01")), 1, 0),
+    mutate(flu_first_trimester = ifelse(month_1 >= as.Date("2009-10-01") & month_1 <= as.Date("2010-01-01") |
+                                  (month_2 >= as.Date("2009-10-01") & month_2 <= as.Date("2010-01-01")) |
+                                  (month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01")), 1, 0),
             flu_first_trimester = as.factor(flu_first_trimester),
     flu_first_trimester= replace(flu_first_trimester,
                                               (is.na(flu_first_trimester)), 0))
   
   bevn_eco <- bevn_eco %>%
-    mutate(flu_second_trimester = ifelse(month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01")|
-                                        (month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01")) |
-                                        (month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01")), 1, 0),
+    mutate(flu_second_trimester = ifelse(month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01")|
+                                        (month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01")) |
+                                        (month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01")), 1, 0),
            flu_second_trimester = as.factor(flu_second_trimester),
            flu_second_trimester= replace(flu_second_trimester,
                                         (is.na(flu_second_trimester)), 0))
   
   ## Exposure during third trimester - up to delivery incl.
   bevn_eco <- bevn_eco %>%
-    mutate(flu_third_trimester = ifelse(month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01") |
-                                        (month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01")) |
-                                        (month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01")) |
-                                        (month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01")) |
-                                        (month_11 >= as.Date("2009-04-01") & month_11 <= as.Date("2010-02-01")) |
-                                        (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01")), 1, 0),
+    mutate(flu_third_trimester = ifelse(month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01") |
+                                        (month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01")) |
+                                        (month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01")) |
+                                        (month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01")) |
+                                        (month_11 >= as.Date("2009-10-01") & month_11 <= as.Date("2010-01-01")) |
+                                        (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01")), 1, 0),
            flu_third_trimester = as.factor(flu_third_trimester),
            flu_third_trimester= replace(flu_third_trimester,
                                          (is.na(flu_third_trimester)), 0))
 
   
   bevn_eco <- bevn_eco %>%
-    mutate(flu_first_trimester_continuous = case_when((month_1 >= as.Date("2009-04-01") & month_1 <= as.Date("2010-02-01") &
-                                                        (month_2 >= as.Date("2009-04-01") & month_2 <= as.Date("2010-02-01")) &
-                                                        (month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01")))~ 3,
+    mutate(flu_first_trimester_continuous = case_when((month_1 >= as.Date("2009-10-01") & month_1 <= as.Date("2010-01-01") &
+                                                        (month_2 >= as.Date("2009-10-01") & month_2 <= as.Date("2010-01-01")) &
+                                                        (month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01")))~ 3,
                                                      
-                                                     ((month_1 >= as.Date("2009-04-01") & month_1 <= as.Date("2010-02-01") &
-                                                         !(month_2 >= as.Date("2009-04-01") & month_2 <= as.Date("2010-02-01")))|
+                                                     ((month_1 >= as.Date("2009-10-01") & month_1 <= as.Date("2010-01-01") &
+                                                         !(month_2 >= as.Date("2009-10-01") & month_2 <= as.Date("2010-01-01")))|
                                                         
-                                                        !(month_1 >= as.Date("2009-04-01") & month_1 <= as.Date("2010-02-01")) &
-                                                        !(month_2 >= as.Date("2009-04-01") & month_2 <= as.Date("2010-02-01")) &
-                                                        (month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01")))~ 1,
+                                                        !(month_1 >= as.Date("2009-10-01") & month_1 <= as.Date("2010-01-01")) &
+                                                        !(month_2 >= as.Date("2009-10-01") & month_2 <= as.Date("2010-01-01")) &
+                                                        (month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01")))~ 1,
                                                      
-                                                     ((month_1 >= as.Date("2009-04-01") & month_1 <= as.Date("2010-02-01") &
-                                                         (month_2 >= as.Date("2009-04-01") & month_2 <= as.Date("2010-02-01")) &
-                                                         !(month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01")))|
+                                                     ((month_1 >= as.Date("2009-10-01") & month_1 <= as.Date("2010-01-01") &
+                                                         (month_2 >= as.Date("2009-10-01") & month_2 <= as.Date("2010-01-01")) &
+                                                         !(month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01")))|
                                                         
-                                                        !(month_1 >= as.Date("2009-04-01") & month_1 <= as.Date("2010-02-01")) &
-                                                        (month_2 >= as.Date("2009-04-01") & month_2 <= as.Date("2010-02-01")) &
-                                                        (month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01")))~ 2,
+                                                        !(month_1 >= as.Date("2009-10-01") & month_1 <= as.Date("2010-01-01")) &
+                                                        (month_2 >= as.Date("2009-10-01") & month_2 <= as.Date("2010-01-01")) &
+                                                        (month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01")))~ 2,
                                                      
-                                                     !(month_1 >= as.Date("2009-04-01") & month_1 <= as.Date("2010-02-01")) &
-                                                       !(month_2 >= as.Date("2009-04-01") & month_2 <= as.Date("2010-02-01")) &
-                                                       !(month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01")) ~
+                                                     !(month_1 >= as.Date("2009-10-01") & month_1 <= as.Date("2010-01-01")) &
+                                                       !(month_2 >= as.Date("2009-10-01") & month_2 <= as.Date("2010-01-01")) &
+                                                       !(month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01")) ~
                                                        0),
            flu_first_trimester_continuous = as.numeric(flu_first_trimester_continuous))
   table(bevn_eco$flu_first_trimester_continuous, useNA = "always")
@@ -541,194 +535,194 @@ table(bevn_eco$GR_last_trimester_continuous,useNA = "always")
     mutate(
       flu_last_trimester_continuous = ifelse(GA_month == 4,
                                             case_when(
-                                       (month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01") &
-                                        (month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01")) &
-                                        (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 3,
+                                       (month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01") &
+                                        (month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01")) &
+                                        (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 3,
                                               
-                                        ((month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01") &
-                                        !(month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01"))) |
-                                        !(month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01")) &
-                                        !(month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01")) &
-                                        (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 1,
+                                        ((month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01") &
+                                        !(month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01"))) |
+                                        !(month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01")) &
+                                        !(month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01")) &
+                                        (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 1,
                                               
-                                        ((month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01") &
-                                        (month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01")) &
-                                        !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) |
-                                        !(month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01")) &
-                                       (month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01")) &
-                                       (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 2,
+                                        ((month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01") &
+                                        (month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01")) &
+                                        !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) |
+                                        !(month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01")) &
+                                       (month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01")) &
+                                       (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 2,
                                               
-                                        !(month_3 >= as.Date("2009-04-01") & month_3 <= as.Date("2010-02-01")) &
-                                       !(month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01")) &
-                                        !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01")) ~
+                                        !(month_3 >= as.Date("2009-10-01") & month_3 <= as.Date("2010-01-01")) &
+                                       !(month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01")) &
+                                        !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01")) ~
                                                 0
                                         ),
                                     ifelse(GA_month == 5,
                                            case_when(
-                                           (month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01") &
-                                           (month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 3,
+                                           (month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01") &
+                                           (month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 3,
                                                      
-                                           ((month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01") &
-                                           !(month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01"))) |
-                                           !(month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01")) &
-                                           !(month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 1,
+                                           ((month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01") &
+                                           !(month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01"))) |
+                                           !(month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01")) &
+                                           !(month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 1,
                                                      
-                                           ((month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01") &
-                                           (month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01")) &
-                                           !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) |
-                                           !(month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01")) &
-                                           (month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 2,
+                                           ((month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01") &
+                                           (month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01")) &
+                                           !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) |
+                                           !(month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01")) &
+                                           (month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 2,
                                                      
-                                            !(month_4 >= as.Date("2009-04-01") & month_4 <= as.Date("2010-02-01")) &
-                                            !(month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01")) &
-                                            !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01")) ~
+                                            !(month_4 >= as.Date("2009-10-01") & month_4 <= as.Date("2010-01-01")) &
+                                            !(month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01")) &
+                                            !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01")) ~
                                              0
                                             ), 
                                       ifelse(GA_month == 6,
                                              case_when(
-                                             (month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01") &
-                                             (month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01")) &
-                                             (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 3,
+                                             (month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01") &
+                                             (month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01")) &
+                                             (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 3,
                                                             
-                                             ((month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01") &
-                                              !(month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01"))) |
-                                              !(month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01")) &
-                                              !(month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01")) &
-                                              (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 1,
+                                             ((month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01") &
+                                              !(month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01"))) |
+                                              !(month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01")) &
+                                              !(month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01")) &
+                                              (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 1,
                                                             
-                                              ((month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01") &
-                                               (month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01")) &
-                                               !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) |
-                                               !(month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01")) &
-                                               (month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01")) &
-                                               (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 2,
+                                              ((month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01") &
+                                               (month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01")) &
+                                               !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) |
+                                               !(month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01")) &
+                                               (month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01")) &
+                                               (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 2,
                                                             
-                                               !(month_5 >= as.Date("2009-04-01") & month_5 <= as.Date("2010-02-01")) &
-                                               !(month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01")) &
-                                               !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01")) ~
+                                               !(month_5 >= as.Date("2009-10-01") & month_5 <= as.Date("2010-01-01")) &
+                                               !(month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01")) &
+                                               !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01")) ~
                                                0
                                                 ), 
                                       ifelse(GA_month == 7,
                                              case_when(
-                                             (month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01") &
-                                             (month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01")) &
-                                             (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 3,
+                                             (month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01") &
+                                             (month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01")) &
+                                             (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 3,
                                                                    
-                                             ((month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01") &
-                                             !(month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01"))) |
-                                             !(month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01")) &
-                                             !(month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01")) &
-                                             (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 1,
+                                             ((month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01") &
+                                             !(month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01"))) |
+                                             !(month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01")) &
+                                             !(month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01")) &
+                                             (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 1,
                                                                    
-                                             ((month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01") &
-                                             (month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01")) &
-                                             !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) |
-                                             !(month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01")) &
-                                             (month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01")) &
-                                             (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 2,
+                                             ((month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01") &
+                                             (month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01")) &
+                                             !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) |
+                                             !(month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01")) &
+                                             (month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01")) &
+                                             (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 2,
                                                                    
-                                             !(month_6 >= as.Date("2009-04-01") & month_6 <= as.Date("2010-02-01")) &
-                                            !(month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01")) &
-                                             !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01")) ~
+                                             !(month_6 >= as.Date("2009-10-01") & month_6 <= as.Date("2010-01-01")) &
+                                            !(month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01")) &
+                                             !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01")) ~
                                              0
                                              ),           
                                     ifelse(GA_month == 8,
                                            case_when(
-                                           (month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01") &
-                                           (month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 3,
+                                           (month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01") &
+                                           (month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 3,
                                                                           
-                                           ((month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01") &
-                                          !(month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01"))) |
-                                            !(month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01")) &
-                                           !(month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01")) &
-                                            (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 1,
+                                           ((month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01") &
+                                          !(month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01"))) |
+                                            !(month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01")) &
+                                           !(month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01")) &
+                                            (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 1,
                                                                           
-                                           ((month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01") &
-                                            (month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01")) &
-                                            !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) |
-                                             !(month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01")) &
-                                              (month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01")) &
-                                             (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 2,
+                                           ((month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01") &
+                                            (month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01")) &
+                                            !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) |
+                                             !(month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01")) &
+                                              (month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01")) &
+                                             (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 2,
                                                                           
-                                          !(month_7 >= as.Date("2009-04-01") & month_7 <= as.Date("2010-02-01")) &
-                                           !(month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01")) &
-                                           !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01")) ~
+                                          !(month_7 >= as.Date("2009-10-01") & month_7 <= as.Date("2010-01-01")) &
+                                           !(month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01")) &
+                                           !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01")) ~
                                            0
                                            ),      
                                    ifelse(GA_month == 9,
                                           case_when(
-                                          (month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01") &
-                                          (month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01")) &
-                                          (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 3,
+                                          (month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01") &
+                                          (month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01")) &
+                                          (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 3,
                                                                                  
-                                          ((month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01") &
-                                          !(month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01"))) |
-                                          !(month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01")) &
-                                          !(month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01")) &
-                                          (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 1,
+                                          ((month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01") &
+                                          !(month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01"))) |
+                                          !(month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01")) &
+                                          !(month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01")) &
+                                          (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 1,
                                                                                  
-                                           ((month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01") &
-                                          (month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01")) &
-                                          !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) |
-                                          !(month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01")) &
-                                           (month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 2,
+                                           ((month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01") &
+                                          (month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01")) &
+                                          !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) |
+                                          !(month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01")) &
+                                           (month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 2,
                                                                                  
-                                           !(month_8 >= as.Date("2009-04-01") & month_8 <= as.Date("2010-02-01")) &
-                                           !(month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01")) &
-                                          !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01")) ~
+                                           !(month_8 >= as.Date("2009-10-01") & month_8 <= as.Date("2010-01-01")) &
+                                           !(month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01")) &
+                                          !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01")) ~
                                            0
                                           ),    
                                     ifelse(GA_month == 10,
                                            case_when(
-                                            (month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01") &
-                                           (month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 3,
+                                            (month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01") &
+                                           (month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 3,
                                                                                         
-                                           ((month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01") &
-                                           !(month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01"))) |
-                                           !(month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01")) &
-                                           !(month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 1,
+                                           ((month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01") &
+                                           !(month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01"))) |
+                                           !(month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01")) &
+                                           !(month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 1,
                                                                                         
-                                           ((month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01") &
-                                           (month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01")) &
-                                           !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) |
-                                           !(month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01")) &
-                                           (month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 2,
+                                           ((month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01") &
+                                           (month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01")) &
+                                           !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) |
+                                           !(month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01")) &
+                                           (month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 2,
                                                                                         
-                                           !(month_9 >= as.Date("2009-04-01") & month_9 <= as.Date("2010-02-01")) &
-                                          !(month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01")) &
-                                            !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01")) ~
+                                           !(month_9 >= as.Date("2009-10-01") & month_9 <= as.Date("2010-01-01")) &
+                                          !(month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01")) &
+                                            !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01")) ~
                                            0
                                            ),       
                                     ifelse(GA_month == 11,
                                            case_when(
-                                           (month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01") &
-                                           (month_11 >= as.Date("2009-04-01") & month_11 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 3,
+                                           (month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01") &
+                                           (month_11 >= as.Date("2009-10-01") & month_11 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 3,
                                                                                                
-                                            ((month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01") &
-                                            !(month_11 >= as.Date("2009-04-01") & month_11 <= as.Date("2010-02-01"))) |
-                                           !(month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01")) &
-                                            !(month_11 >= as.Date("2009-04-01") & month_11 <= as.Date("2010-02-01")) &
-                                           (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 1,
+                                            ((month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01") &
+                                            !(month_11 >= as.Date("2009-10-01") & month_11 <= as.Date("2010-01-01"))) |
+                                           !(month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01")) &
+                                            !(month_11 >= as.Date("2009-10-01") & month_11 <= as.Date("2010-01-01")) &
+                                           (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 1,
                                                                                                
-                                            ((month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01") &
-                                             (month_11 >= as.Date("2009-04-01") & month_11 <= as.Date("2010-02-01")) &
-                                             !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) |
-                                             !(month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01")) &
-                                             (month_11 >= as.Date("2009-04-01") & month_11 <= as.Date("2010-02-01")) &
-                                             (birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01"))) ~ 2,
+                                            ((month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01") &
+                                             (month_11 >= as.Date("2009-10-01") & month_11 <= as.Date("2010-01-01")) &
+                                             !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) |
+                                             !(month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01")) &
+                                             (month_11 >= as.Date("2009-10-01") & month_11 <= as.Date("2010-01-01")) &
+                                             (birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01"))) ~ 2,
                                                                                                
-                                             !(month_10 >= as.Date("2009-04-01") & month_10 <= as.Date("2010-02-01")) &
-                                              !(month_11 >= as.Date("2009-04-01") & month_11 <= as.Date("2010-02-01")) &
-                                            !(birth_Y_M_1stday >= as.Date("2009-04-01") & birth_Y_M_1stday <= as.Date("2010-02-01")) ~
+                                             !(month_10 >= as.Date("2009-10-01") & month_10 <= as.Date("2010-01-01")) &
+                                              !(month_11 >= as.Date("2009-10-01") & month_11 <= as.Date("2010-01-01")) &
+                                            !(birth_Y_M_1stday >= as.Date("2009-10-01") & birth_Y_M_1stday <= as.Date("2010-01-01")) ~
                                               0
                                              ),              
                                                                                              
@@ -817,31 +811,9 @@ table(bevn_eco$GR_last_trimester_continuous,useNA = "always")
   #               COVID_third_trimester= replace(COVID_third_trimester,
   #                                             (is.na(COVID_third_trimester)), 0))
 
-####################### Exposure in any trimester############
-  # bevn_eco <- bevn_eco %>%
-  #   mutate(HW_any_trim=ifelse(HW_first_trimester==1 |
-  #                               HW_second_trimester==1 |
-  #                               HW_third_trimester==1, '1', '0'),
-  #          HW_any_trim=as.factor(HW_any_trim)) %>%
-  #   mutate(COVID_any_trim=ifelse(COVID_first_trimester==1 |
-  #                               COVID_second_trimester==1 |
-  #                               COVID_third_trimester==1, '1', '0'),
-  #          COVID_any_trim=as.factor(COVID_any_trim)) %>%
-  #   mutate(GR_any_trim=ifelse(GR_first_trimester==1 |
-  #                             GR_second_trimester==1 |
-  #                             GR_third_trimester==1, '1', '0'),
-  # GR_any_trim=as.factor(GR_any_trim))
-  # 
-  # 
-  # 
+
   
-  
-  
-  
-  
-  
-  
-  # 2023.09.13
+# 2023.09.13
   # exposure during 3rd trimester vs not exposed (the "not exposed" DO NOT include the 
   #exposed in 1st/2nd trimester --> these are put to NA)
 # bevn_eco <- bevn_eco %>%
@@ -883,12 +855,6 @@ table(bevn_eco$GR_last_trimester_continuous,useNA = "always")
 #                                               COVID_third_trimester==0, '0',
 #                                                    NA)),
 #          covid_3rd_trim_vs_not_exposed=as.factor(covid_3rd_trim_vs_not_exposed))
-# 
-# table(bevn_eco$HW_3rd_trim_vs_not_exposed, useNA = "always")
-# table(bevn_eco$GR_3rd_trim_vs_not_exposed, useNA = "always")
-# table(bevn_eco$flu_3rd_trim_vs_not_exposed, useNA = "always")
-# table(bevn_eco$covid_3rd_trim_vs_not_exposed, useNA = "always")
-# 
 
 # 2023.09.14
 # exposure : all combinations explored 
@@ -979,12 +945,6 @@ table(bevn_eco$GR_last_trimester_continuous,useNA = "always")
 #                                       COVID_third_trimester==1, 'all',
 #                          0))))))),
 #          covid_all_trim_comb=as.factor(covid_all_trim_comb))
-# table(bevn_eco$HW_all_trim_comb, useNA = "always")
-# table(bevn_eco$GR_all_trim_comb, useNA = "always")
-# table(bevn_eco$flu_all_trim_comb, useNA = "always")
-# table(bevn_eco$covid_all_trim_comb, useNA = "always")
-# 
-
 
 
 
