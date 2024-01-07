@@ -121,34 +121,6 @@ BW_all_trim_all_crises_gt_docx <- BW_all_trim_all_crises_gt%>%
 ####################
 
 
-## PTB all crises, all trimesters ADJUSTED FOR BIRTHWEIGHT
-PTB_all_trim_all_crises <- rbind(my_ci_PTB_HW_1st_trim, my_ci_PTB_HW_2nd_trim, my_ci_PTB_HW_3rd_trim,
-                                 my_ci_PTB_GR_1st_trim, my_ci_PTB_GR_2nd_trim, my_ci_PTB_GR_3rd_trim,
-                                 my_ci_PTB_1st_trim_covid, my_ci_PTB_2nd_trim_covid, my_ci_PTB_3rd_trim_covid
-                                 )
-PTB_all_trim_all_crises['Crisis'] <- c("Heatwave", " ", " ",
-                                      "Great Recession", " ", " ", 
-                                      "COVID-19", " ", " ")
-PTB_all_trim_all_crises['Trimester'] <- c("First", "Second", "Third", 
-                                         "First", "Second", "Third",
-                                         "First", "Second", "Third")
-PTB_all_trim_all_crises<-PTB_all_trim_all_crises[, c('Crisis', "Trimester", "OR", "lci","uci", "d")]
-
-PTB_all_trim_all_crises_gt <- PTB_all_trim_all_crises %>%
-  gt()%>%
-  tab_header(title="Trimester effect of each crisis on pretermbirth") %>%
-  tab_spanner(label = "95% CI", columns = c(lci, uci)) 
-PTB_all_trim_all_crises_gt
-
-PTB_all_trim_all_crises_gt_html <- PTB_all_trim_all_crises_gt%>%
-  gtsave(here("output/tables_paper", "PTB_all_trim_all_crises_gt.html"))
-
-PTB_all_trim_all_crises_gt_docx <- PTB_all_trim_all_crises_gt%>%
-  gtsave(here("output/tables_paper", "PTB_all_trim_all_crises_gt.docx"))
-
-PTB_all_trim_all_crises <- rbind(my_ci_PTB_HW_1st_trim_unadj_BW, my_ci_PTB_HW_2nd_trim_unadj_BW, my_ci_PTB_HW_3rd_trim_unadj_BW,
-                                 my_ci_PTB_GR_1st_trim_unadj_BW, my_ci_PTB_GR_2nd_trim_unadj_BW, my_ci_PTB_GR_3rd_trim_unadj_BW
-)
 
 # PTB all crises, all trimesters UNADJUSTED FOR BIRTHWEIGHT
 my_ci_PTB_1st_trim_covid_unadj_BW <- read.csv2(here("output/models_trimester", "my_ci_PTB_covid_1st_trim_unadj_BW.csv"))
@@ -291,7 +263,7 @@ SB_all_trim_all_crises_mat_nat1_unadj_GA_gt %>%
 
 ##### October 2023, with file TRIMESTER_different_outcomes_sept2023_3rd_trim_vs_not_epsoed
 ## BW all crises, first and last trimesters UNADJUSTED FOR GA
-BW_trim_all_crises <- rbind(my.ci_BW_1st_trim,my.ci_BW_last_trim)
+BW_trim_all_crises <- rbind(BW_1st_trim,BW_last_trim)
 
 BW_trim_all_crises['Crisis'] <- c("Heatwave", 
                                    "Great Recession",
@@ -301,23 +273,27 @@ BW_trim_all_crises['Crisis'] <- c("Heatwave",
                                     "COVID-19")
 BW_trim_all_crises['Trimester'] <- c("First", " ", " ", 
                                      "Last", " ", " ")
-BW_trim_all_crises<-BW_trim_all_crises[, c("Trimester",'Crisis',"beta", "lci","uci", "d")]
+BW_trim_all_crises<-BW_trim_all_crises[, c("Trimester",'Crisis',"beta", "lci","uci", "d", "pvalue")]
 
 BW_trim_all_crises <- BW_trim_all_crises %>%
   gt()%>%
-  tab_header(title="Trimester effect of each crisis on birthweight") %>%
-  tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) 
+  # tab_header(title="Table 5.A :Trimester effect of each crisis on birthweight") %>%
+  tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#eaeaea")),
+    locations = cells_body(rows=c(3,4,6), columns=c(2:6)))
 BW_trim_all_crises
 
 BW_trim_all_crises%>%
-  gtsave(here("output/tables_paper", "BW_trim_all_crises_gt.html"))
+  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "BW_trim_all_crises_gt.html"))
 
 BW_trim_all_crises%>%
-  gtsave(here("output/tables_paper", "BW_trim_all_crises_gt.docx"))
+  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "BW_trim_all_crises_gt.docx"))
 
 
 ## SB all crises, first and last trimesters UNADJUSTED FOR GA
-SB_trim_all_crises <- rbind(my.ci_SB_1st_trim,my.ci_SB_last_trim)
+SB_trim_all_crises <- rbind(SB_1st_trim,SB_last_trim)
 
 SB_trim_all_crises['Crisis'] <- c("Heatwave", 
                                   "Great Recession",
@@ -327,23 +303,31 @@ SB_trim_all_crises['Crisis'] <- c("Heatwave",
                                   "COVID-19")
 SB_trim_all_crises['Trimester'] <- c("First", " ", " ", 
                                      "Last", " ", " ")
-SB_trim_all_crises<-SB_trim_all_crises[, c("Trimester",'Crisis',"OR", "lci","uci", "d")]
+SB_trim_all_crises<-SB_trim_all_crises[, c("Trimester",'Crisis',"OR", "lci","uci", "d", "pvalue")]
 
 SB_trim_all_crises <- SB_trim_all_crises %>%
   gt()%>%
-  tab_header(title="Trimester effect of each crisis on stillbirth") %>%
-  tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) 
+  # tab_header(title="Table 5.C: Trimester effect of each crisis on stillbirth") %>%
+  tab_spanner(label = "95% CI", columns = c(lci, uci))  %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#d6d6d6")),
+    locations = cells_body(rows=c(5), columns=c(2:6)))%>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#c2c2c2")),
+    locations = cells_body(rows=c(6), columns=c(2:6)))
 SB_trim_all_crises
 
 SB_trim_all_crises%>%
-  gtsave(here("output/tables_paper", "SB_trim_all_crises_gt.html"))
+  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "SB_trim_all_crises_gt.html"))
 
 SB_trim_all_crises%>%
-  gtsave(here("output/tables_paper", "SB_trim_all_crises_gt.docx"))
+  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "SB_trim_all_crises_gt.docx"))
 
 
 ## PTB all crises, first and last trimesters UNADJUSTED FOR GA
-PTB_trim_all_crises <- rbind(my.ci_PTB_1st_trim,my.ci_PTB_last_trim)
+PTB_trim_all_crises <- rbind(PTB_1st_trim,PTB_last_trim)
 
 PTB_trim_all_crises['Crisis'] <- c("Heatwave", 
                                   "Great Recession",
@@ -357,13 +341,95 @@ PTB_trim_all_crises<-PTB_trim_all_crises[, c("Trimester",'Crisis',"OR", "lci","u
 
 PTB_trim_all_crises <- PTB_trim_all_crises %>%
   gt()%>%
-  tab_header(title="Trimester effect of each crisis on preterm birth") %>%
-  tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) 
+  tab_header(title="Table 5.B: Trimester effect of each crisis on preterm birth") %>%
+  tab_spanner(label = "95% CI", columns = c(lci, uci))  %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#d6d6d6")),
+    locations = cells_body(rows=c(1,3), columns=c(2:6)))
 PTB_trim_all_crises
 
 PTB_trim_all_crises%>%
-  gtsave(here("output/tables_paper", "PTB_trim_all_crises_gt.html"))
-
+  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "PTB_trim_all_crises_gt.html"))
 PTB_trim_all_crises%>%
-  gtsave(here("output/tables_paper", "PTB_trim_all_crises_gt.docx"))
+  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "PTB_trim_all_crises_gt.docx"))
 
+
+# All outcomes together in one table
+BW_trim_all_crises <- rbind(BW_1st_trim,BW_last_trim)
+BW_trim_all_crises <- BW_trim_all_crises %>%
+  rename("beta (g)"=beta,lci1=lci,
+         uci1=uci,
+         d1=d,p1=pvalue)
+PTB_trim_all_crises <- rbind(PTB_1st_trim,PTB_last_trim)
+PTB_trim_all_crises<-PTB_trim_all_crises %>%
+  rename(OR2=OR, lci2=lci,
+         uci2=uci,
+         d2=d,
+         p2=pvalue)
+SB_trim_all_crises <- rbind(SB_1st_trim,SB_last_trim)
+SB_trim_all_crises<- SB_trim_all_crises %>%
+  rename(OR3=OR, lci3=lci,
+         uci3=uci,
+         d3=d,
+         p3=pvalue)
+all_outcomes_trim <- cbind(BW_trim_all_crises, PTB_trim_all_crises, SB_trim_all_crises)
+df <- data.frame(Crisis = c("Heatwave", 
+                            "Great Recession",
+                            "COVID-19",
+                            "Heatwave", 
+                            "Great Recession",
+                            "COVID-19"), Trimester=c("First", " ", " ", 
+                                                     "Last", " ", " "))
+all_outcomes_trim <-cbind(df,all_outcomes_trim)
+
+all_outcomes_trim_gt <- all_outcomes_trim %>%
+  gt() %>%
+  # tab_header(title="Table 5: Trimester effect of each crisis") %>%
+  tab_spanner(
+    label = "Birthweight",
+    columns = c("beta (g)", "lci1", "uci1", "d1", "p1")
+  ) %>%
+  tab_spanner(
+    label = "Preterm birth",
+    columns = c("OR2", "lci2", "lci2", "uci2","d2", "p2")
+  ) %>%
+  tab_spanner(
+    label = "Stillbirth",
+    columns = c("OR3", "lci3", "lci3", "uci3","d3","p3")
+  ) %>%
+  cols_label(
+    lci1 = "lci",
+    uci1 ="uci",
+    d1="d",
+    OR2="OR",
+    lci2="lci",
+    uci2="uci",
+    d2="d",
+    OR3="OR",
+    lci3="lci",
+    uci3="uci",
+    d3="d"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#eaeaea")),
+    locations = cells_body(rows=c(3,4,6), columns=c(3:6))) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#d6d6d6")),
+    locations = cells_body(rows=c(1,3), columns=c(7:10))) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#d6d6d6")),
+    locations = cells_body(rows=c(5), columns=c(11:14))) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#c2c2c2")),
+    locations = cells_body(rows=c(6), columns=c(11:14)))
+all_outcomes_trim_gt
+
+all_outcomes_trim_gt%>%
+  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "all_outcomes_trim_gt.html"))
+all_outcomes_trim_gt%>%
+  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "all_outcomes_trim_gt.docx"))
