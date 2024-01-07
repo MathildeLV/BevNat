@@ -73,7 +73,7 @@ ggplot_PTB_SEP2 <- ggplot(data=plot_PTB_SEP2)+
                     limits=c("low","medium", "high"), 
                     # labels=c("fully adjusted","95% CI","95% CI"),  
                     values =c("darkorchid1","lightpink3", "darkmagenta"))+
-  scale_x_datetime( breaks = date_breaks("12 month"), 
+  scale_x_datetime( breaks = date_breaks("1 year"), 
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
@@ -153,7 +153,7 @@ ggplot_PTB_nationality2 <- ggplot(data=plot_PTB_nationality2)+
   scale_fill_manual('Maternal nationality',
                     limits=c("Swiss","African", "Asian", "European", "Northern American", "Southern/Central American"),
                       values =c("#69D8F3","gold", "#8B0000", "hotpink", "lightgreen", "#666975"))+
-  scale_x_datetime( breaks = date_breaks("12 month"), 
+  scale_x_datetime( breaks = date_breaks("1 year"), 
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
@@ -217,7 +217,7 @@ ggplot_PTB_Language_region2 <- ggplot(data=plot_PTB_language2)+
   scale_fill_manual('Language region',
                     limits=c("German","French", "Italian"),
                       values =c("aquamarine","cadetblue1", "aquamarine4"))+
-  scale_x_datetime( breaks = date_breaks("12 month"), 
+  scale_x_datetime( breaks = date_breaks("1 year"), 
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
@@ -270,7 +270,7 @@ plot_PTB_sex <- ggplot(data=plot_data_sex)+
   scale_fill_manual('Sex',
                     limits=c("Males","Females"),
                       values =c("magenta","purple"))+
-  scale_x_datetime( breaks = date_breaks("12 month"), 
+  scale_x_datetime( breaks = date_breaks("1 year"), 
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
