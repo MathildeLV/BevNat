@@ -1,0 +1,283 @@
+---
+title: "Trimester effect: exposure in 1st vs 3rd trim, BW, PTB, stillbirth. First parities only"
+author: "Mathilde Le Vu"
+date:  "`r Sys.Date()`"
+html_document: 
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+# Birthweight (not adjusted for gestational age)
+## First trimester exposure to the crises
+
+```{r}
+  m_BW_1st_trim_primip <- bam(BW ~ s(mat_age) + birth_Y_M_num+  s(month, bs="cc") + mean_ssep2_by_10 + mean_Alt_mean2_by_100+ sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_first_trimester + GR_first_trimester_relativ  + covid_hosp_1st_trim_relativ, data=bevn_eco_in7_primiparous) 
+    summary(m_BW_1st_trim_primip)
+    # extracting the plot information
+plot_m_BW_3rd_trim_mat_age_primip <- GAM_plot_function_continuous(m_BW_1st_trim_primip, 1) # mat age
+plot_m_BW_3rd_trim_month_primip <- GAM_plot_function_continuous(m_BW_1st_trim_primip, 2) #seasonality
+```
+
+### Graph maternal age variable X BW (not adj for GA)
+
+```{r}
+plot_BW_3rd_trim_mat_age_primip <- ggplot(data=plot_m_BW_3rd_trim_mat_age_primip)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Maternal age (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3160,3380)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,60,by=5),expand = c(0, 0)) +
+  scale_y_continuous(breaks=seq(0,4000,by=50)) +
+theme(axis.title.x = axis.title.x.position)
+plot_BW_3rd_trim_mat_age_primip
+```
+
+### Graph seasonality X birthweight (not adj for GA)
+
+```{r}
+plot_BW_3rd_trim_month_primip <- ggplot(data=plot_m_BW_3rd_trim_month_primip)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Month")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3160,3380)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(1,12,by=1),expand = c(0, 0)) +
+  scale_y_continuous(breaks=seq(0,4000,by=50)) +
+theme(axis.title.x = axis.title.x.position)
+plot_BW_3rd_trim_month_primip
+```
+
+### Table summarizing the birthweight outcome model (not adj for GA)
+
+```{r}
+  beta <- coef(m_BW_1st_trim_primip)
+  Vb <- vcov(m_BW_1st_trim_primip, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 622748 #to check
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci_BW_1st_trim_primip <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  my.ci_BW_1st_trim_primip <- format(round(my.ci_BW_1st_trim_primip[15:17, c(1:4)], digits=2), nsmall=2)
+```
+
+## Last trimester exposure to the crises
+
+```{r}
+    m_BW_last_trim_primip <- bam(BW ~ s(mat_age) + birth_Y_M_num+  s(month, bs="cc") + mean_ssep2_by_10 + mean_Alt_mean2_by_100 + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_last_trimester + GR_last_trimester_relativ  + covid_hosp_last_trim_relativ, data=bevn_eco_in7_primiparous) 
+    summary(m_BW_last_trim_primip) 
+# extracting the plot information
+plot_m_BW_last_trim_mat_age_primip <- GAM_plot_function_continuous(m_BW_last_trim_primip, 1) # mat age
+plot_m_BW_last_trim_month_primip <- GAM_plot_function_continuous(m_BW_last_trim_primip, 2) #seasonality
+```
+
+### Graph maternal age variable X BW (not adj for GA)
+
+```{r}
+plot_BW_last_trim_mat_age_primip <- ggplot(data=plot_m_BW_last_trim_mat_age_primip)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Maternal age (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3160,3380)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,60,by=5),expand = c(0, 0)) +
+  scale_y_continuous(breaks=seq(0,4000,by=50)) +
+theme(axis.title.x = axis.title.x.position)
+plot_BW_last_trim_mat_age_primip
+```
+
+
+### Graph seasonality X birthweight (not adj for GA)
+
+```{r}
+plot_BW_last_trim_month_primip <- ggplot(data=plot_m_BW_last_trim_month_primip)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Month")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3160,3380)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(1,12,by=1),expand = c(0, 0)) +
+  scale_y_continuous(breaks=seq(0,4000,by=50)) +
+theme(axis.title.x = axis.title.x.position)
+plot_BW_last_trim_month_primip
+```
+
+### Table summarizing the birthweight outcome model (not adj for GA)
+
+```{r}
+ beta <- coef(m_BW_last_trim_primip)
+  Vb <- vcov(m_BW_last_trim_primip, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  n <- 622748 #to check
+  d <- (abs(beta)/(sqrt(n)*se))
+  my.ci_BW_last_trim_primip <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+  my.ci_BW_last_trim_primip <- format(round(my.ci_BW_last_trim_primip[15:17, c(1:4)], digits=2), nsmall=2)
+```
+
+
+# Preterm birth (without adjusting for birthweight)
+## First trimester exposure 
+```{r echo=FALSE}
+  m_PTB_1st_trim_primip <- bam(PTB ~ s(mat_age) + birth_Y_M_num+  s(month, bs="cc") + mean_ssep2_by_10 + mean_Alt_mean2_by_100+ sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_first_trimester + flu_first_trimester_relativ  + covid_hosp_1st_trim_relativ, family="binomial", data=bevn_eco_in7_primiparous) 
+summary(m_PTB_1st_trim_primip)
+    # extracting the plot information
+plot_m_PTB_1st_trim_mat_age_primip <- GAM_plot_function_binary(m_PTB_1st_trim_primip, 1)
+plot_m_PTB_1st_trim_month_primip <- GAM_plot_function_binary(m_PTB_1st_trim_primip, 2)
+```
+
+### Graph maternal age X preterm birth
+
+```{r}
+plot_PTB_1st_trim_mat_age_primip <- ggplot(data=plot_m_PTB_1st_trim_mat_age_primip)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Maternal age (years)")+
+  ylab("Preterm birth probability")+
+  theme_bw()+
+  coord_cartesian(ylim=c(0.05,0.14)) +
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,60,by=5),expand = c(0, 0)) +
+  theme(axis.title.x = axis.title.x.position)
+plot_PTB_1st_trim_mat_age_primip
+```
+
+### Graph seasonality X preterm birth 
+```{r}
+plot_PTB_1st_trim_seasonality_primip <- ggplot(data=plot_m_PTB_1st_trim_month_primip)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Month")+
+  ylab("Preterm birth probability")+
+  theme_bw()+
+  coord_cartesian(ylim=c(0.05,0.14)) +
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(1,12,by=1),expand = c(0, 0)) +
+  theme(axis.title.x = axis.title.x.position)
+plot_PTB_1st_trim_seasonality_primip
+```
+
+### Table summarizing the preterm birth outcome model
+
+```{r}
+  OR <- exp(coef(m_PTB_1st_trim_primip))
+  beta <- coef(m_PTB_1st_trim_primip)
+  Vb <- vcov(m_PTB_1st_trim_primip, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my.ci_PTB_1st_trim_primip <- data.frame(cbind(OR, lci, uci, d))
+  my.ci_PTB_1st_trim_primip <- format(round(my.ci_PTB_1st_trim_primip[15:17, c(1:4)], digits=2), nsmall=2)
+```
+
+
+## Last trimester exposure 
+```{r echo=FALSE}
+  m_PTB_last_trim_primip <- bam(PTB ~ s(mat_age) + birth_Y_M_num+  s(month, bs="cc") + mean_ssep2_by_10 + mean_Alt_mean2_by_100 + sex + Urban3 + Language + mother_nationality_cat2 + civil_status3 + HW_last_trimester + flu_last_trimester_relativ  + covid_hosp_last_trim_relativ, family="binomial", data=bevn_eco_in7_primiparous) 
+
+    # extracting the plot information
+plot_m_PTB_last_trim_mat_age_primip <- GAM_plot_function_binary(m_PTB_last_trim_primip, 1)
+plot_m_PTB_last_trim_month_primip <- GAM_plot_function_binary(m_PTB_last_trim_primip, 2)
+```
+
+### Graph maternal age X preterm birth
+
+```{r}
+plot_PTB_last_trim_mat_age_primip <- ggplot(data=plot_m_PTB_last_trim_mat_age_primip)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Maternal age (years)")+
+  ylab("Preterm birth probability")+
+  theme_bw()+
+  coord_cartesian(ylim=c(0.05,0.14)) +
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(0,60,by=5),expand = c(0, 0)) +
+  theme(axis.title.x = axis.title.x.position)
+plot_PTB_1st_trim_mat_age_primip
+```
+
+### Graph seasonality X preterm birth 
+```{r}
+plot_PTB_last_trim_seasonality_primip <- ggplot(data=plot_m_PTB_last_trim_month_primip)+
+  geom_line(aes(x=(x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=(x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  xlab("Month")+
+  ylab("Preterm birth probability")+
+  theme_bw()+
+  coord_cartesian(ylim=c(0.05,0.14)) +
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom") +
+  scale_x_continuous(breaks=seq(1,12,by=1),expand = c(0, 0)) +
+  theme(axis.title.x = axis.title.x.position)
+plot_PTB_1st_trim_seasonality_primip
+```
+
+### Table summarizing the preterm birth outcome model
+
+```{r}
+  OR <- exp(coef(m_PTB_last_trim_primip))
+  beta <- coef(m_PTB_last_trim_primip)
+  Vb <- vcov(m_PTB_last_trim_primip, unconditional = TRUE)
+  se <- sqrt(diag(Vb))
+  lci <- exp(beta-1.96*se)
+  uci <- exp(beta+1.96*se)
+  d <- abs(beta)/1.81
+  my.ci_PTB_last_trim_primip <- data.frame(cbind(OR, lci, uci, d))
+  my.ci_PTB_last_trim_primip <- format(round(my.ci_PTB_last_trim_primip[15:17, c(1:4)], digits=2), nsmall=2)
+```
