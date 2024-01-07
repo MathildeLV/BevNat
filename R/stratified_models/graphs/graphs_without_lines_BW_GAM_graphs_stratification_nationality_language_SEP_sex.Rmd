@@ -1,0 +1,265 @@
+---
+title: "BW GAM stratified by maternal nationality, SSEP or Language Region / Unadjusted for gestational age"
+author: "Mathilde Le Vu"
+date:  "`r Sys.Date()`"
+html_document: 
+output:
+  rmdformats::robobook:
+    code_folding: show
+    self_contained: true
+    highlight: pygments
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+# Socio economic position : stratification
+## SSEP by tertile
+
+```{r include=FALSE}
+m_BW_L_SSEP1 <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_L_SSEP1)  
+m_BW_M_SSEP1 <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_M_SSEP1)  
+m_BW_H_SSEP1 <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_H_SSEP1)  
+
+#function to extract the plot information
+plot_m_BW_L_SSEP1 <- GAM_plot_function_continuous(m_BW_L_SSEP1, 1) %>%
+  mutate(SEP="low")
+plot_m_BW_M_SSEP1 <- GAM_plot_function_continuous(m_BW_M_SSEP1, 1) %>%
+  mutate(SEP="medium")
+plot_m_BW_H_SSEP1 <- GAM_plot_function_continuous(m_BW_H_SSEP1, 1) %>%
+  mutate(SEP="high")
+```
+
+```{r}
+x_date <-   bevn_eco_in7 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_data_SEP <- plot_m_BW_L_SSEP1 %>%
+  rbind(plot_m_BW_M_SSEP1) %>%
+  rbind(plot_m_BW_H_SSEP1) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+# graph parameters
+lim1 <- as.POSIXct(ymd("2007-01-01"))
+lim2 <- as.POSIXct(ymd("2022-12-01"))
+
+plot_BW_SEP <- ggplot(data=plot_data_SEP)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=SEP, linetype=SEP),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=SEP),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3200,3450)) +
+  # scale_colour_manual("",
+  #                     values = c("#555555","#555555","#555555"),
+  #                     limits=c("fitall","CIlall","CIuall"),
+  #                     labels=c("fully adjusted","95% CI","95% CI"))+
+  scale_colour_manual('SSEP',                                                #colour manual is for the line
+                      limits=c("low","medium", "high"),
+                      # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("darkorchid1","lightpink3", "darkmagenta"))+
+  scale_fill_manual('SSEP',                                              # fill is for CI
+                    limits=c("low","medium", "high"), 
+                    # labels=c("fully adjusted","95% CI","95% CI"),  
+                    values =c("darkorchid1","lightpink3", "darkmagenta"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  scale_linetype_manual('SSEP',
+                        limits = c("low", "medium", "high"),
+                        values = c("solid", "dashed", "dotted")) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), ## to make the size of the curves (linetypes) in the legend longer and 
+        #being able to differentiate between them
+        legend.key.height = unit(0.5, "cm")) +
+        theme(axis.title.x = axis.title.x.position)
+plot_BW_SEP
+```
+
+# Stratification by maternal nationality
+
+```{r include=FALSE}
+m_BW_swiss <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_Swiss) 
+m_BW_Afr <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_Afr)  
+m_BW_Asi <- bam(BW ~  s(birth_Y_M_num), data=bevn_eco_in7_Asi)  
+m_BW_Eur <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_Eur)  
+m_BW_Nort_Am <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_Nort_Am)  
+m_BW_S_C_Am <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_S_C_Am)  
+
+#function to extract the plot information
+plot_m_BW_swiss <- GAM_plot_function_continuous(m_BW_swiss, 1) %>%
+  mutate(nationality="Swiss")
+plot_m_BW_Afr <- GAM_plot_function_continuous(m_BW_Afr, 1) %>%
+  mutate(nationality="African")
+plot_m_BW_Asi <- GAM_plot_function_continuous(m_BW_Asi, 1) %>%
+  mutate(nationality="Asian")
+plot_m_BW_Eur <- GAM_plot_function_continuous(m_BW_Eur, 1) %>%
+  mutate(nationality="European")
+plot_m_BW_Nort_Am <- GAM_plot_function_continuous(m_BW_Nort_Am, 1) %>%
+  mutate(nationality="Northern American")
+plot_m_BW_S_C_Am<- GAM_plot_function_continuous(m_BW_S_C_Am, 1) %>%
+  mutate(nationality="Southern/Central American")
+```
+
+```{r}
+plot_data_nationality <- plot_m_BW_swiss %>%
+  rbind(plot_m_BW_Afr) %>%
+  rbind(plot_m_BW_Asi) %>%
+  rbind(plot_m_BW_Eur) %>%
+  rbind(plot_m_BW_Nort_Am) %>%
+  rbind(plot_m_BW_S_C_Am) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+plot_BW_nationality <- ggplot(data=plot_data_nationality)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=nationality, linetype=nationality),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=nationality),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3200,3450)) +
+  scale_colour_manual('Maternal nationality',
+                      limits=c("Swiss","African", "Asian", "European", "Northern American", "Southern/Central American"),
+                      values =c("#69D8F3","gold", "#8B0000", "hotpink", "lightgreen", "#666975"))+
+  scale_fill_manual('Maternal nationality',
+                    limits=c("Swiss","African", "Asian", "European", "Northern American", "Southern/Central American"),
+                      values =c("#69D8F3","gold", "#8B0000", "hotpink", "lightgreen", "#666975"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  scale_linetype_manual('Maternal nationality',
+                        limits = c("Swiss", "African", "Asian", "European", "Northern American", "Southern/Central American"),
+                        values = c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash")) +
+   guides(linetype = guide_legend(keyheight = unit(13, "cm"), keywidth = unit(13, "cm"), 
+              title = "Maternal nationality", label = c("Swiss", "African", "Asian", "European", "Northern American", "Southern/Central American"))) +
+theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm"))+
+  theme(axis.title.x = axis.title.x.position)
+plot_BW_nationality
+```
+
+# Stratification by langage region
+```{r include=FALSE}
+m_BW_German <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_German)  
+m_BW_French <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_French)  
+m_BW_Italian <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_Italian)  
+
+plot_m_BW_German <- GAM_plot_function_continuous(m_BW_German, 1) %>%
+  mutate(language_region="German")
+plot_m_BW_French <- GAM_plot_function_continuous(m_BW_French, 1) %>%
+  mutate(language_region="French")
+plot_m_BW_Italian <- GAM_plot_function_continuous(m_BW_Italian, 1) %>%
+  mutate(language_region="Italian")
+```
+
+```{r}
+plot_data_language <- plot_m_BW_German %>%
+  rbind(plot_m_BW_French) %>%
+  rbind(plot_m_BW_Italian) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+plot_BW_language_region <- ggplot(data=plot_data_language)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=language_region, linetype=language_region),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=language_region),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3200, 3450)) +
+  scale_colour_manual('Language region',
+                      limits=c("German","French", "Italian"),
+                      values =c("aquamarine","cadetblue1", "aquamarine4"))+
+  scale_fill_manual('Language region',
+                    limits=c("German","French", "Italian"),
+                      values =c("aquamarine","cadetblue1", "aquamarine4"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  scale_linetype_manual('Language region',
+                        limits = c("German", "French", "Italian"),
+                        values = c("solid", "dashed", "dotted")) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm"))  +
+        theme(axis.title.x = axis.title.x.position)
+plot_BW_language_region
+```
+
+# Stratification by sex
+```{r include=FALSE}
+m_BW_males <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_males)  
+m_BW_females <- bam(BW ~ s(birth_Y_M_num), data=bevn_eco_in7_females)  
+
+plot_m_BW_males <- GAM_plot_function_continuous(m_BW_males, 1) %>%
+  mutate(Sex="Males")
+plot_m_BW_females <- GAM_plot_function_continuous(m_BW_females, 1) %>%
+  mutate(Sex="Females")
+```
+
+```{r}
+plot_data_sex <- plot_m_BW_males %>%
+  rbind(plot_m_BW_females) %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+plot_BW_sex <- ggplot(data=plot_data_sex)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit,col=Sex, linetype=Sex),lwd=lwdline)+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu,fill=Sex),alpha=0.15,lwd=lwdline)+
+  xlab("Timeline (years)")+
+  ylab("Birthweight (g)")+
+  coord_cartesian(ylim=c(3200, 3450)) +
+  scale_colour_manual('Sex',
+                      limits=c("Males","Females"),
+                      values =c("magenta","purple"))+
+  scale_fill_manual('Sex',
+                    limits=c("Males","Females"),
+                      values =c("magenta","purple"))+
+  scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)),
+                    expand = c(0,0)) +
+  scale_linetype_manual('Sex',
+                        limits = c("Males", "Females"),
+                        values = c("solid", "dashed")) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+        legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm"))  +
+        theme(axis.title.x = axis.title.x.position)
+plot_BW_sex
+```
