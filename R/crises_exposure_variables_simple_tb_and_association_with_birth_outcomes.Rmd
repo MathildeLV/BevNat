@@ -75,7 +75,65 @@ all_crises_distribution
 # Save the plot as a PDF with smaller dots
 ggsave("crises_exposures.pdf", plot = all_crises_distribution, path = here("output/figures_paper"), device = "pdf", width = 10, height = 5)
 ```
+## Adjusted for GA duration (/mn of pregnancy months) : heatwave better presented
+```{r}
+all_crises_distribution <- bevn_eco_in6 %>%
+  ggplot(aes(x = as.Date(birth_Y_M_1stday))) +
+  geom_point(aes(y = ifelse(GR_relativ_by_pregn_month != 0, GR_relativ_by_pregn_month, NA), color = "Great Recession"), size = 1.1) +  # Adjust the size parameter
+  geom_point(aes(y = ifelse(flu_relativ_by_pregn_month != 0, flu_relativ_by_pregn_month, NA), color = "Flu"), size = 1.1) +  
+  geom_point(aes(y = ifelse(covid_hosp_relativ_by_pregn_month != 0, covid_hosp_relativ_by_pregn_month, NA), color = "COVID-19"), size = 1.1) +
+   geom_point(aes(y = ifelse(HW !=0, 1, NA), color = "Heatwave"), size = 1.1) + 
+  scale_color_manual(values = c("COVID-19" = "darkorchid1",
+                                "Flu" = "lightpink3",
+                                "Great Recession" = "darkmagenta",
+                                "Heatwave" = "black")) +  # Add "Heatwave" to color scale
+  labs(color = "Crisis") +
+  ylab("relative crisis exposure") +
+  xlab("birthdate") +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "1 year")  # Specify breaks
+  ) +
+  NULL
+all_crises_distribution
 
+# Save the plot as a PDF with smaller dots
+ggsave("crises_exposures_HW_horiz.pdf", plot = all_crises_distribution, path = here("output/figures_paper"), device = "pdf", width = 10, height = 5)
+```
+
+# Heatmap
+```{r}
+all_crises_heatmap <- bevn_eco_in6 %>%
+  ggplot(aes(x = as.Date(birth_Y_M_1stday), y = factor(1))) +  # Using factor(1) to create a single row for the heatmap
+  geom_tile(aes(fill = case_when(
+    GR_relativ_by_pregn_month != 0 ~ GR_relativ_by_pregn_month,
+    flu_relativ_by_pregn_month != 0 ~ flu_relativ_by_pregn_month,
+    covid_hosp_relativ_by_pregn_month != 0 ~ covid_hosp_relativ_by_pregn_month,
+    HW != 0 ~ 1, GR_relativ_by_pregn_month ==0 & flu_relativ_by_pregn_month ==0 & covid_hosp_relativ_by_pregn_month ==0& HW ==0 ~0
+  )),
+  width = 365) +  # Set the width of tiles to one day
+  scale_fill_gradient(low="lightblue", high = "darkred") +  # Adjust values
+  labs(fill = "Intensity of crisis exposure") +
+  ylab("relative crisis exposure") +
+  xlab("birthdate") +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "1 year")
+  ) +
+  annotate("text",x=ymd("2008-10-01"),y=1.0,label="The Great Recession",angle = 90, size=4) +
+  annotate("text",x=ymd("2009-10-01"),y=1.0,label="Flu pandemic",angle = 90, size=4) +
+  annotate("text",x=ymd("2015-05-01"),y=1.0,label="Heatwave",angle = 90, size=4, color="white") +
+  annotate("text",x=ymd("2018-06-01"),y=1.0,label="Heatwave",angle = 90, size=4, color="white") +
+  annotate("text",x=ymd("2021-07-01"),y=1.0,label="COVID-19",angle = 0, size=4) +
+  theme_minimal() +  # You can customize the theme as needed
+  theme(axis.text.y = element_blank(),  # Remove y-axis labels since there's only one row
+        axis.ticks.y = element_blank(),
+        panel.grid = element_blank()) +  # Remove background grid lines
+  NULL
+all_crises_heatmap
+# Save the plot as a PDF with smaller dots
+ggsave("crises_exposures_heatmwap.pdf", plot = all_crises_heatmap, path = here("output/figures_paper"), device = "pdf", width = 10, height = 5)
+```
 
 # Simple tables for all crises variables
 ## GR
