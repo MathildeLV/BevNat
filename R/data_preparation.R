@@ -181,13 +181,6 @@ bevn_eco$country_of_birth_cat2 <- as.factor(ifelse(bevn_eco$country_of_birth == 
     mutate(mean_Alt_mean2_by_100=mean_Alt_mean2/100, # Altitude div/100m
     mean_ssep2_by_10=mean_ssep2/10)   # SSEP div/10 points 
 
-# ## Categorizing altitude between <1500 and >= 1500
-#   bevn_eco <- bevn_eco %>%
-#     mutate(mean_Alt_categ= as.factor(case_when(mean_Alt_mean2>1500 | mean_Alt_mean2==1500 ~"1",
-#                                      mean_Alt_mean2<1500 ~"0")
-#            ))
-#   round(prop.table(table(bevn_eco$mean_Alt_categ, useNA="always"))*100,2)
-#   
 
 # NEW VARIABLES
   ## Age difference between parents
@@ -267,7 +260,7 @@ bevn_eco$country_of_birth_cat2 <- as.factor(ifelse(bevn_eco$country_of_birth == 
    table(bevn_eco$PTB, bevn_eco$GA_weeks_cat3, useNA = "always")
    table(bevn_eco$EPTB, bevn_eco$GA_weeks_cat3, useNA = "always")
    table(bevn_eco$VPTB, bevn_eco$GA_weeks_cat3, useNA = "always")
-   
+
    # Parity category, 1, 2, 3, 4+
    bevn_eco <- bevn_eco %>%
      dplyr::mutate(parity_cat = cut (parity, breaks=c(0,1,2,3,20)))  
@@ -287,9 +280,6 @@ bevn_eco$country_of_birth_cat2 <- as.factor(ifelse(bevn_eco$country_of_birth == 
    table(bevn_eco$pat_age_cat, useNA = "always")
    
   
-
-  
-
 # Chr as factor variables
   #Stillbirth to 0/1 binary variable (1 is stillbirth)
    bevn_eco <- bevn_eco %>%
@@ -395,5 +385,3 @@ bevn_eco$country_of_birth_cat2 <- as.factor(ifelse(bevn_eco$country_of_birth == 
                      'Flag..Art.der.Geburt..einfach.mehrfach.',
                      'mean_ssep', 'median_ssep',
                      'Alt_Mean', 'Alt_SD'))
-  
-  
