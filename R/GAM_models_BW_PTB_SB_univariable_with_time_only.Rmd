@@ -40,7 +40,7 @@ plot_BW_univ_unadj_GA <- ggplot(data=plot_data_BW_univ_not_adj_GA)+
   ylab("Birthweight (g)")+
   coord_cartesian(ylim=c(3200,3450)) +
   scale_colour_manual(                      values ="black")+
-  scale_x_datetime( breaks = date_breaks("12 month"), 
+  scale_x_datetime( breaks = date_breaks("1 year"), 
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
@@ -81,7 +81,7 @@ plot_PTB_univ_unadj_BW <- ggplot(data=plot_data_PTB_univ)+
   ylab("Preterm birth probability")+
   coord_cartesian(ylim=c(0.03,0.07)) +
  scale_colour_manual(values ="black")+
-  scale_x_datetime( breaks = date_breaks("12 month"), 
+  scale_x_datetime( breaks = date_breaks("1 year"), 
                     labels = label_date_short(),
                     limits =c(as.POSIXct("2007-01-01"), max(lim2)),
                     expand = c(0,0)) +
