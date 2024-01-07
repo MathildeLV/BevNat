@@ -19,10 +19,10 @@ BW_trim_all_crises_primip <- BW_trim_all_crises_primip %>%
 BW_trim_all_crises_primip
 
 BW_trim_all_crises_primip%>%
-  gtsave(here("output/tables_paper/suppl_material", "BW_trim_all_crises_gt_primip.html"))
+  gtsave(here("output/tables_for_paper/suppl_material", "BW_trim_all_crises_gt_primip.html"))
 
 BW_trim_all_crises_primip%>%
-  gtsave(here("output/tables_paper/suppl_material", "BW_trim_all_crises_gt_primip.docx"))
+  gtsave(here("output/tables_for_paper/suppl_material", "BW_trim_all_crises_gt_primip.docx"))
 
 
 ## PTB all crises, first and last trimesters UNADJUSTED FOR GA
@@ -48,7 +48,7 @@ PTB_trim_all_crises_primip <- PTB_trim_all_crises_primip %>%
 PTB_trim_all_crises_primip
 
 PTB_trim_all_crises_primip%>%
-  gtsave(here("output/tables_paper/suppl_material", "PTB_trim_all_crises_gt_primip.html"))
+  gtsave(here("output/tables_for_paper/suppl_material", "PTB_trim_all_crises_gt_primip.html"))
 
 PTB_trim_all_crises_primip%>%
-  gtsave(here("output/tables_paper/suppl_material", "PTB_trim_all_crises_gt_primip.docx"))
+  gtsave(here("output/tables_for_paper/suppl_material", "PTB_trim_all_crises_gt_primip.docx"))

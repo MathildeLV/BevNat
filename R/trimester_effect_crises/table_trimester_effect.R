@@ -74,6 +74,6 @@ all_outcomes_trim_gt <- all_outcomes_trim %>%
 all_outcomes_trim_gt
 
 all_outcomes_trim_gt%>%
-  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "all_outcomes_trim_gt.html"))
+  gtsave(here("output/tables_for_paper/pvalue_added_in_the_tables", "all_outcomes_trim_gt.html"))
 all_outcomes_trim_gt%>%
-  gtsave(here("output/tables_paper/pvalue_added_in_the_tables", "all_outcomes_trim_gt.docx"))
+  gtsave(here("output/tables_for_paper/pvalue_added_in_the_tables", "all_outcomes_trim_gt.docx"))

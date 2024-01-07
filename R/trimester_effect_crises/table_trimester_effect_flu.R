@@ -23,10 +23,10 @@ BW_trim_all_crises_flu <- BW_trim_all_crises_flu %>%
 BW_trim_all_crises_flu
 
 BW_trim_all_crises_flu%>%
-  gtsave(here("output/tables_paper/suppl_material", "BW_trim_all_crises_gt_flu.html"))
+  gtsave(here("output/tables_for_paper/suppl_material", "BW_trim_all_crises_gt_flu.html"))
 
 BW_trim_all_crises_flu%>%
-  gtsave(here("output/tables_paper/suppl_material", "BW_trim_all_crises_gt_flu.docx"))
+  gtsave(here("output/tables_for_paper/suppl_material", "BW_trim_all_crises_gt_flu.docx"))
 
 
 ## SB all crises, first and last trimesters UNADJUSTED FOR GA
@@ -87,7 +87,7 @@ PTB_trim_all_crises_flu <- PTB_trim_all_crises_flu %>%
 PTB_trim_all_crises_flu
 
 PTB_trim_all_crises_flu%>%
-  gtsave(here("output/tables_paper/suppl_material", "PTB_trim_all_crises_gt_flu.html"))
+  gtsave(here("output/tables_for_paper/suppl_material", "PTB_trim_all_crises_gt_flu.html"))
 
 PTB_trim_all_crises_flu%>%
-  gtsave(here("output/tables_paper/suppl_material", "PTB_trim_all_crises_gt_flu.docx"))
+  gtsave(here("output/tables_for_paper/suppl_material", "PTB_trim_all_crises_gt_flu.docx"))
