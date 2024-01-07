@@ -74,6 +74,7 @@ plot_BW_prim_month
 ```
 
 ## Table summarizing the birthweight outcome model 
+### Without the intercept
 ```{r}
   beta <- coef(m_BW_prim)
   Vb <- vcov(m_BW_prim, unconditional = TRUE)
@@ -81,12 +82,10 @@ plot_BW_prim_month
   n <- 622748 #to check
   d <- (abs(beta)/(sqrt(n)*se))
   my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
- tab_BW_prim <- round(head(my.ci,17), 2)
-```
+ tab_BW_prim <- format(round((my.ci[2:17,]), 2), nsmall=2)
+ 
 
-```{r}
-tab_BW_prim['Variable'] <- c("Intercept",
-                              "Time (by month)", "SSEP (/10 points)", "Altitude (/100m)",
+tab_BW_prim['Variable'] <- c("Time (by month)", "SSEP (/10 points)", "Altitude (/100m)",
                               "Sex (ref: male)", "Urban (ref: rural)",
                               "Language region (ref: German)", " ", 
                               "Maternal nationality (ref: Swiss)", " ", " ",
@@ -95,80 +94,80 @@ tab_BW_prim['Variable'] <- c("Intercept",
                               "Heatwave (ref: 0)", "Great Recession (continuous)",
                               "COVID (continuous)")
 
-    tab_BW_prim['Category'] <- c(" ", 
-                                 " ", " ", " ",
+    tab_BW_prim['Category'] <- c(" ", " ", " ",
                                 "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
                             "Southern/Central America", "Single", "1", "","")
     tab_BW_prim<-tab_BW_prim[, c('Variable', "Category", "beta", "lci","uci", "d")]
 
-    
-tab_BW_prim_gt <- tab_BW_prim %>%
+ 
+tab_BW_prim <-tab_BW_prim %>%
+  mutate(beta=as.character(beta),
+         lci=as.character(lci),
+         uci=as.character(uci),
+         d=as.character(d))
+
+pvalues_smooth_BW_main = summary(m_BW_prim)
+pvalues_smooth_BW_main <- pvalues_smooth_BW_main$s.table[,4]
+pvalues_smooth_BW_main <- format(pvalues_smooth_BW_main, scientific=FALSE)
+
+pvalues_smooth_BW_main_df <- data.frame(pvalues_smooth_BW_main) %>%
+  dplyr::mutate(Variable=c("Maternal age (years)", "Seasonality (month)")) %>%
+  rename(c(pvalue=(pvalues_smooth_BW_main)))%>%
+  mutate(pvalue=as.numeric(pvalue)) %>%
+  mutate(pvalue1=pvalue) %>%
+  add_column(beta="")%>%
+  add_column(Category="")%>%
+  add_column(lci="") %>%
+  add_column(uci="")
+
+pvalues_smooth_BW_main_df$pvalue <-  format(round(pvalues_smooth_BW_main_df$pvalue, digits=2), nsmall=2)
+
+pvalues_smooth_BW_main_df <- pvalues_smooth_BW_main_df %>%
+  mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
+                           (pvalue1<0.001)~ "<0.001",
+                           (pvalue1<0.01)~ "<0.01")) 
+
+pvalues_smooth_BW_main_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_BW_main_df$pvalue1), 
+                                             pvalues_smooth_BW_main_df$pvalue, pvalues_smooth_BW_main_df$pvalue1))
+pvalues_smooth_BW_main_df <- pvalues_smooth_BW_main_df%>%
+  rename("d"="pvalue1") %>%
+  select(-one_of('pvalue')) 
+rowinfo = c("Smooth variables", "p-value","", "", "", "")
+ow <- rbind(rowinfo,pvalues_smooth_BW_main_df)
+
+BW <- rbind(tab_BW_prim, ow)
+
+tab_BW_prim_gt <- BW %>%
   gt()%>%
-  tab_header(title=md(gt::html("**Association between birthweight and <br> neonatal, maternal and ecological factors from a GAM <br> (model 1.3 : first parities only)**")),
-               subtitle = "linear and categorical variables") %>%
+  # tab_header(title=md(gt::html("**Association between birthweight and <br> neonatal, maternal and ecological factors from a GAM <br> (model 1.3 : first parities only)**"))) %>%
   tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) %>%
   tab_style(
     style = list(
-          cell_fill(color = "#E0E0E0")
-        ),
-        locations = cells_body(rows=c(2, 4, 6, 9, 10, 11, 12, 13,15,17)))%>%
-    tab_style(
+      cell_fill(color = "#E0E0E0")
+    ),
+    locations = cells_body(rows=c(1, 3, 5,8:12,14,16,19)))%>%
+  tab_style(
     style = list(
-     cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(3, 5, 7, 8, 14,16))) %>%
-   tab_options(table.width = pct(30), data_row.padding = px(1),   table.font.size = 12,
+      cell_fill(color = "#F2F0F0")),
+    locations = cells_body(rows=c(2,4,6,7,13,15,18))) %>%
+  tab_options(table.width = pct(30), data_row.padding = px(1),   table.font.size = 12,
               column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
               heading.title.font.size = 14, heading.subtitle.font.size = 14,
               source_notes.font.size = 12) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(rows = 17)) %>%
   tab_source_note(source_note = "n=622,748")
 tab_BW_prim_gt
 
 BW_estimates_prim_gt <- tab_BW_prim_gt %>%
-  gtsave(here("output/tables_paper/suppl_material", "BW_estimates_prim_gt.html"))
+  gtsave(here("output/tables_for_paper/suppl_material", "BW_estimates_prim_gt.html"))
 BW_estimates_prim_gt <- tab_BW_prim_gt %>%
-  gtsave(here("output/tables_paper/suppl_material", "BW_estimates_prim_gt.docx"))
+  gtsave(here("output/tables_for_paper/suppl_material", "BW_estimates_prim_gt.docx"))
 ```
-
-
-## Table summarizing smooth term pvalues of the BW model (not adj for GA)
-```{r}
- pvalues_smooth_BW_prim = summary(m_BW_prim)
- pvalues_smooth_BW_prim <- pvalues_smooth_BW_prim$s.table[,4]
-  pvalues_smooth_BW_prim <- format(pvalues_smooth_BW_prim, scientific=FALSE)
-
-  pvalues_smooth_BW_prim_df <- data.frame(pvalues_smooth_BW_prim) %>%
-  dplyr::mutate(Variable=c("Maternal age", "Seasonality")) %>%
-    rename(c(pvalue=(pvalues_smooth_BW_prim)))%>%
-    mutate(pvalue=as.numeric(pvalue)) %>%
-    mutate(pvalue1=pvalue) 
-  
-  pvalues_smooth_BW_prim_df$pvalue <-  format(round(pvalues_smooth_BW_prim_df$pvalue, digits=3), nsmall=2)
-  
-  pvalues_smooth_BW_prim_df <- pvalues_smooth_BW_prim_df %>%
-    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
-                             (pvalue1<0.001)~ "<0.001")) 
-  
-  pvalues_smooth_BW_prim_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_BW_prim_df$pvalue1), pvalues_smooth_BW_prim_df$pvalue,                                                 pvalues_smooth_BW_prim_df$pvalue1))
-  
-  pvalues_smooth_BW_prim_gt <- pvalues_smooth_BW_prim_df %>%
-    select(-one_of('pvalue')) %>%
-    rename("p-value"="pvalue1") %>%
-    gt()%>% 
-    tab_header(title=md(gt::html("**Birthweight GAM (model 1.3)**")), 
-              subtitle = "smooth variables") %>%
-  tab_options(table.width = pct(12), data_row.padding = px(1),   table.font.size = 12,
-              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
-              heading.title.font.size = 14, heading.subtitle.font.size = 14,
-              source_notes.font.size = 12) 
-  pvalues_smooth_BW_prim_gt
-
-  BW_prim_smooth_pvalues_gt <- pvalues_smooth_BW_prim_gt%>%
-  gtsave(here("output/tables_paper/suppl_material", "pvalues_smooth_BW_prim_gt.html"))
-  BW_prim_smooth_pvalues_gt <- pvalues_smooth_BW_prim_gt%>%
-    gtsave(here("output/tables_paper/suppl_material", "pvalues_smooth_BW_prim_gt.docx"))
-```
-
 
 # Preterm birth (without adjusting for birthweight)
 ```{r echo=FALSE}
@@ -222,7 +221,7 @@ plot_PTB_prim_seasonality
 ```
 
 ## Table summarizing the preterm birth outcome model
-
+### Without the intercept
 ```{r}
   OR <- exp(coef(m_PTB_prim))
   beta <- coef(m_PTB_prim)
@@ -232,12 +231,15 @@ plot_PTB_prim_seasonality
   uci <- exp(beta+1.96*se)
   d <- abs(beta)/1.81
   my.ci <- data.frame(cbind(OR, lci, uci, d))
-  tab_PTB_prim <- round(head(my.ci, 17), 2)
-```
-
-```{r}
-tab_PTB_prim['Variable'] <- c("Intercept",
-                              "Time (by month)", "SSEP (/10 points)", "Altitude (/100m)",
+  tab_PTB_prim <- format(round((my.ci[2:17,]), 2), nsmall=2)
+  
+  tab_PTB_prim <-tab_PTB_prim %>%
+  mutate(OR=as.character(OR),
+         lci=as.character(lci),
+         uci=as.character(uci),
+         d=as.character(d))
+ 
+tab_PTB_prim['Variable'] <- c("Time (by month)", "SSEP (/10 points)", "Altitude (/100m)",
                               "Sex (ref: male)", "Urban (ref: rural)",
                               "Language region (ref: German)", " ", 
                               "Maternal nationality (ref: Swiss)", " ", " ",
@@ -246,78 +248,72 @@ tab_PTB_prim['Variable'] <- c("Intercept",
                               "Heatwave (ref: 0)", "Great Recession (continuous)",
                               "COVID (continuous)")
 
-    tab_PTB_prim['Category'] <- c(" ", 
-                                    " ", " "," ",
+    tab_PTB_prim['Category'] <- c(" ", " "," ",
                                     "Female", "Urban",
                                     "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
                             "Southern/Central America", "Single", "1", "","")
     tab_PTB_prim <-tab_PTB_prim[, c('Variable', "Category", "OR", "lci","uci", "d")]
 
-tab_PTB_prim_gt<- tab_PTB_prim %>%
+
+pvalues_smooth_PTB_main = summary(m_PTB_prim)
+pvalues_smooth_PTB_main <- pvalues_smooth_PTB_main$s.table[,4]
+pvalues_smooth_PTB_main <- format(pvalues_smooth_PTB_main, scientific=FALSE)
+
+pvalues_smooth_PTB_main_df <- data.frame(pvalues_smooth_PTB_main) %>%
+  dplyr::mutate(Variable=c("Maternal age (years)", "Seasonality (month)")) %>%
+  rename(c(pvalue=(pvalues_smooth_PTB_main)))%>%
+  mutate(pvalue=as.numeric(pvalue)) %>%
+  mutate(pvalue1=pvalue) %>%
+  add_column(OR="")%>%
+  add_column(Category="")%>%
+  add_column(lci="") %>%
+  add_column(uci="")
+
+pvalues_smooth_PTB_main_df$pvalue <-  format(round(pvalues_smooth_PTB_main_df$pvalue, digits=2), nsmall=2)
+
+pvalues_smooth_PTB_main_df <- pvalues_smooth_PTB_main_df %>%
+  mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
+                           (pvalue1<0.001)~ "<0.001",
+                           (pvalue1<0.01)~ "<0.01")) 
+
+pvalues_smooth_PTB_main_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_PTB_main_df$pvalue1), 
+                                             pvalues_smooth_PTB_main_df$pvalue, pvalues_smooth_PTB_main_df$pvalue1))
+pvalues_smooth_PTB_main_df <- pvalues_smooth_PTB_main_df%>%
+  rename("d"="pvalue1") %>%
+  select(-one_of('pvalue')) 
+rowinfo = c("Smooth variables", "p-value","", "", "", "")
+ow <- rbind(rowinfo,pvalues_smooth_PTB_main_df)
+
+PTB <- rbind(tab_PTB_prim, ow)
+
+tab_PTB_prim_gt <- PTB %>%
   gt()%>%
-  tab_header(title=md(gt::html("**Association between the risk of preterm birth and <br> neonatal, maternal and ecological factors from a GAM <br> (model 2.3: first parities only)**")),
-               subtitle = "linear categorical variables") %>%
+  # tab_header(title=md(gt::html("**Association between the risk of preterm birth and <br> neonatal, maternal and ecological factors from a GAM <br> (model 2.3: first parities only)**"))) %>%
   tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
   tab_style(
     style = list(
           cell_fill(color = "#E0E0E0")
         ),
-        locations = cells_body(rows=c(2, 4, 6, 9:13, 15,
-                                      17)))%>%
+        locations = cells_body(rows=c(1, 3, 5,8:12,14,16,19)))%>%
     tab_style(
     style = list(
      cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(3, 5, 7, 8, 14, 16))) %>%
-   tab_options(table.width = pct(30), data_row.padding = px(1),   table.font.size = 12,
+        locations = cells_body(rows=c(2,4,6,7,13,15,18))) %>%
+  tab_options(table.width = pct(30), data_row.padding = px(1),   table.font.size = 12,
               column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
               heading.title.font.size = 14, heading.subtitle.font.size = 14,
               source_notes.font.size = 12) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(rows = 17)) %>%
   tab_source_note(source_note = "n=622,748")
 tab_PTB_prim_gt
 
 PTB_estimates_prim_gt <- tab_PTB_prim_gt%>%
-  gtsave(here("output/tables_paper/suppl_material", "PTB_estimates_prim.html"))
+  gtsave(here("output/tables_for_paper/suppl_material", "PTB_estimates_prim.html"))
 PTB_estimates_prim_gt <- tab_PTB_prim_gt%>%
-  gtsave(here("output/tables_paper/suppl_material", "PTB_estimates_prim.docx"))
-```
-
-## Table summarizing smooth term pvalues of the PTB model
-
-```{r}
-  pvalues_smooth_PTB_prim = summary(m_PTB_prim)
-  pvalues_smooth_PTB_prim <- pvalues_smooth_PTB_prim$s.table[,4]
-  pvalues_smooth_PTB_prim <- format(pvalues_smooth_PTB_prim, scientific=FALSE)
-  
-  pvalues_smooth_PTB_prim_df <- data.frame(pvalues_smooth_PTB_prim) %>%
-    dplyr::mutate(Variable=c("Maternal age", "Seasonality")) %>%
-    rename(c(pvalue=(pvalues_smooth_PTB_prim)))%>%
-    mutate(pvalue=as.numeric(pvalue)) %>%
-    mutate(pvalue1=pvalue) 
-  
-  pvalues_smooth_PTB_prim_df$pvalue <-  format(round(pvalues_smooth_PTB_prim_df$pvalue, digits=3), nsmall=2)
-  
-  pvalues_smooth_PTB_prim_df <- pvalues_smooth_PTB_prim_df %>%
-    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
-                             (pvalue1<0.001)~ "<0.001")) 
-  
-  pvalues_smooth_PTB_prim_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_PTB_prim_df$pvalue1),                                                            pvalues_smooth_PTB_prim_df$pvalue,  
-                                                 pvalues_smooth_PTB_prim_df$pvalue1))
-  
-  pvalues_smooth_PTB_prim_gt <- pvalues_smooth_PTB_prim_df %>%
-    select(-one_of('pvalue')) %>%
-      rename("p-value"="pvalue1") %>%
-      gt()%>% 
-  tab_header(title=md(gt::html("**Preterm birth GAM (model 2.3)**")), 
-              subtitle = "smooth variables") %>%
-  tab_options(table.width = pct(12), data_row.padding = px(1),   table.font.size = 12,
-              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
-              heading.title.font.size = 14, heading.subtitle.font.size = 14,
-              source_notes.font.size = 12)
-  pvalues_smooth_PTB_prim_gt
-  
-  PTB_prim_smooth_pvalues_gt <- pvalues_smooth_PTB_prim_gt%>%
-    gtsave(here("output/tables_paper/suppl_material", "PTB_full_smooth_pvalues_prim.html")) 
-  PTB_prim_smooth_pvalues_gt <- pvalues_smooth_PTB_prim_gt%>%
-    gtsave(here("output/tables_paper/suppl_material", "PTB_full_smooth_pvalues_prim.docx"))
+  gtsave(here("output/tables_for_paper/suppl_material", "PTB_estimates_prim.docx"))
 ```
