@@ -439,9 +439,9 @@ BW_main_gt <- BW_full %>%
 BW_main_gt
 
 BW_estimates_main_gt <- BW_main_gt%>%
-  gtsave(here("output/tables_for_paper/pvalue_added_in_the_tables", "BW_estimates_categ_and_smooth_main_gt_with_pvalue.html"))
+  gtsave(here("output/tables_for_paper", "BW_estimates_categ_and_smooth_main_gt_with_pvalue.html"))
 BW_estimates_main_gt <- BW_main_gt%>%
-  gtsave(here("output/tables_for_paper/pvalue_added_in_the_tables", "BW_estimates_categ_and_smooth_main_gt_with_pvalue.docx"))
+  gtsave(here("output/tables_for_paper", "BW_estimates_categ_and_smooth_main_gt_with_pvalue.docx"))
 ```
 
 
@@ -848,9 +848,9 @@ SB_main_gt <- SB_full %>%
 SB_main_gt
 
 SB_estimates_main_gt <- SB_main_gt%>%
-  gtsave(here("output/tables_for_paper/pvalue_added_in_the_tables", "SB_estimates_categ_and_smooth_main_gt_with_pvalue.html"))
+  gtsave(here("output/tables_for_paper", "SB_estimates_categ_and_smooth_main_gt_with_pvalue.html"))
 SB_estimates_main_gt <- SB_main_gt%>%
-  gtsave(here("output/tables_for_paper/pvalue_added_in_the_tables", "SB_estimates_categ_and_smooth_main_gt_with_pvalue.docx"))
+  gtsave(here("output/tables_for_paper", "SB_estimates_categ_and_smooth_main_gt_with_pvalue.docx"))
 ```
 
 
@@ -1277,7 +1277,7 @@ PTB_main_gt <- PTB_full %>%
 PTB_main_gt
 
 PTB_estimates_main_gt <- PTB_main_gt%>%
-  gtsave(here("output/tables_for_paper/pvalue_added_in_the_tables", "PTB_estimates_categ_and_smooth_main_gt_with_pvalue.html"))
+  gtsave(here("output/tables_for_paper", "PTB_estimates_categ_and_smooth_main_gt_with_pvalue.html"))
 PTB_estimates_main_gt <- PTB_main_gt%>%
-  gtsave(here("output/tables_for_paper/pvalue_added_in_the_tables", "PTB_estimates_categ_and_smooth_main_gt_with_pvalue.docx"))
+  gtsave(here("output/tables_for_paper", "PTB_estimates_categ_and_smooth_main_gt_with_pvalue.docx"))
 ```
