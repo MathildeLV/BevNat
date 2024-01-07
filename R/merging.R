@@ -7,14 +7,16 @@
 # gem$MS_Reg <- as.numeric(gem$MS_Reg)
 summary(gem$MS_Reg)
 
-anth <- anth %>%
-  rename(MS_Reg=MSRegion) %>% #like this MS region variables are named the same (MS_Reg) in both gem and anth datasets.
-  mutate(MS_Reg= as.numeric(MS_Reg))
+# anth <- anth %>%
+#   rename(MS_Reg=MSRegion) %>% #like this MS region variables are named the same (MS_Reg) in both gem and anth datasets.
+#   mutate(MS_Reg= as.numeric(MS_Reg))
+# 
+# summary(anth$MS_Reg)
+# 
+# eco <- anth %>%
+#   full_join(gem)
 
-summary(anth$MS_Reg)
-
-eco <- anth %>%
-  full_join(gem)
+eco <- gem
 
 # Merging bevn whole (2007-2020) and 2021
 bevn2007_21 <- bevn %>%
@@ -51,16 +53,19 @@ bevn2007_22_test <- bevn2007_22 %>%
 
 com_eco <- bevn2007_22_test %>%
   filter( is.na(Statistikjahr)) %>%
-  dplyr::select(com)
-
+  dplyr::select(com) %>%
+  arrange(com)
 com_eco
+#old GMDNR
 
 com_bevn <- bevn2007_22_test %>%
   filter( is.na(MS_Reg)) %>%
   dplyr::select(com) %>%
   distinct(com) %>%
-  filter(com<8000)
+  filter(com<8000) %>%
+  arrange(com) 
 com_bevn
+# new GMDNR
 
 
 #recoding Gemeindenummer
@@ -237,15 +242,31 @@ bevn_eco%>%
   filter( is.na(Statistikjahr)) %>%
   dplyr::select(com)
 
+# bevn_eco %>%
+#   filter(is.na(Language)) %>%
+#   dplyr::select(com) %>%
+#   distinct(com) %>%
+#   filter(com<8000) %>%
+#   arrange(com)
+
+
 tab <- bevn_eco %>%
   filter(mean_ssep!=mean_ssep2) 
 
+
+# 
+# test <- bevn_eco %>%
+#   filter(Mutter..ständig.oder.nicht.ständiger.Wohnsitz==1, #res status
+#          Geburtsstaat==8100) 
+
+
+
 ## Add Swiss population per year
 pop <- pop %>%
-  rename(Ereignisjahr=birthyear) %>%
-  mutate(Ereignisjahr=as.numeric(Ereignisjahr)) %>%
-  mutate(population=as.numeric(population))
+  mutate(Ereignisjahr=as.numeric(Ereignisjahr),
+         population=as.numeric(population),
+         permanent_resident_population=as.numeric(permanent_resident_population),
+         non_permanent_population=as.numeric(non_permanent_population)) 
 
 bevn_eco <- bevn_eco %>%
   full_join(pop) 
-
