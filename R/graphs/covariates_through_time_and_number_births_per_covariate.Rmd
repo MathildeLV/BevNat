@@ -1,0 +1,634 @@
+---
+title: "Covariates and birth numbers through years"
+author: "Mathilde Le Vu"
+date: "2023-09-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Covariates through time
+
+## Maternal age through the years
+### With ggplot
+```{r}
+mat_age_years <- bevn_eco_in6 %>%
+  group_by(birth_Y_M_1stday) %>%
+  mutate(mean_mat_age=mean(mat_age)) %>%
+  ungroup()
+
+mat_age_years%>%
+  ggplot(aes(x=as.Date(birth_Y_M_1stday), y=mean_mat_age)) + 
+  geom_line() + 
+  # geom_smooth(method = "loess", se = FALSE, color = "blue")+# Add a smoothed line: doesnt work: R runs forevere
+   scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "1 year")
+  ) +
+    labs(x = "Timeline (years)", y="Mean maternal age (years)", title = "Maternal age through time")+
+  NULL
+```
+
+### With GAM +  ggplot
+```{r}
+m_matage_time <- bam(mat_age ~ s(birth_Y_M_num), data=bevn_eco_in6) 
+plot_m_matage_time <- GAM_plot_function_continuous(m_matage_time, 1) 
+
+x_date <-   bevn_eco_in6 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_matage_time <- plot_m_matage_time %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+lim1 <- as.POSIXct(ymd("2007-01-01"))
+lim2 <- as.POSIXct(ymd("2022-12-01"))
+
+plot_mat_age_time <- ggplot(data=plot_matage_time)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  scale_colour_manual('mat_age',  #colour manual is for the line
+                      # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("#9557DC"))+
+  scale_fill_manual('mat_age',                        # fill is for CI
+                    # labels=c("fully adjusted","95% CI","95% CI"),  
+                    values =c("#9557DC"))+
+   scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)), #to force labelling from 2007 on the x axis
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+         legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
+theme(axis.title.x = axis.title.x.position) + 
+  labs(x = "Timeline (years)", y="Maternal age (years)", title = "Maternal age through time")
+plot_mat_age_time
+```
+
+## SSEP through the years
+### With ggplot
+```{r}
+ssep_years <- bevn_eco_in6 %>%
+  group_by(birth_Y_M_1stday) %>%
+  mutate(mean_mean_ssep2=mean(mean_ssep2)) %>%
+  ungroup()
+
+ssep_years%>%
+  ggplot(aes(x=as.Date(birth_Y_M_1stday), y=mean_mean_ssep2)) + 
+  geom_line() + 
+    # geom_smooth(method = "loess", se = FALSE, color = "blue")+# Add a smoothed line
+   scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "1 year")
+  ) +
+    labs(x = "Timeline (years)", y="Mean SSEP", title = "SSEP through time")+
+  NULL
+```
+
+### With GAM +  ggplot
+```{r}
+m_seep_time <- bam(mean_ssep2 ~ s(birth_Y_M_num), data=bevn_eco_in6) 
+plot_ssep_time <- GAM_plot_function_continuous(m_seep_time, 1)
+
+x_date <-   bevn_eco_in6 %>% #careful, mayhave to change the dataset if I later work with smaller time ranges!
+  select(birth_Y_M, birth_Y_M_num) %>%
+  distinct(birth_Y_M, .keep_all = TRUE) %>%
+  rename(x=birth_Y_M_num)
+
+plot_sseptime <- plot_ssep_time %>%
+  mutate(x=round(x,0)) %>%
+  left_join(x_date) %>%
+  mutate(date_x= ymd(paste0(birth_Y_M,"-01")))
+
+lim1 <- as.POSIXct(ymd("2007-01-01"))
+lim2 <- as.POSIXct(ymd("2022-12-01"))
+
+plot_ssep_time <- ggplot(data=plot_sseptime)+
+  geom_line(aes(x=as.POSIXct(date_x),y=fit),lwd=lwdline, color=("black"))+
+  geom_ribbon(aes(x=as.POSIXct(date_x),ymin=CIl,ymax=CIu),alpha=0.15,lwd=lwdline, fill='black')+
+  scale_colour_manual('mat_age',  #colour manual is for the line
+                      # labels=c("fully adjusted","95% CI","95% CI"),
+                      values =c("#9557DC"))+
+  scale_fill_manual('mat_age',                        # fill is for CI
+                    # labels=c("fully adjusted","95% CI","95% CI"),  
+                    values =c("#9557DC"))+
+   scale_x_datetime( breaks = date_breaks("12 month"), 
+                    labels = label_date_short(),
+                    limits =c(as.POSIXct("2007-01-01"), max(lim2)), #to force labelling from 2007 on the x axis
+                    expand = c(0,0)) +
+  theme_bw()+
+  theme(axis.text.y=element_text(color="black",size=size_axis),
+        axis.text.x=element_text(color="black",size=size_axis,angle=45,hjust=1),
+        axis.title=element_text(size=size_axis_title),
+        legend.text=element_text(size=size_legend),
+        legend.title=element_text(size=size_legend_title),
+        legend.position="bottom",
+         legend.key.width = unit(1.5, "cm"), 
+        legend.key.height = unit(0.5, "cm")) +
+theme(axis.title.x = axis.title.x.position) + 
+  labs(x = "Timeline (years)", y="Mean SSEP", title = "SSEP through time")
+plot_ssep_time
+```
+
+## Parities through the years
+```{r}
+# I have first to create a category for the missing to display them on the plot
+bevn_eco_in6 <- bevn_eco_in6 %>%
+  mutate(parity_catgraph = ifelse(is.na(parity_cat), "missing", as.character(parity_cat)))
+
+# Reorder the levels of the parity_catgraph variable
+bevn_eco_in6 <- bevn_eco_in6 %>%
+  mutate(
+    parity_catgraph = as.factor(parity_catgraph),
+    parity_catgraph = fct_relevel(
+      parity_catgraph,
+      "missing", "(3,20]", "(2,3]", "(1,2]", "(0,1]"
+    ))
+
+gg_parity_birthy <- bevn_eco_in6 %>%
+  ggplot(aes(x = birthyear, fill = parity_catgraph)) +
+  geom_bar(position = "fill") +
+  labs(
+    title = "Parity through the years",
+    x = "Birthyear",
+    y = "Share of parity categories"
+  ) +
+  guides(fill = guide_legend(title = "Parity")) +
+  scale_fill_manual(
+    values = c(
+      "(0,1]" = "darkblue", "(1,2]" = "purple", "(2,3]" = "magenta", "(3,20]" = "lightpink", "missing" = "darkgray"
+    ),
+    labels = c(
+      "(0,1]" = "1", "(1,2]" = "2", "(2,3]" = "3", "(3,20]" = ">3"
+    )
+  ) +
+  scale_x_continuous(breaks = c(2007, 2010, 2013, 2016, 2019,2022))
+gg_parity_birthy
+```
+
+## Maternal nationality through the years
+
+```{r}
+bevn_eco_in6 <- bevn_eco_in6 %>%
+  mutate(mother_nationality_cat2_graph = ifelse(is.na(mother_nationality_cat2), "Oceania or missing", as.character(mother_nationality_cat2)))
+# Reorder the levels of the mother_nationality_cat2_graph variable
+bevn_eco_in6 <- bevn_eco_in6 %>%
+  mutate(
+    mother_nationality_cat2_graph = as.factor(mother_nationality_cat2_graph),
+    mother_nationality_cat2_graph = fct_relevel(
+      mother_nationality_cat2_graph,
+      "Oceania or missing", "Northern America", "Southern and Central America", "Africa", "Asia", "Europe", "Switzerland"
+    ))
+
+gg_mat_nat_birthy <- bevn_eco_in6 %>%
+ ggplot(aes(x=birthyear, fill=mother_nationality_cat2_graph)) + 
+  geom_bar(position = "fill") +
+  labs(
+    title = "Maternal nationality through the years",
+    x = "Birthyear",
+    y = "Share of nationality categories"
+  ) +
+  guides(fill=guide_legend(title="Maternal nationality"))+
+  scale_fill_manual(values = c("Switzerland" = "darkblue", "Europe" = "lightpink","Africa" = "purple", "Asia" = "magenta",  "Northern America"="darkgreen", "Southern and Central America"="lightblue", "Oceania or missing"="darkgray")
+) +
+ scale_x_continuous(breaks = c(2007, 2010, 2013, 2016, 2019,2022)) +
+  NULL
+gg_mat_nat_birthy
+```
+
+## Language region through the years
+
+```{r}
+bevn_eco_in6 <- bevn_eco_in6 %>%
+  mutate(Language_graph = ifelse(is.na(Language), "missing", as.character(Language)))
+bevn_eco_in6 <- bevn_eco_in6 %>%
+  mutate(
+    Language_graph = as.factor(Language_graph),
+    Language_graph = fct_relevel(
+      Language_graph,
+      "missing", "Italian", "French", "German or Romansh"
+    ))
+
+gg_lang_birthy <- bevn_eco_in6 %>%
+ ggplot(aes(x=birthyear, fill=Language_graph)) + 
+  geom_bar(position = "fill") +
+  labs(
+    title = "Share of births from each language region through the years",
+    x = "Birthyear",
+    y = "Share of each language region"
+  ) +
+  guides(fill=guide_legend(title="Language region"))+
+  scale_fill_manual(values = c("German or Romansh" = "darkblue", "Italian" = "lightpink","French" = "magenta", "missing"="darkgray")) +
+ scale_x_continuous(breaks = c(2007, 2010, 2013, 2016, 2019, 2022))
+# +
+# theme(panel.background = element_rect(fill = "white"))
+gg_lang_birthy
+```
+
+## Civil status
+```{r}
+bevn_eco_in6 <- bevn_eco_in6 %>%
+  mutate(
+    civilstatus_graph = as.factor(civil_status3),
+    civilstatus_graph = fct_relevel(
+      civilstatus_graph,
+      "Single", "Married"
+    ))
+
+gg_civilstat_birthy <- bevn_eco_in6 %>%
+  ggplot(aes(x = birthyear, fill = civilstatus_graph)) +
+  geom_bar(position = "fill") +
+  labs(
+    title = "Maternal civil status through the years",
+    x = "Birthyear",
+    y = "Civil status",
+        color = "SSEP tertile" 
+
+  ) +
+  guides(fill = guide_legend(title = "Civil status")) +
+  scale_fill_manual(
+    values = c(
+      "Married" = "darkblue", "Single" = "magenta")) +
+  scale_x_continuous(breaks = c(2007, 2010, 2013, 2016, 2019,2022))
+gg_civilstat_birthy
+```
+
+# Crude birth numbers through the years, depending on covariates
+## Overall
+```{r}
+# Birth numbers
+count_data <- bevn_eco_in_br %>%
+  group_by(birth_Y_M_1stday) %>%
+  summarize(count = n())
+
+gg_birth_numbers <- count_data %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = count)) +
+  geom_line() +
+  labs(
+    title = "Birth numbers among resident population, by month",
+    x = "Birthyear",
+    y = "Birth numbers"
+  ) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  ) +
+  NULL
+gg_birth_numbers
+```
+
+## SSEP tertiles
+```{r}
+table(bevn_eco_in6$mean_ssep2_cat1)
+
+count_data <- bevn_eco_in6 %>%
+  filter(!is.na(mean_ssep2_cat1)) %>%
+  group_by(birth_Y_M_1stday, mean_ssep2_cat1) %>%
+  summarize(count = n())
+
+gg_SSEP_count <- count_data %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = count, color = mean_ssep2_cat1, group = mean_ssep2_cat1)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers depending on SSEP tertile through time",
+    x = "Birthyear",
+    y = "Number of births",
+    color = "SSEP tertile" 
+  ) +
+  scale_color_manual(values = c("low SSEP" = "darkblue", "medium SSEP" = "magenta", "high SSEP" = "cyan")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  ) +
+  NULL
+gg_SSEP_count
+```
+
+## Maternal nationality
+```{r}
+bevn_eco_in6 <- bevn_eco_in6 %>%
+  mutate(
+    mother_nationality_cat2_graph = fct_relevel(
+      mother_nationality_cat2_graph,
+      "Switzerland", "Europe","Asia","Africa", "Southern and Central America", "Northern America",
+      "Oceania or missing", 
+    ))
+
+count_data <- bevn_eco_in6 %>%
+  group_by(birth_Y_M_1stday, mother_nationality_cat2_graph) %>%
+  summarize(count = n())
+
+gg_mat_nat_count_log <- count_data %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = log10(count), color = mother_nationality_cat2_graph, group = mother_nationality_cat2_graph)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers depending on maternal nationality, by month",
+    x = "Birthyear",
+    y = "log10(Number of births)",
+    color = "Maternal nationality" 
+  ) +
+  scale_color_manual(values = c("Switzerland" = "darkblue", "Europe" = "lightpink","Africa" = "purple", "Asia" = "magenta",  "Northern America"="darkgreen", "Southern and Central America"="lightblue", "Oceania or missing"="darkgray")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  ) +
+  NULL
+gg_mat_nat_count_log
+
+
+gg_mat_nat_count <- count_data %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = (count), color = mother_nationality_cat2_graph, group = mother_nationality_cat2_graph)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers depending on maternal nationality, by month",
+    x = "Birthyear",
+    y = "Number of births",
+    color = "Maternal nationality" 
+  ) +
+  scale_color_manual(values = c("Switzerland" = "darkblue", "Europe" = "lightpink","Africa" = "purple", "Asia" = "magenta",  "Northern America"="darkgreen", "Southern and Central America"="lightblue", "Oceania or missing"="darkgray")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  ) +
+  NULL
+gg_mat_nat_count
+```
+
+## Language region
+```{r}
+count_data <- bevn_eco %>%
+  filter(!is.na(Language)) %>%
+  group_by(birth_Y_M_1stday, Language) %>%
+  summarize(count = n())
+
+gg_lang_count_log <- count_data %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = log10(count), color = Language, group = Language)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers depending on language region, by month",
+    x = "Birthyear",
+    y = "log10(Number of births)",
+    color = "Language region" 
+  ) +
+  scale_color_manual(values = c("German or Romansh" = "darkblue", "Italian" = "lightpink","French" = "magenta")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  ) +
+  NULL
+gg_lang_count_log
+
+gg_lang_count <- count_data %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = count, color = Language, group = Language)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers depending on language region, by month",
+    x = "Birthyear",
+    y = "Number of births",
+    color = "Language region" 
+  ) +
+  scale_color_manual(values = c("German or Romansh" = "darkblue", "Italian" = "lightpink","French" = "magenta")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  ) +
+  NULL
+gg_lang_count
+```
+
+
+### Language region: zoom from 2015
+```{r}
+count_data <- bevn_eco %>%
+  filter(!is.na(Language)) %>%
+  group_by(birth_Y_M_1stday, Language) %>%
+  summarize(count = n())
+
+gg_lang_count_log <- count_data %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = log10(count), color = Language, group = Language)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers depending on language region, by month",
+    x = "Birthyear",
+    y = "log10(Number of births)",
+    color = "Language region" 
+  ) +
+  scale_color_manual(values = c("German or Romansh" = "darkblue", "Italian" = "lightpink","French" = "magenta")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "1 year")
+  ) +
+  NULL
+gg_lang_count_log
+
+
+# Not log
+gg_lang_count <- count_data %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = count, color = Language, group = Language)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers depending on language region through time",
+    x = "Birthyear",
+    y = "Number of births",
+    color = "Language region" 
+  ) +
+  scale_color_manual(values = c("German or Romansh" = "darkblue", "Italian" = "lightpink","French" = "magenta")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2015-01-01"), as.Date("2022-12-01"), by = "1 year")
+  ) +
+  NULL
+gg_lang_count
+
+#wave 1: 03 and 04/2020, wave 2: 10/2020 to 02/2021
+
+
+count_data_gr<-count_data%>%
+  filter(Language=="German or Romansh")
+count_data_fr<-count_data%>%
+  filter(Language=="French")
+count_data_it<-count_data%>%
+  filter(Language=="Italian")
+
+gg_lang_count_gr <- count_data_gr %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = count)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers in German-speaking Switzerland through time",
+    x = "Birthyear",
+    y = "Number of births",
+    color = "Language region" 
+  ) +
+  scale_color_manual(values = c("German or Romansh" = "darkblue")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2015-01-01"), as.Date("2022-12-01"), by = "1 year")
+  ) +
+  NULL
+gg_lang_count_gr
+
+gg_lang_count_fr <- count_data_fr %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = count)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers in French-speaking Switzerland through time",
+    x = "Birthyear",
+    y = "Number of births",
+    color = "Language region" 
+  ) +
+  scale_color_manual(values = c("French" = "magenta")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2015-01-01"), as.Date("2022-12-01"), by = "1 year")
+  ) +
+  NULL
+gg_lang_count_fr
+
+
+gg_lang_count_it <- count_data_it %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = count)) +
+  geom_line() +
+  labs(
+    title = "Crude birth numbers in Italian-speaking Switzerland through time",
+    x = "Birthyear",
+    y = "Number of births",
+    color = "Language region" 
+  ) +
+  scale_color_manual(values = c("Italian" = "lightpink")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2015-01-01"), as.Date("2022-12-01"), by = "1 year")
+  ) +
+  NULL
+gg_lang_count_it
+```
+
+# Birthrate
+## Overall
+### In whole dataset but among resident population only
+```{r}
+test <-  bevn_eco_in_br %>%
+  group_by(birth_Y_M_1stday) %>%
+  mutate(birthrate_per_month=((1000*n())/(mean(permanent_resident_population))))  %>%
+  ungroup()
+
+gg_birthrate <- test %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = birthrate_per_month, color="bevn_eco_in_br")) +
+  geom_line() +
+  labs(
+    title = "Monthly birth rate among the permanent resident population",
+    x = "Birthyear",
+    y = "Birthrate (/1000 inhabitants)"
+  ) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  ) +
+  NULL
+gg_birthrate
+```
+
+### In analysed dataset (bevn_eco_in6) among resident population only
+```{r}
+test2 <-  bevn_eco_in6 %>%
+  group_by(birth_Y_M_1stday) %>%
+  mutate(birthrate_per_month=((1000*n())/(mean(permanent_resident_population))))  %>%
+  ungroup()
+
+gg_birthrate_bevn_eco_in6 <- test %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = birthrate_per_month)) +
+  geom_line() +
+  labs(
+    title = "Birth rate among resident population, by month",
+    x = "Birthyear",
+    y = "Birthrate"
+  ) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  ) +
+  NULL
+gg_birthrate_bevn_eco_in6
+```
+
+### Both plots together
+```{r}
+# Create a common plot by adding both ggplot objects together
+combined_plot <- gg_birthrate +
+  geom_line(data = test2, aes(x = birth_Y_M_1stday, y = birthrate_per_month, color = "bevn_eco_in6"))
+
+# Update the legend to show custom labels for the colors
+combined_plot <- combined_plot +
+  scale_color_manual(values = c("bevn_eco_in_br" = "magenta", "bevn_eco_in6" = "darkblue"),
+                     labels = c("bevn_eco_in_br" = "whole dataset (n=1'340'047)", "bevn_eco_in6" = "after exclusion steps (n=1'274'449)"),
+                      labs(color = "dataset")) +
+  scale_linetype_manual(values = c("bevn_eco_in_br" = "dashed", "bevn_eco_in6" = "solid")) +
+  theme(legend.position = "bottom")
+
+combined_plot
+```
+
+## By parity
+```{r}
+a <-  bevn_eco_in_br %>%
+    filter(!is.na(parity_cat)) %>%
+  filter(!is.na(birth_Y_M_1stday)) %>%
+  group_by(birth_Y_M_1stday,parity_cat) %>%
+  summarise(n= n(), 
+            birthrate_per_month_parity=((1000*n)/(mean(permanent_resident_population)))) %>%
+  ungroup()
+
+gg_birthrate_parity <- a %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = birthrate_per_month_parity, colour=parity_cat)) +
+  geom_line() +
+  labs(
+    title = "Monthly birth rate among the permanent resident population",
+    x = "Birthyear",
+    y = "Birthrate (/1000 inhabitants)"
+  ) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  )+
+NULL
+gg_birthrate_parity
+```
+
+# GA_weeks through time
+```{r}
+table(bevn_eco_in7$GA_weeks_37_41, useNA = "always")
+
+count_data <- bevn_eco_in7 %>%
+  filter(!is.na(GA_weeks_37_41)) %>%
+  group_by(birth_Y_M_1stday, GA_weeks_37_41) %>%
+  summarize(count = n())
+
+gg_GA_weeks_count <- count_data %>%
+  ggplot(aes(x = birth_Y_M_1stday, y = count, color = GA_weeks_37_41, group = GA_weeks_37_41)) +
+  geom_line() +
+  labs(
+    title = "Birth numbers depending on GA_weeks through time",
+    x = "Birthyear",
+    y = "Number of births",
+    color = "GA_weeks" 
+  ) +
+  scale_color_manual(values = c("[37,38)" = "darkblue", "[38,39)" = "magenta", "[39,40)" = "cyan", "[40,41)"= "purple", "[41,46]"="blue"),
+       labels = c("[41,46]" = ">41")) +
+  scale_x_date(
+    date_labels = "%Y", 
+    breaks = seq(as.Date("2007-01-01"), as.Date("2022-12-01"), by = "3 years")
+  ) +
+  NULL
+gg_GA_weeks_count
+```
