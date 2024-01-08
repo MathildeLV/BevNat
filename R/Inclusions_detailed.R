@@ -73,8 +73,15 @@ dim(bevn_eco_in0)
    bevn_eco_in4 <- bevn_eco_in3 %>%
      filter(GA_weeks >=22 | BW >= 500) %>%
      filter(!is.na(BW)) 
-   
-   
+   # bevn_eco_in4 <- bevn_eco_in3 %>%
+   #   filter(GA_weeks >=22) %>%
+   #   filter(BW >= 500) %>%
+   #   filter(!is.na(BW)) 
+
+   bevn_eco_in4 <- bevn_eco_in3 %>%
+     filter(!(GA_weeks <22) | !(BW< 500)) %>%
+     filter(!is.na(BW)) 
+     
    test <- bevn_eco_in3 %>%
    filter(!is.na(BW)) 
    dim(bevn_eco_in3)-dim(test)
@@ -115,10 +122,11 @@ dim(bevn_eco_in0)
    
 # Outliers xclusion : BW <100g or BW >7.5kg. 
    # and BW >2000 & GA<23, or BW<500 & GA>35
-   bevn_eco_in6 <- bevn_eco_in5 %>%
+   bevn_eco_in6 <- bevn_eco_in5 %>% 
      filter(BW >= 100 & BW < 7500) %>%
      filter(!((BW>2000 & GA_weeks<23)|(BW<500 & GA_weeks>35)))
 
+   
    dim(bevn_eco_in5)-dim(bevn_eco_in6)
    dim(bevn_eco_in6)
    100*(dim(bevn_eco_in5)-dim(bevn_eco_in6))/dim(bevn_eco_in5)
@@ -136,7 +144,7 @@ dim(bevn_eco_in0)
    # 100*(dim(bevn_eco_in6)-dim(bevn_eco_in6.1))/dim(bevn_eco_in6)
    # #Exclusion of 146 additional entries and no missing NA (0.01%). New nb of entries: 1 274 449       
    
-# Live births only
+# Livebirths only
    table(bevn_eco$stillbirth, useNA="always")
    # We will exclude 6 005  stillborn and no NAs
    
