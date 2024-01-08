@@ -75,9 +75,9 @@ mat_in_inv_v2 <- mat_in_inv_v2 %>%
 mat_in_inv_v2
 
 mat_in_inv_v2 %>%
-  gtsave(here("output/tables_paper", "maternal_characteristics_in.html")) 
+  gtsave(here("output/tables_for_paper", "maternal_characteristics_in.html")) 
 mat_in_inv_v2 %>% 
-  gtsave(here("output/tables_paper", "maternal_characteristics_in.docx"), encoding = "latin1")
+  gtsave(here("output/tables_for_paper", "maternal_characteristics_in.docx"), encoding = "latin1")
 
 
 
@@ -134,9 +134,9 @@ mat_in_inv_6 <- mat_in_inv_6 %>%
 mat_in_inv_6
 
 mat_in_inv_6 %>%
-  gtsave(here("output/tables_paper", "maternal_characteristics_in6.html"))
+  gtsave(here("output/tables_for_paper", "maternal_characteristics_in6.html"))
 mat_in_inv_6 %>% 
-  gtsave(here("output/tables_paper", "maternal_characteristics_in6.docx"))
+  gtsave(here("output/tables_for_paper", "maternal_characteristics_in6.docx"))
 
 
 ## In7: dataset bevn_eco_in7, grouped rows
@@ -190,9 +190,9 @@ mat_in_inv_7 <- mat_in_inv_7 %>%
 mat_in_inv_7
 
 mat_in_inv_7 %>%
-  gtsave(here("output/tables_paper", "maternal_characteristics_in7.html"))
+  gtsave(here("output/tables_for_paper", "maternal_characteristics_in7.html"))
 mat_in_inv_7 %>%
-  gtsave(here("output/tables_paper", "maternal_characteristics_in7.docx"))
+  gtsave(here("output/tables_for_paper", "maternal_characteristics_in7.docx"))
 
 
 # Neonatal characteristics
@@ -230,12 +230,12 @@ neo_in_inv
                column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
                
    ) %>%
-  gtsave(here("output/tables_paper", "neonatal_characteristics_in.html"))
+  gtsave(here("output/tables_for_paper", "neonatal_characteristics_in.html"))
   neo_in_inv
   
   neo_in_inv %>%
     gt()%>%
-    gtsave(here("output/tables_paper", "neonatal_characteristics_in.docx"))
+    gtsave(here("output/tables_for_paper", "neonatal_characteristics_in.docx"))
 
 ## In dataset 6
 neo_in6_inv <- t(formatted2)
@@ -270,12 +270,12 @@ neo_in6_inv %>%
               column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
               
   ) %>%
-  gtsave(here("output/tables_paper", "neonatal_characteristics_in6.html"))
+  gtsave(here("output/tables_for_paper", "neonatal_characteristics_in6.html"))
 neo_in6_inv
 
 neo_in6_inv %>%
   gt()%>%
-  gtsave(here("output/tables_paper", "neonatal_characteristics_in6.docx"))
+  gtsave(here("output/tables_for_paper", "neonatal_characteristics_in6.docx"))
 
 ## In dataset 7
 neo_in7_inv <- t(formatted1)
@@ -307,12 +307,12 @@ neo_in7_inv %>%
               column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
               heading.title.font.size = 14, heading.subtitle.font.size = 14
   ) %>%
-gtsave(here("output/tables_paper", "neonatal_characteristics_in7.html"))
+gtsave(here("output/tables_for_paper", "neonatal_characteristics_in7.html"))
 neo_in7_inv
 
 neo_in7_inv %>%
   gt()%>%
-  gtsave(here("output/tables_paper", "neonatal_characteristics_in7.docx"))
+  gtsave(here("output/tables_for_paper", "neonatal_characteristics_in7.docx"))
 
 
 # Combined maternal and neonatal characteristics
@@ -375,9 +375,9 @@ combined_in0_inva <- combined_in0_inva %>%
 combined_in0_inva
 
 combined_in0_inva %>%
-  gtsave(here("output/tables_paper", "maternal_neonatal_characteristics_in.html")) 
+  gtsave(here("output/tables_for_paper", "maternal_neonatal_characteristics_in.html")) 
 combined_in0_inva %>% 
-  gtsave(here("output/tables_paper", "maternal_neonatal_characteristics_in.docx"), encoding = "latin1")
+  gtsave(here("output/tables_for_paper", "maternal_neonatal_characteristics_in.docx"), encoding = "latin1")
 
 
 # Combined maternal and neonatal characteristics
@@ -437,9 +437,9 @@ combined_in6_inva <- combined_in6_inva %>%
   )
 
 combined_in6_inva %>%
-  gtsave(here("output/tables_paper", "maternal_neonatal_characteristics_in6.html")) 
+  gtsave(here("output/tables_for_paper", "maternal_neonatal_characteristics_in6.html")) 
 combined_in6_inva %>% 
-  gtsave(here("output/tables_paper", "maternal_neonatal_characteristics_in6.docx"), encoding = "latin1")
+  gtsave(here("output/tables_for_paper", "maternal_neonatal_characteristics_in6.docx"), encoding = "latin1")
 
 
 # dataset bev_eco_in7 without stillbirth
@@ -497,9 +497,9 @@ combined_in7_inva <- combined_in7_inva %>%
   )
 
 combined_in7_inva %>%
-  gtsave(here("output/tables_paper", "maternal_neonatal_characteristics_in7.html")) 
+  gtsave(here("output/tables_for_paper", "maternal_neonatal_characteristics_in7.html")) 
 combined_in7_inva %>% 
-  gtsave(here("output/tables_paper", "maternal_neonatal_characteristics_in7.docx"), encoding = "latin1")
+  gtsave(here("output/tables_for_paper", "maternal_neonatal_characteristics_in7.docx"), encoding = "latin1")
 
 
 #####
@@ -543,12 +543,12 @@ birthrate_perm_pop %>%
               column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
               
   ) %>%
-  gtsave(here("output/tables_paper", "birthrate_resident_pop.html"))
+  gtsave(here("output/tables_for_paper", "birthrate_resident_pop.html"))
 birthrate_perm_pop
 
 birthrate_perm_pop %>%
   gt()%>%
-  gtsave(here("output/tables_paper", "birthrate_resident_pop.docx"))
+  gtsave(here("output/tables_for_paper", "birthrate_resident_pop.docx"))
 
 
 # GA_weeks
@@ -586,10 +586,10 @@ GA_weeks_birthyear <- GA_weeks_birthyear %>%
                 rows=1:5) 
 
 GA_weeks_birthyear %>%
-  gtsave(here("output/tables_paper/suppl_material", "GA_weeks_birthyear_in7.html"))
+  gtsave(here("output/tables_for_paper/suppl_material", "GA_weeks_birthyear_in7.html"))
 
 GA_weeks_birthyear%>%
-  gtsave(here("output/tables_paper/suppl_material", "GA_weeks_birthyear_in7.docx"))
+  gtsave(here("output/tables_for_paper/suppl_material", "GA_weeks_birthyear_in7.docx"))
 
 table(bevn_eco$Language, bevn_eco$mother_nationality_cat2)
 round(prop.table(table(bevn_eco$mother_nationality_cat2, bevn_eco$Language,useNA="always"), margin=1)*100,2)
