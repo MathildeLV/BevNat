@@ -1,5 +1,5 @@
 ---
-title: "GAM all variables different outcomes, crises: pooling trimesters. Without adj. for GA in"
+title: "GAM all variables different outcomes. Flu pandemic instead of Great Recession"
 author: "Mathilde Le Vu"
 date:  "`r Sys.Date()`"
 html_document: 
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-# Birthweight (not adjusted for gestational age)
+# Birthweight
 
 ```{r}
  m_BW_flu <- bam(BW ~ s(mat_age) + birth_Y_M_num+  s(month, bs="cc") + mean_ssep2_by_10 + mean_Alt_mean2_by_100 + parity_cat + sex + Urban3 + Language + mother_nationality_cat2  +civil_status3+ HW + flu_relativ_by_pregn_month + covid_hosp_relativ_by_pregn_month, data=bevn_eco_in7) 
@@ -76,108 +76,100 @@ plot_BW_month_flu
 ```
 
 ## Table summarizing the birthweight outcome model (not adj for GA)
-
+### Categorical and smooth variables together
+### Without the intercept
 ```{r}
-  beta <- coef(m_BW_flu)
-  Vb <- vcov(m_BW_flu, unconditional = TRUE)
-  se <- sqrt(diag(Vb))
-  n <- 1263853 #to check
-  d <- (abs(beta)/(sqrt(n)*se))
-  my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
- tab_BW_bam <- round(head(my.ci,20), 2)
-```
+beta <- coef(m_BW_flu)
+Vb <- vcov(m_BW_flu, unconditional = TRUE)
+se <- sqrt(diag(Vb))
+n <- 1263853 #to check
+d <- (abs(beta)/(sqrt(n)*se))
+my.ci <- data.frame(cbind(beta, lci = beta-1.96*se, uci = beta + 1.96*se, d))
+tab_BW_bam <- format(round((my.ci[2:20,]), 2), nsmall=2)
 
-```{r}
-tab_BW_bam['Variable'] <- c("Intercept", 
-                            "Time (by month)","SSEP (/10 points)",
+tab_BW_bam['Variable'] <- c("Time (by month)", "SSEP (/10 points)",
                             "Altitude (/100m)",
                             "Parity (ref: 1)", " ", " ", 
-                              "Sex (ref: male)", "Urban (ref: rural)",
-                              "Language region (ref: German)", " ", 
-                              "Maternal nationality (ref: Swiss)", " ", " ",
-                              " ", " ",
-                              "Civil status (ref: married)",
-                              "Heatwave (ref: 0)",
+                            "Sex (ref: male)", "Urban (ref: rural)",
+                            "Language region (ref: German)", " ", 
+                            "Maternal nationality (ref: Swiss)", " ", " ",
+                            " ", " ",
+                            "Civil status (ref: married)",
+                            "Heatwave (ref: 0)",
                             "Flu pandemic (continuous)",
-                              "COVID (continuous)")
-
-    tab_BW_bam['Category'] <- c(" ", 
-                                " "," "," ",
-                                "2", "3", ">3", "Female", "Urban", "French", "Italian", 
+                            "COVID (continuous)")
+tab_BW_bam['Category'] <- c(" "," "," ",
+                            "2", "3", ">3", "Female", "Urban", "French", "Italian", 
                             "Africa", "Asia", "Europe", "Northern America",
                             "Southern/Central America", "Single", "1", "","")
-    tab_BW_bam<-tab_BW_bam[, c('Variable', "Category", "beta", "lci","uci", "d")]
+tab_BW_bam<-tab_BW_bam[, c('Variable', "Category", "beta", "lci","uci", "d")]
+tab_BW_bam <-tab_BW_bam %>%
+  mutate(beta=as.character(beta),
+         lci=as.character(lci),
+         uci=as.character(uci),
+         d=as.character(d))
 
-    
-tab_BW_bam_flu_gt <- tab_BW_bam %>%
+pvalues_smooth_BW_main = summary(m_BW_flu)
+pvalues_smooth_BW_main <- pvalues_smooth_BW_main$s.table[,4]
+pvalues_smooth_BW_main <- format(pvalues_smooth_BW_main, scientific=FALSE)
+
+pvalues_smooth_BW_main_df <- data.frame(pvalues_smooth_BW_main) %>%
+  dplyr::mutate(Variable=c("Maternal age (years)", "Seasonality (month)")) %>%
+  rename(c(pvalue=(pvalues_smooth_BW_main)))%>%
+  mutate(pvalue=as.numeric(pvalue)) %>%
+  mutate(pvalue1=pvalue) %>%
+  add_column(beta="")%>%
+  add_column(Category="")%>%
+  add_column(lci="") %>%
+  add_column(uci="")
+
+pvalues_smooth_BW_main_df$pvalue <-  format(round(pvalues_smooth_BW_main_df$pvalue, digits=2), nsmall=2)
+
+pvalues_smooth_BW_main_df <- pvalues_smooth_BW_main_df %>%
+  mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
+                           (pvalue1<0.001)~ "<0.001",
+                           (pvalue1<0.01)~ "<0.01")) 
+
+pvalues_smooth_BW_main_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_BW_main_df$pvalue1), 
+                                             pvalues_smooth_BW_main_df$pvalue, pvalues_smooth_BW_main_df$pvalue1))
+pvalues_smooth_BW_main_df <- pvalues_smooth_BW_main_df%>%
+  rename("d"="pvalue1") %>%
+  select(-one_of('pvalue')) 
+rowinfo = c("Smooth variables", "p-value","", "", "", "")
+ow <- rbind(rowinfo,pvalues_smooth_BW_main_df)
+
+BW <- rbind(tab_BW_bam, ow)
+
+tab_BW_bam_flu_gt <- BW %>%
   gt()%>%
-  tab_header(title=md(gt::html("**Association between birthweight and <br> neonatal, maternal and ecological factors from a GAM (model 1.2)**")),
-               subtitle = "linear and categorical variables") %>%
+  # tab_header(title=md(gt::html("**Association between birthweight and <br> neonatal, maternal and ecological factors from a GAM (model 1.2)**"))) %>%
   tab_spanner(label = "95% CI (g)", columns = c(lci, uci)) %>%
   tab_style(
     style = list(
-          cell_fill(color = "#E0E0E0")
-        ),
-        locations = cells_body(rows=c(2, 4, 8, 10,11,
-                                      17,19)))%>%
-    tab_style(
+      cell_fill(color = "#E0E0E0")
+    ),
+    locations = cells_body(rows=c(1, 3, 7,9,10,16,18,21)))%>%
+  tab_style(
     style = list(
-     cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(3, 5, 6, 7, 9, 12, 13,
-                                      14,15,16,18,20))) %>%
-   tab_options(table.width = pct(30), data_row.padding = px(1),   table.font.size = 12,
+      cell_fill(color = "#F2F0F0")),
+    locations = cells_body(rows=c(2,4,5,6,8,11:15,17,19,22))) %>%
+  tab_options(table.width = pct(30), data_row.padding = px(1),   table.font.size = 12,
               column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
               heading.title.font.size = 14, heading.subtitle.font.size = 14,
               source_notes.font.size = 12) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(rows = 20)) %>%
   tab_source_note(source_note = "n=1,263,853")
 tab_BW_bam_flu_gt
 
 BW_estimates_flu_gt <- tab_BW_bam_flu_gt %>%
-  gtsave(here("output/tables_paper/suppl_material", "BW_estimates_flu_gt.html"))
+  gtsave(here("output/tables_for_paper/suppl_material", "BW_estimates_flu_gt.html"))
 BW_estimates_flu_gt <- tab_BW_bam_flu_gt %>%
-  gtsave(here("output/tables_paper/suppl_material", "BW_estimates_flu_gt.docx"))
+  gtsave(here("output/tables_for_paper/suppl_material", "BW_estimates_flu_gt.docx"))
 ```
-
-
-## Table summarizing smooth term pvalues of the BW model (not adj for GA)
-```{r}
- pvalues_smooth_BW_main = summary(m_BW_flu)
- pvalues_smooth_BW_main <- pvalues_smooth_BW_main$s.table[,4]
-  pvalues_smooth_BW_main <- format(pvalues_smooth_BW_main, scientific=FALSE)
-
-  pvalues_smooth_BW_main_df <- data.frame(pvalues_smooth_BW_main) %>%
-  dplyr::mutate(Variable=c("Maternal age", "Seasonality")) %>%
-    rename(c(pvalue=(pvalues_smooth_BW_main)))%>%
-    mutate(pvalue=as.numeric(pvalue)) %>%
-    mutate(pvalue1=pvalue) 
-  
-  pvalues_smooth_BW_main_df$pvalue <-  format(round(pvalues_smooth_BW_main_df$pvalue, digits=3), nsmall=2)
-  
-  pvalues_smooth_BW_main_df <- pvalues_smooth_BW_main_df %>%
-    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
-                             (pvalue1<0.001)~ "<0.001")) 
-  
-  pvalues_smooth_BW_main_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_BW_main_df$pvalue1), pvalues_smooth_BW_main_df$pvalue,                                                 pvalues_smooth_BW_main_df$pvalue1))
-  
-  pvalues_smooth_BW_flu_gt <- pvalues_smooth_BW_main_df %>%
-    select(-one_of('pvalue')) %>%
-    rename("p-value"="pvalue1") %>%
-    gt()%>% 
-    tab_header(title=md(gt::html("**Birthweight GAM (model 1.2)**")), 
-              subtitle = "smooth variables") %>%
-  tab_options(table.width = pct(12), data_row.padding = px(1),   table.font.size = 12,
-              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
-              heading.title.font.size = 14, heading.subtitle.font.size = 14,
-              source_notes.font.size = 12) 
-  pvalues_smooth_BW_flu_gt
-
-  BW_flu_smooth_pvalues_gt <- pvalues_smooth_BW_flu_gt%>%
-  gtsave(here("output/tables_paper/suppl_material", "pvalues_smooth_BW_flu_gt.html"))
-  BW_flu_smooth_pvalues_gt <- pvalues_smooth_BW_flu_gt%>%
-    gtsave(here("output/tables_paper/suppl_material", "pvalues_smooth_BW_flu_gt.docx"))
-```
-
-
 
 # Stillbirth- simple model, without adjusting for GA
 
@@ -236,101 +228,99 @@ plot_SB_flu_month
 ```
 
 ## Table summarizing the stillbirth outcome model
-
-```{r echo=FALSE}
+## Without the intercept
+## Catgorical and smooth variables together
+```{r}
   OR <- exp(coef(m_SB_crises_flu))
   beta <- coef(m_SB_crises_flu)
-  Vb <- vcov(m_SB_crises_flu, unconditional = TRUE)
+  Vb <- vcov(m_SB_crises_flu , unconditional = TRUE)
   se <- sqrt(diag(Vb))
   lci <- exp(beta-1.96*se)
   uci <- exp(beta+1.96*se)
   d <- abs(beta)/1.81
   my.ci <- data.frame(cbind(OR, lci, uci, d))
-  tab_SB_flu <-  round(head(my.ci, 13), 2)
-```
-
-```{r}
-tab_SB_flu['Variable'] <- c("Intercept", 
-                             "Time (by month)",
-                            "SSEP (/10 points)", "Altitude (/100m)",
+  tab_SB_main <- format(round((my.ci[2:13,]), 2), nsmall=2)
+  
+  tab_SB_main <-tab_SB_main %>%
+  mutate(OR=as.character(OR),
+         lci=as.character(lci),
+         uci=as.character(uci),
+         d=as.character(d))
+  
+tab_SB_main['Variable'] <- c("Time (by month)","SSEP (/10 points)",
+                            "Altitude (/100m)",
                              "Sex (ref: male)", "Urban (ref: rural)",
  "Language region (ref: German)", " ", 
   "Maternal nationality (ref: Swiss)", 
  "Civil status (ref: married)",
    "Heatwave (ref: 0)", "Flu pandemic (continuous)","COVID (continuous)")
 
-    tab_SB_flu['Category'] <- c(" ", 
-                                 " "," "," ",
+    tab_SB_main['Category'] <- c(" "," "," ",
                                  "Female", "Urban", "French", "Italian", "Not Swiss", "Single", "1", "","")
-    tab_SB_flu<-tab_SB_flu[, c('Variable', "Category", "OR", "lci","uci", "d")]
+    tab_SB_main<-tab_SB_main[, c('Variable', "Category", "OR", "lci","uci", "d")]
 
-SB_flu_gt <- tab_SB_flu %>%
+
+pvalues_smooth_SB_main = summary(m_SB_crises_flu)
+pvalues_smooth_SB_main <- pvalues_smooth_SB_main$s.table[,4]
+pvalues_smooth_SB_main <- format(pvalues_smooth_SB_main, scientific=FALSE)
+
+pvalues_smooth_SB_main_df <- data.frame(pvalues_smooth_SB_main) %>%
+  dplyr::mutate(Variable=c("Maternal age (years)", "Seasonality (month)")) %>%
+  rename(c(pvalue=(pvalues_smooth_SB_main)))%>%
+  mutate(pvalue=as.numeric(pvalue)) %>%
+  mutate(pvalue1=pvalue) %>%
+  add_column(OR="")%>%
+  add_column(Category="")%>%
+  add_column(lci="") %>%
+  add_column(uci="")
+
+pvalues_smooth_SB_main_df$pvalue <-  format(round(pvalues_smooth_SB_main_df$pvalue, digits=2), nsmall=2)
+
+pvalues_smooth_SB_main_df <- pvalues_smooth_SB_main_df %>%
+  mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
+                           (pvalue1<0.001)~ "<0.001",
+                           (pvalue1<0.01)~ "<0.01")) 
+
+pvalues_smooth_SB_main_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_SB_main_df$pvalue1), 
+                                             pvalues_smooth_SB_main_df$pvalue, pvalues_smooth_SB_main_df$pvalue1))
+pvalues_smooth_SB_main_df <- pvalues_smooth_SB_main_df%>%
+  rename("d"="pvalue1") %>%
+  select(-one_of('pvalue')) 
+rowinfo = c("Smooth variables", "p-value","", "", "", "")
+ow <- rbind(rowinfo,pvalues_smooth_SB_main_df)
+
+SB <- rbind(tab_SB_main, ow)
+
+estimates_smooth_SB_flu_gt <- SB %>%
   gt()%>%
-  tab_header(title=md(gt::html("**Association between the risk of stillbirth and <br> neonatal, maternal and ecological factors from a GAM (model 3.2)**")),
-            subtitle = "linear and categorical variables") %>%
+  # tab_header(title=md(gt::html("**Association between the risk of stillbirth and <br> neonatal, maternal and ecological factors from a GAM (model 3.2)**"))) %>%
   tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
-  tab_style(
+ tab_style(
     style = list(
           cell_fill(color = "#E0E0E0")
         ),
-        locations = cells_body(rows=c(2, 4, 6, 9, 11, 13)))%>%
+        locations = cells_body(rows=c(1,3,5,8,10,12,15)))%>%
     tab_style(
     style = list(
      cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(3, 5, 7, 8, 10,12))) %>%
+        locations = cells_body(rows=c(2,4,6,7,9,11,14))) %>%
   tab_options(table.width = pct(30), data_row.padding = px(1),   table.font.size = 12,
               column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
               heading.title.font.size = 14, heading.subtitle.font.size = 14,
               source_notes.font.size = 12) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(rows = 13)) %>%
   tab_source_note(source_note = "n=1,270,114")
-SB_flu_gt
+estimates_smooth_SB_flu_gt
 
-SB_estimates_flu_gt <- SB_flu_gt%>%
-  gtsave(here("output/tables_paper/suppl_material", "SB_flu_gt.html"))
-SB_estimates_flu_gt <- SB_flu_gt%>%
-  gtsave(here("output/tables_paper", "SB_estimates_main_gt.docx"))
+  pvalues_smooth_SB_main_gt_sv <- estimates_smooth_SB_flu_gt%>%
+  gtsave(here("output/tables_for_paper/suppl_material", "estimates_SB_flu_gt.html"))
+  pvalues_smooth_SB_main_gt_sv <- estimates_smooth_SB_flu_gt%>%
+    gtsave(here("output/tables_for_paper/suppl_material", "estimates_SB_flu_gt.docx"))
 ```
-
-
-## Table summarizing smooth term pvalues of the stillbirth model
-
-```{r}
-  pvalues_smooth_SB_flu = summary(m_SB_crises_flu)
-  pvalues_smooth_SB_flu <- pvalues_smooth_SB_flu$s.table[,4]
-  pvalues_smooth_SB_flu <- format(pvalues_smooth_SB_flu, scientific=FALSE)
-
-  pvalues_smooth_SB_flu_df <- data.frame(pvalues_smooth_SB_flu) %>%
-  dplyr::mutate(Variable=c("Maternal age", "Seasonality")) %>%
-  rename(c(pvalue=(pvalues_smooth_SB_flu)))%>%
-  mutate(pvalue=as.numeric(pvalue)) %>%
-  mutate(pvalue1=pvalue) 
-  
-  pvalues_smooth_SB_flu_df$pvalue <-  format(round(pvalues_smooth_SB_flu_df$pvalue, digits=3), nsmall=2)
-
-  pvalues_smooth_SB_flu_df <- pvalues_smooth_SB_flu_df %>%
-    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
-                             (pvalue1<0.001)~ "<0.001")) 
-  
-  pvalues_smooth_SB_flu_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_SB_flu_df$pvalue1), pvalues_smooth_SB_flu_df$pvalue, pvalues_smooth_SB_flu_df$pvalue1))
-  
-  pvalues_smooth_SB_flu_gt <- pvalues_smooth_SB_flu_df %>%
-    select(-one_of('pvalue')) %>%
-   rename("p-value"="pvalue1") %>%
-    gt()%>% 
-     tab_header(title=md(gt::html("**Stillbirth GAM (model 3.2)**")), 
-              subtitle = "smooth variables") %>%
-  tab_options(table.width = pct(12), data_row.padding = px(1),   table.font.size = 12,
-              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
-              heading.title.font.size = 14, heading.subtitle.font.size = 14,
-              source_notes.font.size = 12)
-  pvalues_smooth_SB_flu_gt
-  
-  pvalues_smooth_SB_main_gt_sv <- pvalues_smooth_SB_flu_gt%>%
-  gtsave(here("output/tables_paper/suppl_material", "pvalues_smooth_SB_flu_gt.html"))
-  pvalues_smooth_SB_main_gt_sv <- pvalues_smooth_SB_flu_gt%>%
-    gtsave(here("output/tables_paper/suppl_material", "pvalues_smooth_SB_flu_gt.docx"))
-```
-
 
 # Preterm birth (without adjusting for birthweight)
 ```{r echo=FALSE}
@@ -384,107 +374,102 @@ plot_PTB_flu_seasonality <- ggplot(data=plot_m_PTB_flu_month)+
 plot_PTB_flu_seasonality
 ```
 
-## Table summarizing the preterm birth outcome model
-
+### Without the intercept
 ```{r}
   OR <- exp(coef(m_PTB3_flu))
   beta <- coef(m_PTB3_flu)
-  Vb <- vcov(m_PTB3_flu, unconditional = TRUE)
+  Vb <- vcov(m_PTB3_flu , unconditional = TRUE)
   se <- sqrt(diag(Vb))
   lci <- exp(beta-1.96*se)
   uci <- exp(beta+1.96*se)
   d <- abs(beta)/1.81
   my.ci <- data.frame(cbind(OR, lci, uci, d))
-  tab_PTB_flu <- round(head(my.ci, 20), 2)
-```
+  tab_PTB_bam <- format(round((my.ci[2:20,]), 2), nsmall=2)
+  
+  tab_PTB_crises <-tab_PTB_bam %>%
+  mutate(OR=as.character(OR),
+         lci=as.character(lci),
+         uci=as.character(uci),
+         d=as.character(d))
+ 
+tab_PTB_crises['Variable'] <- c("Time (by month)","SSEP (/10 points)",
+                            "Altitude (/100m)","Parity (ref: 1)", " ", " ", 
+                             "Sex (ref: male)", "Urban (ref: rural)",
+                            "Language region (ref: German)", " ", 
+                            "Maternal nationality (ref: Swiss)", " ", " ",
+                            " ", " ",
+                            "Civil status (ref: married)",
+                            "Heatwave (ref: 0)", "Flu pandemic (continuous)",
+                            "COVID (continuous)")
 
-```{r}
-tab_PTB_flu['Variable'] <- c("Intercept", 
-                            "Time (by month)","SSEP (/10 points)",
-                            "Altitude (/100m)",
-                            "Parity (ref: 1)", " ", " ", 
-                              "Sex (ref: male)", "Urban (ref: rural)",
-                              "Language region (ref: German)", " ", 
-                              "Maternal nationality (ref: Swiss)", " ", " ",
-                              " ", " ",
-                              "Civil status (ref: married)",
-                              "Heatwave (ref: 0)",
-                            "Flu pandemic (continuous)",
-                              "COVID (continuous)")
+    tab_PTB_crises['Category'] <- c(" "," "," ",
+                                 "2", "3", ">3", "Female",
+                                 "Urban", "French", "Italian",
+                                  "Africa", "Asia", "Europe", "Northern America",
+                            "Southern/Central America",
+                            "Single", "1", "","")
+    tab_PTB_crises<-tab_PTB_crises[, c('Variable', "Category", "OR", "lci","uci", "d")]
 
-    tab_PTB_flu['Category'] <- c(" ", 
-                                    " ", " "," ",
-                                    "2", "3", ">3", "Female", "Urban",
-                                    "French", "Italian", 
-                            "Africa", "Asia", "Europe", "Northern America",
-                            "Southern/Central America", "Single", "1", "","")
-    tab_PTB_flu<-tab_PTB_flu[, c('Variable', "Category", "OR", "lci","uci", "d")]
 
-tab_PTB_flu_gt<- tab_PTB_flu %>%
+pvalues_smooth_PTB_main = summary(m_PTB3_flu)
+pvalues_smooth_PTB_main <- pvalues_smooth_PTB_main$s.table[,4]
+pvalues_smooth_PTB_main <- format(pvalues_smooth_PTB_main, scientific=FALSE)
+
+pvalues_smooth_PTB_main_df <- data.frame(pvalues_smooth_PTB_main) %>%
+  dplyr::mutate(Variable=c("Maternal age (years)", "Seasonality (month)")) %>%
+  rename(c(pvalue=(pvalues_smooth_PTB_main)))%>%
+  mutate(pvalue=as.numeric(pvalue)) %>%
+  mutate(pvalue1=pvalue) %>%
+  add_column(OR="")%>%
+  add_column(Category="")%>%
+  add_column(lci="") %>%
+  add_column(uci="")
+
+pvalues_smooth_PTB_main_df$pvalue <-  format(round(pvalues_smooth_PTB_main_df$pvalue, digits=2), nsmall=2)
+
+pvalues_smooth_PTB_main_df <- pvalues_smooth_PTB_main_df %>%
+  mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
+                           (pvalue1<0.001)~ "<0.001",
+                           (pvalue1<0.01)~ "<0.01")) 
+
+pvalues_smooth_PTB_main_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_PTB_main_df$pvalue1), 
+                                             pvalues_smooth_PTB_main_df$pvalue, pvalues_smooth_PTB_main_df$pvalue1))
+pvalues_smooth_PTB_main_df <- pvalues_smooth_PTB_main_df%>%
+  rename("d"="pvalue1") %>%
+  select(-one_of('pvalue')) 
+rowinfo = c("Smooth variables", "p-value","", "", "", "")
+ow <- rbind(rowinfo,pvalues_smooth_PTB_main_df)
+
+PTB <- rbind(tab_PTB_crises, ow)
+
+PTB_flu_gt <- PTB %>%
   gt()%>%
-  tab_header(title=md(gt::html("**Association between the risk of preterm birth and <br> neonatal, maternal and ecological factors from a GAM (model 2.2)**")),
-               subtitle = "linear categorical variables") %>%
+  # tab_header(title=md(gt::html("**Table 3 : Association between the risk of preterm birth and <br> neonatal, maternal and ecological factors from a GAM (model 2.1)**"))) %>%
   tab_spanner(label = "95% CI", columns = c(lci, uci)) %>%
   tab_style(
     style = list(
           cell_fill(color = "#E0E0E0")
         ),
-        locations = cells_body(rows=c(2, 4, 8, 10,11,
-                                      17,19)))%>%
+        locations = cells_body(rows=c(1, 3, 7, 9, 10, 16, 18, 21)))%>%
     tab_style(
     style = list(
      cell_fill(color = "#F2F0F0")),
-        locations = cells_body(rows=c(3, 5, 6, 7, 9, 12, 13,
-                                      14,15,16,18,20))) %>%
-   tab_options(table.width = pct(30), data_row.padding = px(1),   table.font.size = 12,
+        locations = cells_body(rows=c(2,4,5,6,8,11,12,
+                                      13,14,15,17,19,22))) %>%
+  tab_options(table.width = pct(30), data_row.padding = px(1),   table.font.size = 12,
               column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
               heading.title.font.size = 14, heading.subtitle.font.size = 14,
               source_notes.font.size = 12) %>%
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(rows = 20)) %>%
   tab_source_note(source_note = "n=1,263,853")
-tab_PTB_flu_gt
+PTB_flu_gt
 
-PTB_estimates_flu_gt <- tab_PTB_flu_gt%>%
-  gtsave(here("output/tables_paper/suppl_material", "PTB_estimates_flu.html"))
-PTB_estimates_flu_gt <- tab_PTB_flu_gt%>%
-  gtsave(here("output/tables_paper/suppl_material", "PTB_estimates_flu.docx"))
-```
-
-## Table summarizing smooth term pvalues of the PTB model
-
-```{r}
-  pvalues_smooth_PTB_flu = summary(m_PTB3_flu)
-  pvalues_smooth_PTB_flu <- pvalues_smooth_PTB_flu$s.table[,4]
-  pvalues_smooth_PTB_flu <- format(pvalues_smooth_PTB_flu, scientific=FALSE)
-  
-  pvalues_smooth_PTB_flu_df <- data.frame(pvalues_smooth_PTB_flu) %>%
-    dplyr::mutate(Variable=c("Maternal age", "Seasonality")) %>%
-    rename(c(pvalue=(pvalues_smooth_PTB_flu)))%>%
-    mutate(pvalue=as.numeric(pvalue)) %>%
-    mutate(pvalue1=pvalue) 
-  
-  pvalues_smooth_PTB_flu_df$pvalue <-  format(round(pvalues_smooth_PTB_flu_df$pvalue, digits=3), nsmall=2)
-  
-  pvalues_smooth_PTB_flu_df <- pvalues_smooth_PTB_flu_df %>%
-    mutate(pvalue1=case_when((pvalue1<0.00001) ~ "<0.0001",
-                             (pvalue1<0.001)~ "<0.001")) 
-  
-  pvalues_smooth_PTB_flu_df$pvalue1 <- (ifelse(is.na(pvalues_smooth_PTB_flu_df$pvalue1),                                                            pvalues_smooth_PTB_flu_df$pvalue,  
-                                                 pvalues_smooth_PTB_flu_df$pvalue1))
-  
-  pvalues_smooth_PTB_flu_gt <- pvalues_smooth_PTB_flu_df %>%
-    select(-one_of('pvalue')) %>%
-      rename("p-value"="pvalue1") %>%
-      gt()%>% 
-  tab_header(title=md(gt::html("**Preterm birth GAM (model 2.2)**")), 
-              subtitle = "smooth variables") %>%
-  tab_options(table.width = pct(12), data_row.padding = px(1),   table.font.size = 12,
-              column_labels.font.weight = "bold",  row_group.font.weight  = "bold",
-              heading.title.font.size = 14, heading.subtitle.font.size = 14,
-              source_notes.font.size = 12)
-  pvalues_smooth_PTB_flu_gt
-  
-  pvalues_smooth_PTB_flu_gt_sv <- pvalues_smooth_PTB_flu_gt%>%
-    gtsave(here("output/tables_paper/suppl_material", "PTB_full_smooth_pvalues_flu.html")) 
-  pvalues_smooth_PTB_flu_gt_sv <- pvalues_smooth_PTB_flu_gt%>%
-    gtsave(here("output/tables_paper/suppl_material", "PTB_full_smooth_pvalues_flu.docx"))
+PTB_estimates_flu_gt <- PTB_flu_gt%>%
+  gtsave(here("output/tables_for_paper/suppl_material", "PTB_estimates_categ_and_smooth_flu_gt.html"))
+PTB_estimates_flu_gt <- PTB_flu_gt%>%
+  gtsave(here("output/tables_for_paper/suppl_material", "PTB_estimates_categ_and_smooth_flu_gt.docx"))
 ```
