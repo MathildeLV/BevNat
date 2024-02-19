@@ -23,7 +23,7 @@ table(bevn_eco_in7$mean_ssep2_cat1, bevn_eco_in7$PTB, useNA="always")
 round(prop.table(table(bevn_eco_in7$mean_ssep2_cat1, bevn_eco_in7$PTB, useNA="always"), margin=1)*100,2)
 ```
 
-## PTB % stratified by SSEP tertile, adjusted for all covariates
+## PTB % stratified by SSEP tertile,adjusted for time only
 ```{r include=FALSE}
 m_PTB_bam_L_SSEP1_2 <- bam(PTB ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in7_L_SSEP1)  
 m_PTB_bam_M_SSEP1_2 <- bam(PTB ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in7_M_SSEP1)  
@@ -106,7 +106,7 @@ table(bevn_eco_in7$mother_nationality_cat2, bevn_eco_in7$PTB, useNA="always")
 round(prop.table(table(bevn_eco_in7$mother_nationality_cat2, bevn_eco_in7$PTB, useNA="always"), margin=1)*100,2)
 ```
 
-## PTB % stratified by maternal nationality, adjusted for all covariates
+## PTB % stratified by maternal nationality, adjusted for time only
 
 ```{r include=FALSE}
 m_PTB_bam_swiss2 <- bam(PTB ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in7_Swiss)
@@ -182,7 +182,7 @@ table(bevn_eco_in7$Language, bevn_eco_in7$PTB, useNA="always")
 round(prop.table(table(bevn_eco_in7$Language, bevn_eco_in7$PTB, useNA="always"), margin=1)*100,2)
 ```
 
-## PTB % stratified by langage region, adjusted for all other covariates
+## PTB % stratified by langage region, adjusted for time only
 
 ```{r include=FALSE}
 m_PTB_bam_German2<- bam(PTB ~ s(birth_Y_M_num), family="binomial", data=bevn_eco_in7_German) 
