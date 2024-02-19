@@ -105,3 +105,24 @@ PTB_supplfig_8_prim <- ggarrange(plot_PTB_prim_mat_age, plot_PTB_prim_seasonalit
                                 labels = c("A", "B"),
                                 ncol = 2, nrow = 1) 
 PTB_supplfig_8_prim
+
+
+## Sensitivity analyses: low birth weight instead of continuous birth weight
+LBW_supplfig_11 <- ggarrange(plot_LBW_univ, 
+                             plot_LBW_sex,
+                             ggplot_LBW_SEP2,
+                             ggplot_LBW_Language_region2,
+                             ggplot_LBW_nationality2,
+                             labels = c("A", "B", "C", "D", "E"),
+                             ncol = 2, nrow = 3) 
+LBW_supplfig_11
+# directly save 12*12
+ggsave("LBW_supplfig_11_univ_and_stratified.pdf", LBW_supplfig_11, width = 12, height = 12, units = "in", path = here("output/figures_paper/suppl_material"))
+
+
+LBW_supplfig_12 <- ggarrange(plot_LBW_main_mat_age, plot_LBW_main_seasonality,
+                                labels = c("A", "B"),
+                                ncol = 2, nrow = 1) 
+LBW_supplfig_12
+# directly save 9*4.5
+ggsave("LBW_supplfig_12_smooth_matage_seasonality_adj_model.pdf", LBW_supplfig_12, width = 9, height = 4.5, units = "in", path = here("output/figures_paper/suppl_material"))
