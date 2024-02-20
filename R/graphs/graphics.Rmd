@@ -15,34 +15,307 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-# Histogram: maternal age distribution 
-```{r}
-bevn_eco_in7 %>% 
-  ggplot(aes(x = mat_age)) + 
-  geom_histogram()
 
+# Add labels 
+```{r}
+my_labels <- c(mat_age = "maternal age (years)", 
+               parity_cat = "parity",
+               civil_status3= "civil status",
+               mean_ssep2= "mean SSEP",
+               mean_Alt_mean2="mean altitude",
+               BW="birth weight (g)", 
+               Language="language region",
+               Urban3="urbanity",
+               mother_nationality_cat2="maternal nationality",
+               sex="sex",
+               GA_weeks="gestational age (weeks)",
+               stillbirth="stillbirth",
+               PTB="preterm birth (<37 weeks) ", LBW="low birth weight (<2'500g)"
+              )
+ bevn_eco_in6_graph <- bevn_eco_in6
+ 
+ label(bevn_eco_in6_graph) <- as.list(my_labels[match(names(bevn_eco_in6_graph), # Assign labels to data frame variables
+                             
+                                                                     names(my_labels))])
+label(bevn_eco_in6_graph)
+bevn_eco_in6_graph <- bevn_eco_in6_graph%>%
+  mutate(mother_nationality_cat2= case_when(is.na(mother_nationality_cat2) ~ "Missing or Oceanian",
+                                             TRUE ~as.character(mother_nationality_cat2)),
+         Language=case_when(is.na(Language) ~"Missing",
+                            TRUE ~as.character(Language)),
+          Urban3=case_when(is.na(Urban3) ~"Missing",
+                            TRUE ~as.character(Urban3)),
+          parity_cat=case_when(is.na(parity_cat) ~"Missing",
+                            TRUE ~as.character(parity_cat)),
+         across(c(mother_nationality_cat2, Language, Urban3,parity_cat), as.factor)) 
+  
+
+attr(bevn_eco_in6_graph$stillbirth, 'levels')<- c("livebirth", "stillbirth")
+attr(bevn_eco_in6_graph$sex, 'levels')<- c("Male", "Female")
+attr(bevn_eco_in6_graph$PTB, "levels")<- c('term', 'preterm')
+attr(bevn_eco_in6_graph$LBW, "levels")<- c('normal BW', 'LBW')
+attr(bevn_eco_in6_graph$parity_cat, "levels")<- c('1', '2', '3', '>3',"Missing")
+
+desired_order_nat <- c("Missing or Oceanian","Northern America","Southern and Central America","Africa","Asia","Europe","Switzerland")  # Replace with your desired order
+desired_order_lang <- c("Missing", "Italian","French","German or Romansh")
+levels(bevn_eco_in6_graph$Urban3)<- c("Rural","Urban", "Missing")
+desired_order_urb<- c("Missing", "Urban","Rural")
+desired_order_parity<- c("Missing",">3", "3","2", "1")
+
+
+bevn_eco_in6_graph <- bevn_eco_in6_graph %>%
+  mutate(mother_nationality_cat2 = factor(mother_nationality_cat2, levels = desired_order_nat),
+         Language = factor(Language, levels = desired_order_lang),
+         Urban3 = factor(Urban3, levels = desired_order_urb),
+         parity_cat = factor(parity_cat, levels = desired_order_parity))
+
+bevn_eco_in6_graph$civil_status3 <- relevel(bevn_eco_in6_graph$civil_status3, ref="Single")
+bevn_eco_in6_graph$sex <- relevel(bevn_eco_in6_graph$sex, ref="Male")
+
+table(bevn_eco_in6_graph$mother_nationality_cat2)
+table(bevn_eco_in6_graph$Urban3)
+table(bevn_eco_in6_graph$civil_status3)
+table(bevn_eco_in6_graph$parity_cat)
+table(bevn_eco_in6_graph$sex)
+table(bevn_eco_in6_graph$PTB)
+table(bevn_eco_in6_graph$LBW)
+table(bevn_eco_in6_graph$stillbirth)
+
+ label(bevn_eco_in6_graph) <- as.list(my_labels[match(names(bevn_eco_in6_graph), # Assign labels to data frame variables
+                                            names(my_labels))])
+label(bevn_eco_in6_graph)
 ```
 
-
-
-# Histogram: maternal nationality through the years
+# Categorical variables
+## maternal nationality through the years
 ```{r}
-gg_nation_birthy <- ggplot(bevn_eco_in7,
+custom_colors <- c("grey","#98F5FF", "#458B74", "#7FFFD4", "#CD8C95", "#FFB6C1","#53868B")  # Replace with your desired colors
+
+gg_nation_birthy <- ggplot(bevn_eco_in6_graph,
        aes(x=birthyear, fill=mother_nationality_cat2)) + 
-  geom_bar(position = "fill") 
-
-gg_nation_birthy +  ggtitle("Maternal nationality through the years") +
- scale_x_continuous(breaks = c(2007, 2010, 2013, 2016, 2020))
+  geom_bar(position = "fill", stat="count") +
+  scale_y_continuous(labels = scales::percent_format(scale = 100))+
+  scale_x_continuous(breaks = seq(2007,2022, by=2))+
+  scale_fill_manual(values=custom_colors)+
+  labs(x="",
+       y="",
+       fill="Maternal nationality")+theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_nation_birthy
 ```
 
-# Histogram: maternal civil status through the years
+## maternal civil status through the years
 ```{r}
-gg_nation_birthy <- ggplot(bevn_eco_in7,
-       aes(x=birthyear, fill=civil_status2)) + 
-  geom_bar(position = "fill") 
+custom_colors <- c("#FFB6C1","#53868B") 
 
-gg_nation_birthy +  ggtitle("Maternal civil status through the years") +
- scale_x_continuous(breaks = c(2007, 2010, 2013, 2016, 2020))
+gg_civil_status_birthy <- ggplot(bevn_eco_in6_graph,
+       aes(x=birthyear, fill=civil_status3)) + 
+  geom_bar(position = "fill", stat="count") +
+  scale_y_continuous(labels = scales::percent_format(scale = 100))+
+  scale_x_continuous(breaks = seq(2007,2022, by=2))+
+  scale_fill_manual(values=custom_colors)+
+  labs(x="",
+       y="",
+       fill="Maternal civil status") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_civil_status_birthy
+```
+
+## language region through the years
+```{r}
+custom_colors <- c("grey","#7FFFD4","#FFB6C1","#53868B") 
+
+gg_lang_region_birthy <- ggplot(bevn_eco_in6_graph,
+       aes(x=birthyear, fill=Language)) + 
+  geom_bar(position = "fill", stat="count") +
+  scale_y_continuous(labels = scales::percent_format(scale = 100))+
+  scale_x_continuous(breaks = seq(2007,2022, by=2))+
+  scale_fill_manual(values=custom_colors)+
+  labs(x="",
+       y="",
+       fill="Language region")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_lang_region_birthy
+```
+
+## urbanity through the years
+```{r}
+custom_colors <- c("grey","#FFB6C1","#53868B") 
+
+gg_urban_birthy <- ggplot(bevn_eco_in6_graph,
+       aes(x=birthyear, fill=Urban3)) + 
+  geom_bar(position = "fill", stat="count") +
+  scale_y_continuous(labels = scales::percent_format(scale = 100))+
+  scale_x_continuous(breaks = seq(2007,2022, by=2))+
+  scale_fill_manual(values=custom_colors)+
+  labs(x="", y="",
+       fill="Urbanity") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_urban_birthy
+```
+
+## parity through the years
+```{r}
+custom_colors <- c("grey","#458B74","#7FFFD4","#FFB6C1","#53868B") 
+
+gg_parity_birthy <- ggplot(bevn_eco_in6_graph,
+       aes(x=birthyear, fill=parity_cat)) + 
+  geom_bar(position = "fill", stat="count") +
+  scale_y_continuous(labels = scales::percent_format(scale = 100))+
+  scale_x_continuous(breaks = seq(2007,2022, by=2))+
+  scale_fill_manual(values=custom_colors)+
+  labs(x="", y="",
+       fill="Parity")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_parity_birthy
+```
+
+## sex
+```{r}
+custom_colors <- c("#FFB6C1","#53868B") 
+
+gg_sex_birthy <- ggplot(bevn_eco_in6_graph,
+       aes(x=birthyear, fill=sex)) + 
+  geom_bar(position = "fill", stat="count") +
+  scale_y_continuous(labels = scales::percent_format(scale = 100))+
+  scale_x_continuous(breaks = seq(2007,2022, by=2))+
+  scale_fill_manual(values=custom_colors)+
+  labs(x="",y="",
+       fill="neonatal sex")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_sex_birthy
+```
+
+## stillbirth
+```{r}
+custom_colors <- c("#53868B") 
+
+gg_stillbirth_birthy <- bevn_eco_in6_graph %>%
+  group_by(birthyear) %>%
+  summarise(percentage = sum(stillbirth == "stillbirth") / n()) %>%
+  ggplot(aes(x = birthyear, y = percentage)) +
+  geom_bar(stat = "identity", fill = custom_colors) +
+  scale_y_continuous(labels = scales::percent_format(scale = 100), limits=c(0,0.005)) +
+  scale_x_continuous(breaks = seq(2007, 2022, by=2)) +  # Customize x-axis breaks and limits
+  labs(x = "", y="") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_stillbirth_birthy
+```
+
+## PTB
+```{r}
+gg_PTB_birthy <- bevn_eco_in6_graph %>%
+  group_by(birthyear) %>%
+  summarise(percentage = sum(PTB == "preterm") / n()) %>%
+  ggplot(aes(x = birthyear, y = percentage)) +
+  geom_bar(stat = "identity", fill = custom_colors) +
+  scale_y_continuous(labels = scales::percent_format(scale = 100), limits=c(0,0.06)) +
+  scale_x_continuous(breaks = seq(2007, 2022, by=2)) +  # Customize x-axis breaks and limits
+  labs(x = "",y="") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_PTB_birthy
+```
+
+## LBW
+```{r}
+gg_LBW_birthy <- bevn_eco_in6_graph %>%
+  group_by(birthyear) %>%
+  summarise(percentage = sum(LBW == "LBW") / n()) %>%
+  ggplot(aes(x = birthyear, y = percentage)) +
+  geom_bar(stat = "identity", fill = custom_colors) +
+  scale_y_continuous(labels = scales::percent_format(scale = 100), limits=c(0,0.06)) +
+  scale_x_continuous(breaks = seq(2007, 2022, by=2)) +
+  labs(x = "",y=""
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_LBW_birthy
+```
+
+# Continuous variables
+## maternal age  
+```{r}
+custom_colors <- c("#98F5FF", "#458B74", "#7FFFD4", "#CD8C95", "#FFB6C1","#53868B")  
+
+gg_birthy_mat_age <- ggplot(bevn_eco_in6_graph, aes(x = birthyear, y = mat_age, group = birthyear)) +
+  geom_violin(fill = "#7FFFD4") +  
+     labs(x = "", y = "maternal age (years)") +
+    scale_x_continuous(breaks = seq(2007, 2022, by=2)) + 
+  scale_y_continuous(breaks=seq(10,50,by=5), limits=c(10,50))+
+     theme(
+       panel.background = element_rect(fill = "white"),
+     axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_birthy_mat_age
+
+# colors <- c("#98F5FF", "#FFB6C1")
+# gg_birthy_mat_age <- ggplot(bevn_eco_in6_graph, aes(x = birthyear, y = mat_age, group = birthyear, fill = factor(birthyear %% 2, labels = colors))) +# Alternate colors based on birthyear
+#   geom_boxplot(show.legend=FALSE) +
+#   labs(x = "", y = "Maternal age") +
+#   scale_x_continuous(breaks = seq(2007, 2022, by = 2)) + 
+#   scale_y_continuous(breaks = seq(10, 50, by = 5)) +
+#   theme_bw() +
+#   theme(
+#     panel.background = element_rect(fill = "white")
+#   ) +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+# gg_birthy_mat_age
+# ggplot(bevn_eco_in6_graph, aes(x = birthyear, y = mat_age)) +
+#   stat_summary(fun.data = "mean_cl_normal", geom = "errorbar", width = 0.2) +
+#   stat_summary(fun.data = "mean_cl_normal", geom = "point", size = 3) +
+#   labs(x = "", y = "Maternal age") +
+#     scale_x_continuous(breaks = seq(2007, 2022, by=2)) +  
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1.2))
+```
+
+## mean SSEP
+```{r}
+gg_birthy_SSEP <- ggplot(bevn_eco_in6_graph, aes(x = birthyear, y = mean_ssep2, group = birthyear)) +
+  geom_violin(fill = "#7FFFD4") + 
+     labs(x = "", y = "mean SSEP") +
+    scale_x_continuous(breaks = seq(2007, 2022, by=2)) + 
+  scale_y_continuous(breaks=seq(20,90,by=10), limits=c(20,90))+
+     theme(
+       panel.background = element_rect(fill = "white"),
+     axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_birthy_SSEP
+```
+
+## mean altitude
+```{r}
+gg_birthy_alt  <- ggplot(bevn_eco_in6_graph, aes(x = birthyear, y = mean_Alt_mean2, group = birthyear)) +
+  geom_violin(fill = "#7FFFD4") +  
+     labs(x = "", y = "mean altitude (MASL)") +
+    scale_x_continuous(breaks = seq(2007, 2022, by=2)) + 
+  scale_y_continuous(breaks=seq(200,1950,by=400), limits=c(200,1950))+
+     theme(
+       panel.background = element_rect(fill = "white"),
+     axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_birthy_alt
+```
+
+## birthweight
+```{r}
+gg_birthy_BW  <- ggplot(bevn_eco_in6_graph, aes(x = birthyear, y = BW, group = birthyear)) +
+  geom_violin(fill = "#7FFFD4") + 
+     labs(x = "", y = "birth weight (g)") +
+    scale_x_continuous(breaks = seq(2007, 2022, by=2)) + 
+  scale_y_continuous(breaks=seq(100,7000,by=500), limits=c(100,7000))+
+     theme(
+       panel.background = element_rect(fill = "white"),
+     axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_birthy_BW
+```
+
+## gestational age
+```{r}
+gg_birthy_GA  <- ggplot(bevn_eco_in6_graph, aes(x = birthyear, y = GA_weeks, group = birthyear)) +
+  geom_violin(fill = "#7FFFD4") + 
+     labs(x = "", y = "gestational age (weeks)") +
+    scale_x_continuous(breaks = seq(2007, 2022, by=2)) + 
+  scale_y_continuous(breaks=seq(18,46,by=4), limits=c(18,46))+
+     theme(
+       panel.background = element_rect(fill = "white"),
+     axis.text.x = element_text(angle = 45, hjust = 1.2))
+gg_birthy_GA
 ```
 
 # Kernel plots
