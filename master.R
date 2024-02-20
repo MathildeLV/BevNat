@@ -35,6 +35,8 @@ library(broom)
 library(conflicted)
 library(usdm) # for VIF multicollinearity factor
 library(LaplacesDemon)
+library("Hmisc") #for labeling variables
+library(gtsummary) # for gt summary tables of models (gtsummary::tbl_regression(m))
 
 conflict_prefer("filter", "dplyr")
 conflict_prefer("rename", "dplyr")
