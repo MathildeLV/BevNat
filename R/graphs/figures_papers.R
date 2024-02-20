@@ -1,3 +1,20 @@
+# Results, distribution of variables through the years
+categ_var <- ggarrange(gg_parity_birthy, gg_urban_birthy, gg_lang_region_birthy,
+                       gg_nation_birthy, gg_civil_status_birthy,
+                       gg_sex_birthy, gg_stillbirth_birthy, gg_PTB_birthy,gg_LBW_birthy,
+                       labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+                       ncol=3,
+                       nrow=3)
+categ_var
+ggsave("dataset_incl_stillbirths_categ_var.pdf", categ_var, width = 17, height = 10, units = "in", path = here("output/figures_paper/suppl_material"))
+
+cont_var <- ggarrange(gg_birthy_mat_age, gg_birthy_SSEP,gg_birthy_alt,
+                      gg_birthy_BW, gg_birthy_GA,
+                      labels = c("A", "B", "C", "D", "E"),
+                      ncol=2, nrow=3)
+cont_var
+ggsave("dataset_incl_stillbirths_cont_var.pdf", cont_var, width = 11.33333, height = 10, units = "in", path = here("output/figures_paper/suppl_material"))
+
 # Results, main figures
 ## Figure 1.1, birthweight outcome model, main model and stratified by SEP/mat nationality/lang. region
 # UNADJUSTED FOR GESTATIONAL AGE
