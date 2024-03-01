@@ -89,7 +89,7 @@ label(bevn_eco_in6_graph)
 # Categorical variables
 ## maternal nationality through the years
 ```{r}
-custom_colors <- c("grey","#98F5FF", "#458B74", "#7FFFD4", "#CD8C95", "#FFB6C1","#53868B")  # Replace with your desired colors
+custom_colors <- c("grey","#98F5FF", "#68228B", "#7FFFD4", "#CD8C95", "#FFB6C1","#53868B")  # Replace with your desired colors
 
 gg_nation_birthy <- ggplot(bevn_eco_in6_graph,
        aes(x=birthyear, fill=mother_nationality_cat2)) + 
@@ -309,7 +309,7 @@ gg_birthy_BW
 ```{r}
 gg_birthy_GA  <- ggplot(bevn_eco_in6_graph, aes(x = birthyear, y = GA_weeks, group = birthyear)) +
   geom_violin(fill = "#7FFFD4") + 
-     labs(x = "", y = "gestational age (weeks)") +
+  labs(x = "", y = "gestational age (weeks)") +
     scale_x_continuous(breaks = seq(2007, 2022, by=2)) + 
   scale_y_continuous(breaks=seq(18,46,by=4), limits=c(18,46))+
      theme(
